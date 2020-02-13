@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- TODO: Change title -->
-    <title>Website Template</title>
+    <title>ColorIsFake Midterm</title>
 
     <!-- Load Bulma from CDN (consider saving it to repository instead) -->
     <!-- https://bulma.io/ -->
@@ -13,6 +12,18 @@
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+    <!-- include d3.js v5 -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <!-- include d3.js modules -->
+    <script src="https://d3js.org/d3-array.v2.min.js"></script>
+    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-time.v1.min.js"></script>
+    <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+
+<!--    My CSS! -->
+    <link rel="stylesheet" href="eve-style.css">
   </head>
 
   <body>
@@ -22,10 +33,8 @@
   <section class="hero is-primary is-bold">
     <div class="hero-body">
       <div class="container">
-        <!-- TODO: Change title -->
-        <h1 class="title">Website Title</h1>
-        <!-- TODO: Change subtitle -->
-        <h2 class="subtitle">Website Subtitle</h2>
+        <h1 class="title">ColorIsFake Midterm</h1>
+        <h2 class="subtitle">Chay, Priscilla, and Eve's Data Visualization Site</h2>
       </div>
     </div>
   </section>
@@ -33,7 +42,7 @@
 
   <!-- Page navigation -->
   <!-- https://bulma.io/documentation/components/navbar/ -->
-  <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
         <!-- TODO: Change link to repository homepage if needed -->
@@ -60,30 +69,30 @@
 
           <!-- TODO: Modify or remove dropdown -->
           <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
+            <a class="navbar-link" href="1.html">
               Visualizations
             </a>
 
             <div class="navbar-dropdown">
-              <a class="navbar-item">
+              <a class="navbar-item"  href="1.html">
                 <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Line Chart</span>
+                <span>Domestic vs. International</span>
               </a>
-              <a class="navbar-item">
-                <span class="icon"><i class="fas fa-chart-area"></i></span>
-                <span>Area Chart</span>
-              </a>
-
-              <hr class="navbar-divider">
-
-              <a class="navbar-item">
+              <a class="navbar-item"  href="2.html">
                 <span class="icon"><i class="fas fa-chart-bar"></i></span>
-                <span>Bar Chart</span>
+                <span>Intl. by Region</span>
               </a>
-              <a class="navbar-item">
+
+              <!-- <hr class="navbar-divider"> -->
+
+              <a class="navbar-item"  href="3.html">
+                <span class="icon"><i class="fas fa-chart-area"></i></span>
+                <span>Terminal Growth</span>
+              </a>
+              <!-- <a class="navbar-item">
                 <span class="icon"><i class="fas fa-chart-pie"></i></span>
                 <span>Pie Chart</span>
-              </a>
+              </a> -->
             </div>
           </div>
         </div>
@@ -91,7 +100,7 @@
         <!-- Right navbar items -->
         <div class="navbar-end">
           <!-- TODO: Update as needed -->
-          <a class="navbar-item" href="#about" title="About">
+          <a class="navbar-item" href="grade.html" title="About">
             <span class="icon"><i class="fas fa-tasks"></i></span>
             <span>Grade</span>
           </a>
@@ -111,242 +120,340 @@
       <!-- Begin page content -->
       <div class="content">
         <h1 class="title">
-          <!-- TODO: Change page title -->
-          Page Title
+          SF Emergency Response Visualizations
         </h1>
         <p class="subtitle">
-          <!-- TODO: Change page subtitle -->
-          Page Subtitle
+          Our midterm for CS 360 : Data Visualization
         </p>
 
-        <p>This would be an excellent place to describe what this page is for, what to find in different sections, describe any motivation or theme behind your visualizations, and so on.</p>
+        <h2>Dataset</h2>
+        <p>TODO</p>
+<!--        TODO-->
 
-        <p>You should not use this template unless you intend to customize it. Make it your own. Keep in mind this simple template is over 300 lines! You can see other examples of websites using Bulma at their showcase: <a href="https://bulma.io/expo/">bulma.io/expo/</a>.</p>
+<!--        DONE writeups needed :-->
+<!--        DONE About the original dataset, including its source, size, license, and when you accessed it.<br>-->
 
-        <h2 id="data">Data</h2>
+<!--        DONE Your self-assessment of the letter grade you should earn (D, C, B, or A). For each level, indicate whether you met the functionality requirements and how (if appropriate). You do not need to indicate whether you should receive a plus or minus letter grade.<br>-->
 
-        <p>Include some detailed information about the dataset here. You should <a href="#">add a link</a> to the original dataset. You might also want to quote the license:</p>
+<!--        DONE Your professional information, including your name, photo, USF email address, major, expected graduation date, and brief bio about yourself.<br>-->
 
-        <blockquote>
-          <p>
-            "This data is made available under the Public Domain Dedication and License v1.0 whose full text can be found at: <a href="http://www.opendatacommons.org/licenses/pddl/1.0/">www.opendatacommons.org/licenses/pddl/1.0/</a>"
-          </p>
-          <cite>Put a citation here, possibly link to the dataset license information directly.</cite>
-        </blockquote>
+<!--        <p>This would be an excellent place to describe what this page is for, what to find in different sections, describe any motivation or theme behind your visualizations, and so on.</p>-->
 
-        <p>In addition to including a link to the source and license, you should describe the data. You might want a list of some sort to enumerate the different types of columns:</p>
+<!--        <p>You should not use this template unless you intend to customize it. Make it your own. Keep in mind this simple template is over 300 lines! You can see other examples of websites using Bulma at their showcase: <a href="https://bulma.io/expo/">bulma.io/expo/</a>.</p>-->
 
-        <ol>
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+<!--        <h2 id="data">Data</h2>-->
 
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+<!--        <p>Include some detailed information about the dataset here. You should <a href="#">add a link</a> to the original dataset. You might also want to quote the license:</p>-->
 
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+<!--        <blockquote>-->
+<!--          <p>-->
+<!--            "This data is made available under the Public Domain Dedication and License v1.0 whose full text can be found at: <a href="http://www.opendatacommons.org/licenses/pddl/1.0/">www.opendatacommons.org/licenses/pddl/1.0/</a>"-->
+<!--          </p>-->
+<!--          <cite>Put a citation here, possibly link to the dataset license information directly.</cite>-->
+<!--        </blockquote>-->
 
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
-        </ol>
+<!--        <p>In addition to including a link to the source and license, you should describe the data. You might want a list of some sort to enumerate the different types of columns:</p>-->
 
-        <p>This will of course differ depending on the assignment and data.</p>
+<!--        <ol>-->
+<!--          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>-->
 
-        <h3 id="wrangling">Wrangling</h3>
+<!--          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>-->
 
-        <p>Perhaps you had to do some data wrangling to the original dataset to prepare it for visualization. This would be a great place to discuss some of that wrangling.
+<!--          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>-->
 
-        <pre>
-You can even put code into these pre blocks.
-  It will preserve whitespace.
-    That is helpful for formatted code.
-        </pre>
+<!--          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>-->
+<!--        </ol>-->
 
-        <p>You can alternatively embed a Gist if you want. There is an "embed" button on <a href="https://gist.github.com/octocat/6cad326836d38bd3a7ae">the Gist page</a> and results in something like this:</p>
+<!--        <p>This will of course differ depending on the assignment and data.</p>-->
 
-        <script src="https://gist.github.com/octocat/6cad326836d38bd3a7ae.js"></script>
+<!--        <h3 id="wrangling">Wrangling</h3>-->
 
-        <h2 id="visualizations">Visualizations</h2>
+<!--        <p>Perhaps you had to do some data wrangling to the original dataset to prepare it for visualization. This would be a great place to discuss some of that wrangling.-->
 
-        <p>Ideally not everything would be on a single page like this example. Instead, you might want to put each section in its own webpage. You would need to carefully replicate the page template (with the header, navbar, and footer) and make the necessary updates. For example, you want the "About" navbar item to be considered active on an "About" web page.</p>
+<!--        <pre>-->
+<!--You can even put code into these pre blocks.-->
+<!--  It will preserve whitespace.-->
+<!--    That is helpful for formatted code.-->
+<!--        </pre>-->
 
-        <p>For now this is just a demo. The buttons below do not go anywhere, but can be easily changed to link to different visualization pages.</p>
+<!--        <p>You can alternatively embed a Gist if you want. There is an "embed" button on <a href="https://gist.github.com/octocat/6cad326836d38bd3a7ae">the Gist page</a> and results in something like this:</p>-->
 
-        <p class="buttons">
-          <a class="button is-large is-success" href="#">
-            <span class="icon is-medium">
-              <i class="fas fa-chart-line"></i>
-            </span>
-            <span>Line Chart</span>
-          </a>
+<!--        <script src="https://gist.github.com/octocat/6cad326836d38bd3a7ae.js"></script>-->
 
-          <a class="button is-large is-primary" href="#">
-            <span class="icon is-medium">
-              <i class="fas fa-chart-area"></i>
-            </span>
-            <span>Area Chart</span>
-          </a>
+<!--        <h2 id="visualizations">Visualizations</h2>-->
 
-          <a class="button is-large is-info" href="#">
-            <span class="icon is-medium">
-              <i class="fas fa-chart-bar"></i>
-            </span>
-            <span>Bar Chart</span>
-          </a>
+<!--        <p>Ideally not everything would be on a single page like this example. Instead, you might want to put each section in its own webpage. You would need to carefully replicate the page template (with the header, navbar, and footer) and make the necessary updates. For example, you want the "About" navbar item to be considered active on an "About" web page.</p>-->
 
-          <a class="button is-large is-link" href="#">
-            <span class="icon is-medium">
-              <i class="fas fa-chart-pie"></i>
-            </span>
-            <span>Pie Chart</span>
-          </a>
-        </p>
+<!--        <p>For now this is just a demo. The buttons below do not go anywhere, but can be easily changed to link to different visualization pages.</p>-->
 
-        <!-- https://github.com/vega/vega-embed#basic-example -->
-        <p>It is possible to embed some visualizations directly here too. Here is <a href="https://github.com/vega/vega-embed#basic-example">an example</a> using Vega-Lite:</p>
+<!--        <p class="buttons">-->
+<!--          <a class="button is-large is-success" href="#">-->
+<!--            <span class="icon is-medium">-->
+<!--              <i class="fas fa-chart-line"></i>-->
+<!--            </span>-->
+<!--            <span>Line Chart</span>-->
+<!--          </a>-->
 
-        <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+<!--          <a class="button is-large is-primary" href="#">-->
+<!--            <span class="icon is-medium">-->
+<!--              <i class="fas fa-chart-area"></i>-->
+<!--            </span>-->
+<!--            <span>Area Chart</span>-->
+<!--          </a>-->
 
-        <div id="vis"></div>
+<!--          <a class="button is-large is-info" href="#">-->
+<!--            <span class="icon is-medium">-->
+<!--              <i class="fas fa-chart-bar"></i>-->
+<!--            </span>-->
+<!--            <span>Bar Chart</span>-->
+<!--          </a>-->
 
-        <script type="text/javascript">
-        var spec = "https://raw.githubusercontent.com/vega/vega/master/docs/examples/bar-chart.vg.json";
-        vegaEmbed('#vis', spec).then(function(result) {
-          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
-        }).catch(console.error);
-        </script>
+<!--          <a class="button is-large is-link" href="#">-->
+<!--            <span class="icon is-medium">-->
+<!--              <i class="fas fa-chart-pie"></i>-->
+<!--            </span>-->
+<!--            <span>Pie Chart</span>-->
+<!--          </a>-->
+<!--        </p>-->
 
-        <h4>Instructions</h4>
+<!--        &lt;!&ndash; https://github.com/vega/vega-embed#basic-example &ndash;&gt;-->
+<!--        <p>It is possible to embed some visualizations directly here too. Here is <a href="https://github.com/vega/vega-embed#basic-example">an example</a> using Vega-Lite:</p>-->
 
-        <p>You will likely need to include instructions on how to interpet and use the visualization. In the case above, if you click the three dots <i class="fas fa-ellipsis-h has-text-grey-light	"></i> above it will open a menu where you can either save the visualization to a SVG or PNG, or alternatively open it up in the online Vega Editor.</p>
+<!--        <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>-->
+<!--        <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>-->
+<!--        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>-->
 
-        <h4>Discussion</h4>
+<!--        <div id="vis"></div>-->
 
-        <p>You may also need other sections, like a discussion section, per-visualization section on data wrangling, and others. Because of the extra content and code visualizations take, it might be worthwhile to break up your pages into one home page and then one page per visualization.</p>
+<!--        <script type="text/javascript">-->
+<!--        var spec = "https://raw.githubusercontent.com/vega/vega/master/docs/examples/bar-chart.vg.json";-->
+<!--        vegaEmbed('#vis', spec).then(function(result) {-->
+<!--          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view-->
+<!--        }).catch(console.error);-->
+<!--        </script>-->
 
-        <span class="heading">Acknowledgements</span>
+<!--        <h4>Instructions</h4>-->
 
-        <p>
-          <a href="#">Link to insiration</a><br/>
-          <a href="#">Link to StackOverflow snippet</a>
-        </p>
+<!--        <p>You will likely need to include instructions on how to interpet and use the visualization. In the case above, if you click the three dots <i class="fas fa-ellipsis-h has-text-grey-light	"></i> above it will open a menu where you can either save the visualization to a SVG or PNG, or alternatively open it up in the online Vega Editor.</p>-->
 
-        <p class="is-6">
-          <em>Thanks to Person Name for their suggestion to do something with the visualization.</em>
-        </p>
+<!--        <h4>Discussion</h4>-->
 
-        <h2 id="grade">Grade</h2>
+<!--        <p>You may also need other sections, like a discussion section, per-visualization section on data wrangling, and others. Because of the extra content and code visualizations take, it might be worthwhile to break up your pages into one home page and then one page per visualization.</p>-->
 
-        <!-- TODO: Remove custom style if no longer needed -->
-        <style>
-          table.grades tbody tr td:nth-child(1),
-          table.grades tbody tr td:nth-child(2) {
-            text-align: center;
-          }
-        </style>
+<!--        <span class="heading">Acknowledgements</span>-->
 
-        <!-- TODO: Change or remove table -->
-        <!-- https://bulma.io/documentation/elements/table/ -->
-        <table class="table is-hoverable is-bordered grades">
-          <thead>
-            <tr>
-              <th>Letter</th>
-              <th>Done?</th>
-              <th>Description</th>
-            </tr>
-          </thead>
+<!--        <p>-->
+<!--          <a href="#">Link to insiration</a><br/>-->
+<!--          <a href="#">Link to StackOverflow snippet</a>-->
+<!--        </p>-->
 
-          <tbody>
-            <tr>
-              <td>D</td>
-              <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied. Exactly how this section should look will depend on the assignment in question. There is no requirement for formatting in this way. This is just an example of what a table element might look like for this informaiton.</td>
-            </tr>
+<!--        <p class="is-6">-->
+<!--          <em>Thanks to Person Name for their suggestion to do something with the visualization.</em>-->
+<!--        </p>-->
 
-            <tr>
-              <td>C</td>
-              <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied.</td>
-            </tr>
+        <h4 id="alpha-release">Alpha Release</h4>
 
-            <tr>
-              <td>B</td>
-              <td><i class="has-text-warning far fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied.</td>
-            </tr>
+        <p>The alpha release of your website must have draft content for all of the group pages. Specifically:</p>
 
-            <tr>
-              <td>A</td>
-              <td><i class="has-text-danger fas fa-times-circle"></i></td>
-              <td>Discussion of how this grade level was not satisfied.</td>
-            </tr>
-          </tbody>
+        <ul style="list-style: none;">
+          <li>
+            <p><strong>Home Page:</strong> Include a home/landing page with the following:</p>
 
-        </table>
+            <ul class="task-list" style="list-style: none;">
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />The <strong>overall narrative</strong>, goal, story, or theme of the project. Each visualization might have its own individual goal, but it must be relevant to the overall narrative stated here.</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" checked class="task-list-item-checkbox" />A <strong>clear navigation</strong> component to all of the other required content (e.g. navbar, menu).</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />The <strong>proper attribution</strong> (preferably in a footer) for any images, media, designs, templates, web frameworks, etc. used by the website.</p>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p><strong>Team/About:</strong> Include a page that describes <a href="midterm-project.html#midterm-groups">your group</a>. This should include:</p>
 
-        <h2 id="about">About</h2>
+            <ul class="task-list" style="list-style: none;">
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />Team <strong>names</strong>, including at least first name or nickname, optionally last name.</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />Team <strong>profile photos</strong> (should be professional, but can still be fun).</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />Team <strong>biographies</strong>, including major/minor, expected graduation year, and optionally a personal tidbit.</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />Team <strong>contact information</strong>, optionally including links to social media (Github, Linkedin, etc.).</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />Team <strong>responsibilities</strong>, indicating who worked on what. This includes who worked on which visualizations, and which team member(s) worked on the website design and shared content pages.</p>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p><strong>Dataset:</strong> Include a page that describes the <a href="midterm-project.html#dataset">original dataset</a>, dataset license, and shared processing/wrangling done to that data. Specifically:</p>
 
-        <!-- Profile box -->
-        <!-- https://bulma.io/documentation/layout/media-object/ -->
-        <article class="media">
-          <!-- TODO: Replace with profile photo -->
-          <figure class="media-left">
-            <p class="image is-128x128"><img class="is-rounded" src="profile.png"></p>
-          </figure>
+            <ul class="task-list" style="list-style: none;">
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" /><strong>Proper attribution</strong> for the original dataset. You will need to look at the original dataset page for how to give proper attribution. (This should include a link to the original data!*</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />The <strong>dataset license</strong> for the original dataset.</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />The <strong>dataset size</strong> (number of columns and rows).</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />The <strong>relevant columns</strong> from the original dataset, giving descriptions with the data types, possible values for categorical data, or the range of values (and possibly other simple statistics) for numerical columns.</p>
+              </li>
+              <li class="task-list-item">
+                <p><input type="checkbox" class="task-list-item-checkbox" />Any <strong>shared processing or filtering</strong> done to the original dataset. Include enough detail that this process is repeatable by someone starting with the original dataset. If possible, link directly to the processed version of the data.</p>
+              </li>
+            </ul>
+          </li>
+        </ul>
 
-          <div class="media-content">
-            <div class="content">
-              <!-- TODO: Replace with contact information -->
-              <p>
-                <strong>Full Name</strong><br/>
-                CS Major, <a href="https://www.usfca.edu/">University of San Francisco</a><br/>
-                <em>Expected Graduation: 20??</em><br/>
-                <i class="fas fa-envelope"></i> <a href="mailto:username@dons.usfca.edu">username@dons.usfca.edu</a>
-              </p>
+        <p>These are drafts; the content is expected to change over time. However, the drafts are still expected to have high quality. Check for spelling errors, typos, and grammar. Consider utilizing the <a href="https://myusf.usfca.edu/lwsc/writing-center">Writing Center</a> if you are worried about your text.</p>
 
-              <!-- TODO: Replace with brief biography -->
-              <p>
-                Here is a brief bio about yourself. A good rule of thumb is to include at least one technical tidbit (favorite area or course within computer science), and one fun tidbit (such as loving dogs).
-              </p>
+        <p>The website layout and general design is <em>not</em> expected to change drastically between releases. This is your opportunity to stabilize on the website design so you can focus on the visualizations in future releases.</p>
 
-              <!-- TODO: Replace or remove tags -->
-              <!-- https://bulma.io/documentation/elements/tag/ -->
-              <div class="heading">Skills</div>
+        <p>Submit a link directly to your release on Github in the <a href="https://usfca.instructure.com/courses/1590235/assignments/6908099">Midterm Alpha Release</a> assignment on Canvas. Make sure you are submitting the correct link!</p>
 
-              <div class="tags">
-                <span class="tag">Python</span>
-                <span class="tag">C</span>
-                <span class="tag">Java</span>
-                <span class="tag">JavaScript</span>
-                <span class="tag">HTML</span>
-                <span class="tag">CSS</span>
-                <span class="tag">SVG</span>
+
+
+        <h2 id="about">About us</h2><br>
+
+<!--        3 Profile boxes-->
+        <div class="tile is-ancestor">
+          <div class="tile profile-box">
+            <!-- Profile box -->
+            <!-- https://bulma.io/documentation/layout/media-object/ -->
+            <article class="media">
+              <figure class="media-left">
+                <p class="image is-128x128"><img class="is-rounded" src="eve-profile.jpg"></p>
+              </figure>
+
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <strong>Eve Matson</strong><br/>
+                    Computer Science Major, <a href="https://www.usfca.edu/">USF</a><br/>
+                    <em>Expected Graduation: 2021</em><br/>
+                    <i class="fas fa-envelope" style="margin-right: 3px"></i> <a href="mailto:ematson@dons.usfca.edu">ematson@dons.usfca.edu</a><br>
+                    <i class="fab fa-github" style="margin-right: 3px"></i> <a href="https://github.com/evelynmatson">evelynmatson</a>
+                  </p>
+
+                  <p>
+                    I am a junior Computer Science Major at USF, and expect to graduate in May 2021. I'm from Seattle and enjoy doing computer science, physics and theatre!
+                  </p>
+
+                  <div class="heading">Skills</div>
+
+                  <div class="tags">
+                    <span class="tag">Java</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">C</span>
+                    <span class="tag">JavaScript</span>
+                    <span class="tag">HTML</span>
+                    <span class="tag">CSS</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </article>
+            <!-- End profile box -->
           </div>
-        </article>
-        <!-- End profile box -->
+          <div class="tile profile-box">
+            <!-- Profile box -->
+            <!-- https://bulma.io/documentation/layout/media-object/ -->
+            <article class="media">
+              <figure class="media-left">
+                <p class="image is-128x128"><img class="is-rounded" src="eve-profile.jpg"></p>
+              </figure>
+
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <strong>Eve Matson</strong><br/>
+                    Computer Science Major, <a href="https://www.usfca.edu/">USF</a><br/>
+                    <em>Expected Graduation: 2021</em><br/>
+                    <i class="fas fa-envelope" style="margin-right: 3px"></i> <a href="mailto:ematson@dons.usfca.edu">ematson@dons.usfca.edu</a><br>
+                    <i class="fab fa-github" style="margin-right: 3px"></i> <a href="https://github.com/evelynmatson">evelynmatson</a>
+                  </p>
+
+                  <p>
+                    I am a junior Computer Science Major at USF, and expect to graduate in May 2021. I'm from Seattle and enjoy doing computer science, physics and theatre!
+                  </p>
+
+                  <div class="heading">Skills</div>
+
+                  <div class="tags">
+                    <span class="tag">Java</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">C</span>
+                    <span class="tag">JavaScript</span>
+                    <span class="tag">HTML</span>
+                    <span class="tag">CSS</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <!-- End profile box -->
+          </div>
+          <div class="tile profile-box">
+            <!-- Profile box -->
+            <!-- https://bulma.io/documentation/layout/media-object/ -->
+            <article class="media">
+              <figure class="media-left">
+                <p class="image is-128x128"><img class="is-rounded" src="eve-profile.jpg"></p>
+              </figure>
+
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <strong>Eve Matson</strong><br/>
+                    Computer Science Major, <a href="https://www.usfca.edu/">USF</a><br/>
+                    <em>Expected Graduation: 2021</em><br/>
+                    <i class="fas fa-envelope" style="margin-right: 3px"></i> <a href="mailto:ematson@dons.usfca.edu">ematson@dons.usfca.edu</a><br>
+                    <i class="fab fa-github" style="margin-right: 3px"></i> <a href="https://github.com/evelynmatson">evelynmatson</a>
+                  </p>
+
+                  <p>
+                    I am a junior Computer Science Major at USF, and expect to graduate in May 2021. I'm from Seattle and enjoy doing computer science, physics and theatre!
+                  </p>
+
+                  <div class="heading">Skills</div>
+
+                  <div class="tags">
+                    <span class="tag">Java</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">C</span>
+                    <span class="tag">JavaScript</span>
+                    <span class="tag">HTML</span>
+                    <span class="tag">CSS</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <!-- End profile box -->
+          </div>
+        </div>
+
+
 
       </div>
-      <!-- End page content -->
     </div>
+    <!-- End page content -->
   </section>
 
+
   <!-- Page footer -->
+<!--  <div class="false-footer"></div>-->
   <!-- https://bulma.io/documentation/layout/footer/ -->
-  <footer class="footer">
+  <footer class="footer smaller-footers-are-better">
     <div class="content has-text-centered is-size-7">
       <p>
-        <a href="#top">
-          <span class="fas fa-arrow-up"></span>
-          <span class="has-text-weight-medium">Back to Top</span>
-        </a>
-      </p>
-
-      <p>
-        <!-- TODO: Change to link to your Github repository -->
-        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
-          <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
-        </a>
-
         <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
           <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
         </a>
