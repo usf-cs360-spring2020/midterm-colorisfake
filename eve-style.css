@@ -34,6 +34,13 @@
     margin-left: 5px;
 }
 
+.contributions-box {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-right: 50px;
+    margin-left: 50px;
+}
+
 .check-list {
     list-style: none !important;
 }
