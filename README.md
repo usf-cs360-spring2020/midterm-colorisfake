@@ -2,17 +2,17 @@
 
 <https://usf-cs360-spring2020.github.io/midterm-colorisfake/>
 
-![Profile Image](eve-profile.png)
+![Profile Image](eve-profile.jpg)
 
 **Name:** Eve Matson  
 **Email:** <ematson@dons.usfca.edu>
 
-![Profile Image](priscilla-profile.png)
+![Profile Image](priscilla-profile.jpg)
 
 **Name:** Priscilla Hamiter  
 **Email:** <pmhamiter@dons.usfca.edu>
 
-![Profile Image](chaitrika.png)
+![Profile Image](chaitrika.jpeg)
 
 **Name:** Chaitrika Budamagunta  
 **Email:** <cbudamagunta@dons.usfca.edu>
