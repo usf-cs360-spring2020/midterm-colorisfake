@@ -1,11 +1,21 @@
 # README
 
-<https://usf-cs360-spring2020.github.io/template-bulma/>
+<https://usf-cs360-spring2020.github.io/midterm-colorisfake/>
 
-![Profile Image](profile.png)
+![Profile Image](eve-profile.png)
 
-**Name:** Your Name  
-**Email:** <username@dons.usfca.edu>
+**Name:** Eve Matson  
+**Email:** <ematson@dons.usfca.edu>
+
+![Profile Image](priscilla-profile.png)
+
+**Name:** Priscilla Hamiter  
+**Email:** <pmhamiter@dons.usfca.edu>
+
+![Profile Image](chaitrika.png)
+
+**Name:** Chaitrika Budamagunta  
+**Email:** <cbudamagunta@dons.usfca.edu>
 
 This is a template website using [Bulma](https://bulma.io/), [FontAwesome](https://origin.fontawesome.com/) for icons, and [Github Pages](). Designed to be modified (including this README file).
 
