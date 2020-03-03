@@ -108,25 +108,13 @@
           Dataset
         </h1>
 
-       <div class="tile is-ancestor">
-        <div class="tile is-4 is-vertical is-parent">
-          <div class="tile is-child box">
-            <p class="title">Last Updated</p>
-            <p class="subtitle">February 17, 2020</p>
-          </div>
-          <div class="tile is-child box">
-            <p class="subtitle">Columns</p>
-            <p class="title">34</p>
-          </div>
-        </div>
         <div class="tile is-parent is-8">
           <div class="tile is-child box">
             <p class="title">Fire Department Calls for Service</p>
             <p>This dataset inculdes all fire unit responses to calls in San Francisco, California. Each response includes the call number, incident number, address, unit identifier, call type, disposition, and relevant time intervals. This dataset is updated daily and includes over 5.21 million responses.
           </div>
         </div>
-      </div>
-
+        
      <h2 class="title">
           Relevant Columns in this Dataset
      </h2>
@@ -140,59 +128,32 @@
        </thead>
        <tbody>
          <tr>
-           <td>Call Number</td>
-           <td>A unique 9-digit number assigned by the 911 Dispatch Center</td>
-         </tr>
-         <tr>
-           <td>Unit ID</td>
-         </tr>
-         <tr>
-           <td>Incident Number</td>
-           <td>A unique 8-digit number assigned by the 911 Dispatch Center</td>
-         </tr>
-         <tr>
-           <td>Call Type</td>
-           <td>Call Type</td>
-         </tr>
-         <tr>
            <td>Call Date</td>
-           <td>Date the call is received at the 911 Dispatch Center</td>
+           <td>Date the call is received at the 911 Dispatch Center (MM/DD/YY).</td>
          </tr>
          <tr>
-           <td>Watch Date</td>
-           <td>Watch date when the call is received.</td>
+           <td>Received DtTm</td>
+           <td>Date and time of call is received at the 911 dispatch center (YYYY Month Abbr. HH:MM:SS).</td>
          </tr>
          <tr>
-           <td>Address</td>
-           <td>Address of incident.</td>
+           <td>Dispatch DtTm</td>
+           <td>Date and time the 911 operator dispatches this unit to the call (YYYY Month Abbr. HH:MM:SS).</td>
          </tr>
          <tr>
-           <td>City</td>
-           <td>City of incident.</td>
+           <td>On Scene DtTm</td>
+           <td>Date and time the unit recors arriving to the location of the incident (YYYY Month Abbr. HH:MM:SS).</td>
          </tr>
          <tr>
-           <td>Zipcode of Incident</td>
-           <td>Zipcode of incident.</td>
+           <td>Hospital DtTm</td>
+           <td>If this unit is an ambulance, date and time the unit begins the transport unit arrives to hospital (YYYY Month Abbr. HH:MM:SS)</td>
          </tr>
          <tr>
-           <td>Station Area</td>
-           <td>Fire Station First Response Area associated with the address of the incident.</td>
+           <td>Call Type Group</td>
+           <td>Call types: Fire, Alarm, Potential Life Threatening, Non Life Threatening, and Null</td>
          </tr>
          <tr>
-           <td>Original Priority</td>
-           <td>Initial call priority.</td>
-         </tr>
-         <tr>
-           <td>Priority</td>
-           <td>Call priority</td>
-         </tr>
-         <tr>
-           <td>Final Priority</td>
-           <td>Final call priority.</td>
-         </tr>
-         <tr>
-           <td>Location</td>
-           <td>Location of incident.</td>
+           <td>Neighborhoods - Analysis Boudaries</td>
+           <td>Neighborhood District associated with this address.</td>
          </tr>
        </tbody>
      </table>
