@@ -128,33 +128,57 @@
        </thead>
        <tbody>
          <tr>
-           <td>Call Date</td>
+           <th>Call Date</th>
            <td>Date the call is received at the 911 Dispatch Center (MM/DD/YY).</td>
          </tr>
          <tr>
-           <td>Received DtTm</td>
+           <th>Call Type</th>
+           <td>
+             Type of call the incident falls into. Relevant types (among others):
+             <ul>
+               <li>Medical Incident</li>
+               <li>Structure Fire</li>
+               <li>Traffic Collision</li>
+             </ul>
+           </td>
+
+         </tr>
+         <tr>
+           <th>Received DtTm</th>
            <td>Date and time of call is received at the 911 dispatch center (YYYY Month Abbr. HH:MM:SS).</td>
          </tr>
          <tr>
-           <td>Dispatch DtTm</td>
+           <th>Entry Time</th>
+           <td>Date and time the 911 operator submits the entry of the initical call information into the CAD system</td>
+         </tr>
+         <tr>
+           <th>Dispatch DtTm</th>
            <td>Date and time the 911 operator dispatches this unit to the call (YYYY Month Abbr. HH:MM:SS).</td>
          </tr>
          <tr>
-           <td>On Scene DtTm</td>
+           <th>Response DtTm</th>
+           <td>Date and time this unit acknowledges the dispatch and records that the unit is en route to the location of the call.</td>
+         </tr>
+         <tr>
+           <th>On Scene DtTm</th>
            <td>Date and time the unit recors arriving to the location of the incident (YYYY Month Abbr. HH:MM:SS).</td>
          </tr>
          <tr>
-           <td>Hospital DtTm</td>
+           <th>Hospital DtTm</th>
            <td>If this unit is an ambulance, date and time the unit begins the transport unit arrives to hospital (YYYY Month Abbr. HH:MM:SS)</td>
          </tr>
          <tr>
-           <td>Call Type Group</td>
+           <th>Call Type Group</th>
            <td>Call types: Fire, Alarm, Potential Life Threatening, Non Life Threatening, and Null</td>
          </tr>
          <tr>
-           <td>Neighborhoods - Analysis Boudaries</td>
+           <th>Neighborhoods - Analysis Boudaries</th>
            <td>Neighborhood District associated with this address.</td>
          </tr>
+        <tr>
+          <th>Unit sequence in call dispatch</th>
+          <td>A number that indicates the order this unit was assigned to this call</td>
+        </tr>
        </tbody>
      </table>
 

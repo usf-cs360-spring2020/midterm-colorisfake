@@ -106,7 +106,7 @@
 
         <h2>Visualization Prototypes</h2>
         <p>
-          In my visualizations, I chose to focus on 'processing time': how long it takes fire department units to prepare for a call, or the difference between when a call is sent from a 911 dispatcher (entry time) and when the unit leaves the station (response time).
+          In my visualizations, I chose to focus on 'processing time': how long it takes fire department units to prepare for a call, or the difference between when a call is sent from a 911 dispatcher (dispatch time) and when the unit leaves the station (response time).
           I focus on two of the most common types of incidents, medical and structure fires, and on only the processing time for the first response vehicle to any given call.
         </p>
         <p>
@@ -138,7 +138,7 @@
         <img src="resources/Eve-Prototype-Medical-Overview.png" height="300" width="900"/>
 
         <h3>Data Wrangling</h3>
-        <p>I did all data wrangling in Tableau after simply importing the whole dataset. I added a calculated "processing time" field defined as the call response time minus the call entry time.</p>
+        <p>I did all data wrangling in Tableau after simply importing the whole dataset. I added a calculated "processing time" field defined as the call response time minus the call dispatch time.</p>
         <p>For both visualizations, I also did the following filtering:</p>
           <ul>
             <li>Remove responses with "unit sequence" greater than 1, to show only the first responses, not any subsequent responses to the same call.</li>
