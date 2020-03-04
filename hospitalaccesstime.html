@@ -71,15 +71,15 @@
              </a>
 
              <div class="navbar-dropdown">
-               <a class="navbar-item" href="priscilla.html">
+               <a class="navbar-item" href="responsetime.html">
                  <span class="icon"><i class="fas fa-chart-line"></i></span>
                  <span>Priscilla</span>
                </a>
-               <a class="navbar-item is-active" href="evelyn.html">
+               <a class="navbar-item" href="preparationtime.html">
                  <span class="icon"><i class="fas fa-chart-area"></i></span>
                  <span>Eve</span>
                </a>
-               <a class="navbar-item" href="chaitrika.html">
+               <a class="navbar-item is-active is-active" href="hospitalaccesstime.html">
                  <span class="icon"><i class="fas fa-chart-bar"></i></span>
                  <span>Chaitrika</span>
                </a>
@@ -104,48 +104,49 @@
       <!-- Begin page content -->
       <div class="content">
 
-        <h2>Visualization Prototypes</h2>
-        <p>
-          In my visualizations, I chose to focus on 'processing time': how long it takes fire department units to prepare for a call, or the difference between when a call is sent from a 911 dispatcher (dispatch time) and when the unit leaves the station (response time).
-          I focus on two of the most common types of incidents, medical and structure fires, and on only the processing time for the first response vehicle to any given call.
-        </p>
-        <p>
-          For each, I separate the data by weekday and hour of the day, then calculate the average processing time for all matching responses.
-          Average processing time is encoded as color, and the number of matching responses is encoded as the height of the bar.
-        </p>
-        <p>
-          (Prototypes created in Tableau)
-        </p>
-        <img src="resources/Eve-Prototype-Fire.png" height="1125" width="900"/>
-        <img src="resources/Eve-Prototype-Medical.png" height="1125" width="900"/>
+        <h1>Hospital Access across Neighborhoods</h1>
 
-        <h3>Relevance to Overall Theme</h3>
-        <p>
-          Examining the processing time at different times during the week shows discrepancies in how efficiently the system is able to respond to different incidents.
-          The visualizations show that the fire department is more or less prepared to send help to where it's needed depending on what time of day and what day of the week it is.
-          Many of these times when processing times are higher happen during periods of the week when fewer incidents take place, but some have high rates of incidents AND high average processing time (such as medical incidents at 2AM on Saturday and Sunday).
-          This demonstrates times when the fire department is less effective for the people who need it then.
-<!--          Unfortunately, we can't decide when to have medical emergencies or when buildings should catch fire.-->
+        <p>These visualizations seek to view response times across different neighborhoods in SF, specifically
+        looking at hospital transit times, to see if any patterns emerge.</p>
 
-        </p>
-
-        <h3>Planned Interactivity</h3>
-        <p>My primary interactivity I plan to implement will be data-on-demand in the form of a tooltip.
-          Hovering over any bar will show the specific incident count and average processing time for that day and hour.</p>
-        <p>I will also add an overview below each visualization that shows how the overall average has changed overtime.
-        Brushing on overview will change which years are displayed on the main visualization.</p>
-        <p>I will also add checkboxes to select which neighborhoods are displayed, so users can explore the data specific to the areas they care most about. </p>
-        <img src="resources/Eve-Prototype-Medical-Overview.png" height="300" width="900"/>
-
-        <h3>Data Wrangling</h3>
-        <p>I did all data wrangling in Tableau after simply importing the whole dataset. I added a calculated "processing time" field defined as the call response time minus the call dispatch time.</p>
-        <p>For both visualizations, I also did the following filtering:</p>
+        <h2>Data Wrangling</h2>
+        <p>To create these visualizations, I downloaded a subset of the original dataset, focusing on <strong>2018-2020</strong> and
+          the <strong>Medic</strong> and <strong>Private</strong> Unit Types to focus specifically on hospital related response times.
+          Once in Tableau, this subset was further filtered to only include the data from <strong>2019,</strong>
+          which was <strong>aggregated and depicted as averages for the year.</strong></p>
+        <p>I created calculated values to find the difference in time between:
           <ul>
-            <li>Remove responses with "unit sequence" greater than 1, to show only the first responses, not any subsequent responses to the same call.</li>
-            <li>Remove responses from years with incomplete data (2000 and 2020)</li>
-            <li>Remove responses with call types other than the relevant one (medical incident or structure fire).</li>
-            <li>Remove responses with unusually long processing times (above an hour). These were rare and I considered them outliers.</li>
+            <li>Recieved DtTm and Hospital DtTm</li>
+            <li>Recieved DtTm and On Scene DtTm</li>
+            <li>On Scene DtTm and Hospital DtTm</li>
           </ul>
+        </p>
+        <p>Due to errors in the dataset, there were negative response times calculated, which were filtered out</p>
+
+        <h2>Planned Interactivity</h2>
+        <p>Both charts will be linked, so hovering over a neighborhood on one chart will highlight the same neighborhood on the other.</p>
+        <p>The bar chart will have brushing to focus on one specific neighborhood at a time, and will also ideally include a tooltip
+          showing the specific time difference.</p>
+
+        <h2>Relevance to Theme</h2>
+        <p>Our theme is to analyze the effectiveness of the SF Emergency Response system for the SF community as a whole, and hospital
+          access is crucial to ensuring the safety and health of the overall population. These visualizations will help to look at hospital
+          access across neighborhoods to see if all communities are being given the same chance at immediate medical care.</p>
+
+
+        <h2>Prototypes</h2>
+        <h3>Response Time Averages by Neighborhood and Call Type in 2019</h3>
+        <p><img src="resources/Chay_Proto_Heatmap.png"></p>
+        <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
+          Fire Department Calls for Service<br>
+          <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
+
+        <h3>Response Time Averages by Neighborhood in 2019</h3>
+        <p><img src="resources/Chay_Proto_Bar.png"></p>
+        <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
+          Fire Department Calls for Service<br>
+          <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
+
       </div>
     </div>
     <!-- End page content -->
