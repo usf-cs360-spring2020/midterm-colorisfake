@@ -10,7 +10,26 @@ let c = {
             left: 20
         }
     },
-    plot: {}
+
+    plot: {},
+
+    sub: {
+        margins: {
+            top: 10,
+            right: 10,
+            bottom: 10,
+            left: 10
+        }
+    },
+
+    vis: {
+        weekdays: 7,
+        call_type_ids: {
+            'Medical Incident': 'medical',
+            'Structure Fire': 'fire',
+            'Traffic Collision': 'traffic'
+        }
+    }
 };
 
 let axes = {};
@@ -47,17 +66,32 @@ function prepVis() {
     //     .style('fill', 'pink');
 
     let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
-        .then(drawVis);
+        .then(drawVises);
 }
 
 /**
  * Draw the visualizations after the page has been prepped and the data loaded
  * @param theData the data loaded from csv
  */
-function drawVis(theData) {
-    console.log('before organize', theData);
+function drawVises(theData) {
+    // console.log('before organize', theData);
     let organized = organize(theData);
-    console.log('organized', organized)
+    console.log('organized', organized);
+
+    for (let [call_type, data] of Object.entries(organized)) {
+        drawVis(call_type, data);
+    }
+}
+
+/**
+ * Draw a single svg worth of visualization, for one call type
+ * @param call_type the call type (as written in the data
+ * @param data the organized data for that call type
+ */
+function drawVis(call_type, data) {
+    let id = c.vis.call_type_ids[call_type];
+    let svg = d3.select(`svg.visualization#${id}`);
+    console.log(svg);
 }
 
 /**
@@ -75,11 +109,33 @@ function rowConverter(row) {
  * @return the same data organized by incident type, then hour and weekday
  */
 function organize(data) {
-    let organized = {}
+    let organized = {};
 
     for (let row of data) {
+        let type = row['Call Type'];
+        let weekday = row['Weekday of Entry Date and Time'];
+        let hour = row['Hour of Entry Date and Time'];
 
+        // Make sure the organized data has an object for each kind of incident
+        if (! (type in organized))
+            organized[type] = {};
+        let call_type_obj = organized[type];
+
+        // Make sure the call type object has an object for that weekday
+        // console.log(call_type_obj);
+        if (! (weekday in call_type_obj))
+            call_type_obj[weekday] = {};
+        let weekday_object = call_type_obj[weekday];
+
+        // Make sure the weekday object has an object for that hour
+        if (! (hour in weekday_object))
+            weekday_object[hour] = [];
+        let hour_array = weekday_object[hour];
+
+        hour_array.push(data);
     }
+
+    return organized;
 }
 
 prepVis();
