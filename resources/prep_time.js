@@ -4,10 +4,10 @@ let c = {
         height: 600,
         width: 900,
         pad: {
-            top: 20,
+            top: 50,
             right: 20,
-            bottom: 20,
-            left: 20
+            bottom: 40,
+            left: 10
         }
     },
 
@@ -15,10 +15,10 @@ let c = {
 
     sub: {
         margins: {
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 10
+            top: 2,
+            right: 5,
+            bottom: 2,
+            left: 100
         }
     },
 
@@ -59,11 +59,15 @@ function prepVis() {
         .attr('width', c.plot.width)
         .attr('height', c.plot.height);
 
+    c.sub.width = c.plot.width - c.sub.margins.left - c.sub.margins.right;
+    c.sub.height = (c.plot.height / c.vis.weekdays) - c.sub.margins.top - c.sub.margins.bottom;
+
+
     // Test rectangles
-    // plot.append('rect')
-    //     .attr('width', c.plot.width)
-    //     .attr('height', c.plot.height)
-    //     .style('fill', 'pink');
+    plot.append('rect')
+        .attr('width', c.plot.width)
+        .attr('height', c.plot.height)
+        .style('fill', 'pink');
 
     let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
         .then(drawVises);
@@ -74,12 +78,12 @@ function prepVis() {
  * @param theData the data loaded from csv
  */
 function drawVises(theData) {
-    // console.log('before organize', theData);
+    console.log('before organize', theData);
     let organized = organize(theData);
     console.log('organized', organized);
 
-    for (let [call_type, data] of Object.entries(organized)) {
-        drawVis(call_type, data);
+    for (const call_type in organized) {
+        drawVis(call_type, organized[call_type]);
     }
 }
 
@@ -89,9 +93,35 @@ function drawVises(theData) {
  * @param data the organized data for that call type
  */
 function drawVis(call_type, data) {
+    // console.log('call_type', call_type);
     let id = c.vis.call_type_ids[call_type];
-    let svg = d3.select(`svg.visualization#${id}`);
-    console.log(svg);
+    // console.log(id);
+    let this_svg = d3.select(`svg.visualization#${id}`);
+    // console.log(this_svg);
+
+    let plot = this_svg.select('g#plot');
+    console.log('plot', plot);
+
+    let differential = 0;
+    for (let i of [...Array(c.vis.weekdays).keys()]) {  // 'Range' credit to https://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-a-range-within-the-supp
+        let sub = plot.append('g')
+            .attr('class','sub')
+            .attr('id', i)
+            .attr('width', c.sub.width)
+            .attr('height', c.sub.height)
+            // .attr('y', differential)
+            .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
+
+        differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
+
+        let test = sub.append('rect')
+            .attr('width', c.sub.width)
+            .attr('height', c.sub.height)
+            .attr('fill', 'green');
+
+        console.log('sub', sub);
+        console.log('test', test);
+    }
 }
 
 /**
