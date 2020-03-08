@@ -67,7 +67,7 @@ function prepVis() {
     plot.append('rect')
         .attr('width', c.plot.width)
         .attr('height', c.plot.height)
-        .style('fill', 'pink');
+        .style('fill', 'lemonChiffon');
 
     let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
         .then(drawVises);
@@ -117,7 +117,7 @@ function drawVis(call_type, data) {
         let test = sub.append('rect')
             .attr('width', c.sub.width)
             .attr('height', c.sub.height)
-            .attr('fill', 'green');
+            .attr('fill', 'lightPink');
 
         console.log('sub', sub);
         console.log('test', test);
