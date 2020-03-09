@@ -76,9 +76,16 @@ function prepVis() {
         .rangeRound([0,c.sub.width])
         .paddingInner(c.sub.padding_between_hours);
 
-    scales.incidents = d3.scaleLinear()
+    scales.incidents = {};
+    scales.incidents['medical'] = d3.scaleLinear()
         .range([c.sub.height,0])
-        .domain([0,13237]);
+        .domain([-200,13237]);
+    scales.incidents['fire'] = d3.scaleLinear()
+        .range([c.sub.height,0])
+        .domain([-50,1426]);
+    scales.incidents['traffic'] = d3.scaleLinear()
+        .range([c.sub.height,0])
+        .domain([-50,900]);
 
     // Load the data, then call another function
     let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
@@ -95,7 +102,7 @@ function drawVises(theData) {
     console.log('organized', organized);
 
     // Finish scales
-    let hours = []
+    let hours = [];
     let a_incident_type = organized[Object.keys(organized)[0]];
     let a_weekday = a_incident_type[Object.keys(a_incident_type)[0]];
     for (let hour in Object.keys(a_weekday)) {
@@ -105,13 +112,14 @@ function drawVises(theData) {
     // console.log('hours', hours);
 
     for (const call_type in organized) {
+
         drawVis(call_type, organized[call_type]);
     }
 }
 
 /**
  * Draw a single svg worth of visualization, for one call type
- * @param call_type the call type (as written in the data
+ * @param call_type the call type (as written in the data)
  * @param data the organized data for that call type
  */
 function drawVis(call_type, data) {
@@ -130,6 +138,7 @@ function drawVis(call_type, data) {
     let i = 0;
     let differential = 0;
 
+    let med_incidents = [];
     // Loop through each weekday
     for (let weekday in data) {
         // Setup the SVG for this weekday
@@ -151,14 +160,15 @@ function drawVis(call_type, data) {
 
 
         let weekday_data = data[weekday];
-        console.log(weekday_data);
+        // console.log(weekday_data);
         // console.log('sub', sub);
         // console.log('test', test);
+
 
         // Loop though each hour
         for (let hour in weekday_data) {
             let hour_data = weekday_data[hour];
-            console.log('hour_data', hour_data);
+            // console.log('hour_data', hour_data);
 
 
             // Count incidents
@@ -168,14 +178,19 @@ function drawVis(call_type, data) {
             });
             // console.log('incident_count', incident_count);
 
+            med_incidents.push(incident_count);
+
+            let y_scaled = scales.incidents[c.vis.call_type_ids[call_type]](incident_count);
+            let zero_value = scales.incidents[c.vis.call_type_ids[call_type]](0);
             sub.append('rect')
                 .attr('width', scales.hour.bandwidth())
-                .attr('height', c.sub.height - scales.incidents(incident_count)) // TODO
+                .attr('height', c.sub.height - y_scaled) // TODO
                 .attr('fill', 'blue') // TODO
                 .attr('x', scales.hour(hour))
-                .attr('y', scales.incidents(incident_count)); // TODO
+                .attr('y', y_scaled);
         }
     }
+    console.log(Math.max(...med_incidents));
 }
 
 /**
