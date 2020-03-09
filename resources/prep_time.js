@@ -19,7 +19,8 @@ let c = {
             right: 5,
             bottom: 2,
             left: 100
-        }
+        },
+        padding_between_hours : 0.05
     },
 
     vis: {
@@ -69,6 +70,13 @@ function prepVis() {
         .attr('height', c.plot.height)
         .style('fill', 'lemonChiffon');
 
+
+    // Scales
+    scales.weekday = d3.scaleBand()
+        .rangeRound([0,c.sub.width])
+        .paddingInner(c.sub.padding_between_hours);
+
+    // Load the data, then call another function
     let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
         .then(drawVises);
 }
@@ -78,9 +86,19 @@ function prepVis() {
  * @param theData the data loaded from csv
  */
 function drawVises(theData) {
-    console.log('before organize', theData);
+    // console.log('before organize', theData);
     let organized = organize(theData);
     console.log('organized', organized);
+
+    // Finish scales
+    let hours = []
+    let a_incident_type = organized[Object.keys(organized)[0]];
+    let a_weekday = a_incident_type[Object.keys(a_incident_type)[0]];
+    for (let hour in Object.keys(a_weekday)) {
+        hours.push(hour.toString())
+    }
+    scales.weekday.domain(hours);
+    // console.log('hours', hours);
 
     for (const call_type in organized) {
         drawVis(call_type, organized[call_type]);
@@ -100,10 +118,17 @@ function drawVis(call_type, data) {
     // console.log(this_svg);
 
     let plot = this_svg.select('g#plot');
-    console.log('plot', plot);
+    // console.log('plot', plot);
 
+
+
+    console.log('data', data);
+    let i = 0;
     let differential = 0;
-    for (let i of [...Array(c.vis.weekdays).keys()]) {  // 'Range' credit to https://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-a-range-within-the-supp
+
+    // Loop through each weekday
+    for (let weekday in data) {
+        // Setup the SVG for this weekday
         let sub = plot.append('g')
             .attr('class','sub')
             .attr('id', i)
@@ -113,14 +138,18 @@ function drawVis(call_type, data) {
             .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
 
         differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
+        i += 1;
 
         let test = sub.append('rect')
             .attr('width', c.sub.width)
             .attr('height', c.sub.height)
             .attr('fill', 'lightPink');
 
-        console.log('sub', sub);
-        console.log('test', test);
+
+        let weekday_data = data[weekday];
+        console.log(weekday_data);
+        // console.log('sub', sub);
+        // console.log('test', test);
     }
 }
 
