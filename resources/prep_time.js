@@ -77,15 +77,24 @@ function prepVis() {
         .paddingInner(c.sub.padding_between_hours);
 
     scales.incidents = {};
-    scales.incidents['medical'] = d3.scaleLinear()
-        .range([c.sub.height,0])
-        .domain([-200,13237]);
     scales.incidents['fire'] = d3.scaleLinear()
         .range([c.sub.height,0])
         .domain([-50,1426]);
+    scales.incidents['medical'] = d3.scaleLinear()
+        .range([c.sub.height,0])
+        .domain([-200,13237]);
     scales.incidents['traffic'] = d3.scaleLinear()
         .range([c.sub.height,0])
         .domain([-50,900]);
+
+    scales.color = {};
+    scales.color['fire'] = d3.scaleSequential(d3.interpolateOranges)
+        .domain([0.8862924282193209, 1.84355555554]);
+    scales.color['medical'] = d3.scaleSequential(d3.interpolateBlues)
+        .domain([0.8608115115257102, 1.5448774151841203]);
+    scales.color['traffic'] = d3.scaleSequential(d3.interpolateGreys)
+        .domain([0.8386801541069366, 1.8966183574492759]);
+
 
     // Load the data, then call another function
     let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
@@ -138,7 +147,8 @@ function drawVis(call_type, data) {
     let i = 0;
     let differential = 0;
 
-    let med_incidents = [];
+    // let times = [];
+
     // Loop through each weekday
     for (let weekday in data) {
         // Setup the SVG for this weekday
@@ -171,26 +181,31 @@ function drawVis(call_type, data) {
             // console.log('hour_data', hour_data);
 
 
-            // Count incidents
+            // Count incidents and collect preparation times
             let incident_count = 0;
+            let total_time = 0.0;
             hour_data.forEach(function(row) {
-                incident_count += parseInt(row['Number of Records']);
+                let incidents = parseInt(row['Number of Records']);
+                incident_count += incidents;
+                total_time += parseFloat(row['Avg. Processing Minutes']) * incidents;
             });
-            // console.log('incident_count', incident_count);
-
-            med_incidents.push(incident_count);
+            let avg_prep_time = total_time / incident_count;
+            // times.push(avg_prep_time);
 
             let y_scaled = scales.incidents[c.vis.call_type_ids[call_type]](incident_count);
             let zero_value = scales.incidents[c.vis.call_type_ids[call_type]](0);
+            let color = scales.color[c.vis.call_type_ids[call_type]](avg_prep_time);
             sub.append('rect')
                 .attr('width', scales.hour.bandwidth())
                 .attr('height', c.sub.height - y_scaled) // TODO
-                .attr('fill', 'blue') // TODO
+                .attr('fill', color) // TODO
                 .attr('x', scales.hour(hour))
                 .attr('y', y_scaled);
         }
     }
-    console.log(Math.max(...med_incidents));
+    // console.log(call_type, 'max', Math.max(...times));
+    // // console.log(times);
+    // console.log(call_type, 'min', Math.min(...times));
 }
 
 /**
