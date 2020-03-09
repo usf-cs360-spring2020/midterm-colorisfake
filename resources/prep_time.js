@@ -72,9 +72,13 @@ function prepVis() {
 
 
     // Scales
-    scales.weekday = d3.scaleBand()
+    scales.hour = d3.scaleBand()
         .rangeRound([0,c.sub.width])
         .paddingInner(c.sub.padding_between_hours);
+
+    scales.incidents = d3.scaleLinear()
+        .range([c.sub.height,0])
+        .domain([0,13237]);
 
     // Load the data, then call another function
     let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
@@ -97,7 +101,7 @@ function drawVises(theData) {
     for (let hour in Object.keys(a_weekday)) {
         hours.push(hour.toString())
     }
-    scales.weekday.domain(hours);
+    scales.hour.domain(hours);
     // console.log('hours', hours);
 
     for (const call_type in organized) {
@@ -150,6 +154,27 @@ function drawVis(call_type, data) {
         console.log(weekday_data);
         // console.log('sub', sub);
         // console.log('test', test);
+
+        // Loop though each hour
+        for (let hour in weekday_data) {
+            let hour_data = weekday_data[hour];
+            console.log('hour_data', hour_data);
+
+
+            // Count incidents
+            let incident_count = 0;
+            hour_data.forEach(function(row) {
+                incident_count += parseInt(row['Number of Records']);
+            });
+            // console.log('incident_count', incident_count);
+
+            sub.append('rect')
+                .attr('width', scales.hour.bandwidth())
+                .attr('height', c.sub.height - scales.incidents(incident_count)) // TODO
+                .attr('fill', 'blue') // TODO
+                .attr('x', scales.hour(hour))
+                .attr('y', scales.incidents(incident_count)); // TODO
+        }
     }
 }
 
@@ -191,7 +216,7 @@ function organize(data) {
             weekday_object[hour] = [];
         let hour_array = weekday_object[hour];
 
-        hour_array.push(data);
+        hour_array.push(row);
     }
 
     return organized;
