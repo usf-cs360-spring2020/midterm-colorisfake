@@ -41,7 +41,8 @@ let scales = {};
  * Prepare the page for the visualization to be drawn
  */
 function prepVis() {
-    // Setup each svg and make the main groups
+
+    // Setup each SVG and make the main groups
     let svgs = d3.selectAll('svg.visualization')
         .attr('width', c.svg.width)
         .attr('height', c.svg.height);
@@ -64,14 +65,14 @@ function prepVis() {
     c.sub.height = (c.plot.height / c.vis.weekdays) - c.sub.margins.top - c.sub.margins.bottom;
 
 
-    // Test rectangles
+    // Make some test rectangles
     plot.append('rect')
         .attr('width', c.plot.width)
         .attr('height', c.plot.height)
         .style('fill', 'lemonChiffon');
 
 
-    // Scales
+    // Make the scales
     scales.hour = d3.scaleBand()
         .rangeRound([0,c.sub.width])
         .paddingInner(c.sub.padding_between_hours);
@@ -79,13 +80,13 @@ function prepVis() {
     scales.incidents = {};
     scales.incidents['fire'] = d3.scaleLinear()
         .range([c.sub.height,0])
-        .domain([-50,1426]);
+        .domain([-20,1426]);
     scales.incidents['medical'] = d3.scaleLinear()
         .range([c.sub.height,0])
         .domain([-200,13237]);
     scales.incidents['traffic'] = d3.scaleLinear()
         .range([c.sub.height,0])
-        .domain([-50,900]);
+        .domain([-15,900]);
 
     scales.color = {};
     scales.color['fire'] = d3.scaleSequential(d3.interpolateOranges)
@@ -106,8 +107,8 @@ function prepVis() {
  * @param theData the data loaded from csv
  */
 function drawVises(theData) {
-    // console.log('before organize', theData);
-    let organized = organize(theData);
+    // Put the data into nice groups
+   let organized = organize(theData);
     console.log('organized', organized);
 
     // Finish scales
@@ -118,10 +119,9 @@ function drawVises(theData) {
         hours.push(hour.toString())
     }
     scales.hour.domain(hours);
-    // console.log('hours', hours);
 
+    // Draw a vis for each type of call
     for (const call_type in organized) {
-
         drawVis(call_type, organized[call_type]);
     }
 }
@@ -132,25 +132,18 @@ function drawVises(theData) {
  * @param data the organized data for that call type
  */
 function drawVis(call_type, data) {
-    // console.log('call_type', call_type);
+    // Find the right SVG and plot element
     let id = c.vis.call_type_ids[call_type];
-    // console.log(id);
     let this_svg = d3.select(`svg.visualization#${id}`);
-    // console.log(this_svg);
-
     let plot = this_svg.select('g#plot');
-    // console.log('plot', plot);
 
-
-
-    console.log('data', data);
+    // Draw a subplot for each weekday
     let i = 0;
     let differential = 0;
 
-    // let times = [];
-
-    // Loop through each weekday
     for (let weekday in data) {
+        let weekday_data = data[weekday];
+
         // Setup the SVG for this weekday
         let sub = plot.append('g')
             .attr('class','sub')
@@ -163,25 +156,18 @@ function drawVis(call_type, data) {
         differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
         i += 1;
 
+        // Make a test rectangle for each weekday subplot
         let test = sub.append('rect')
             .attr('width', c.sub.width)
             .attr('height', c.sub.height)
             .attr('fill', 'lightPink');
 
 
-        let weekday_data = data[weekday];
-        // console.log(weekday_data);
-        // console.log('sub', sub);
-        // console.log('test', test);
-
-
-        // Loop though each hour
+        // Loop though each hour, draw a bar for each
         for (let hour in weekday_data) {
             let hour_data = weekday_data[hour];
-            // console.log('hour_data', hour_data);
 
-
-            // Count incidents and collect preparation times
+            // Calculate incident count and average preparation time
             let incident_count = 0;
             let total_time = 0.0;
             hour_data.forEach(function(row) {
@@ -190,22 +176,19 @@ function drawVis(call_type, data) {
                 total_time += parseFloat(row['Avg. Processing Minutes']) * incidents;
             });
             let avg_prep_time = total_time / incident_count;
-            // times.push(avg_prep_time);
 
+            // Make the bar
             let y_scaled = scales.incidents[c.vis.call_type_ids[call_type]](incident_count);
             let zero_value = scales.incidents[c.vis.call_type_ids[call_type]](0);
             let color = scales.color[c.vis.call_type_ids[call_type]](avg_prep_time);
             sub.append('rect')
                 .attr('width', scales.hour.bandwidth())
-                .attr('height', c.sub.height - y_scaled) // TODO
+                .attr('height', zero_value - y_scaled) // TODO
                 .attr('fill', color) // TODO
                 .attr('x', scales.hour(hour))
                 .attr('y', y_scaled);
         }
     }
-    // console.log(call_type, 'max', Math.max(...times));
-    // // console.log(times);
-    // console.log(call_type, 'min', Math.min(...times));
 }
 
 /**
