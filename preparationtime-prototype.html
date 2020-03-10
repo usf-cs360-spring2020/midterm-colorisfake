@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ColorIsFake Midterm</title>
+    <title>Preparation Time</title>
 
     <!-- Load Bulma from CDN (consider saving it to repository instead) -->
     <!-- https://bulma.io/ -->
@@ -45,7 +45,7 @@
   <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
-        <a class="navbar-item is-active" href="index.html">
+        <a class="navbar-item" href="index.html">
           <span class="icon"><i class="fas fa-home"></i></span>
           <span>Home</span>
         </a>
@@ -86,26 +86,26 @@
             </div>
           </div>
 
-           <div class="navbar-item has-dropdown is-hoverable">
-             <a class="navbar-link">
-               Prototypes
-             </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Prototypes
+            </a>
 
-             <div class="navbar-dropdown">
-               <a class="navbar-item" href="responsetime-prototype.html">
-                 <span class="icon"><i class="fas fa-chart-line"></i></span>
-                 <span>Priscilla - Response Time</span>
-               </a>
-               <a class="navbar-item" href="preparationtime-prototype.html">
-                 <span class="icon"><i class="fas fa-chart-area"></i></span>
-                 <span>Evelyn - Preparation Time</span>
-               </a>
-               <a class="navbar-item" href="hospitalaccesstime-prototype.html">
-                 <span class="icon"><i class="fas fa-chart-bar"></i></span>
-                 <span>Chaitrika - Hospital Access Time</span>
-               </a>
-             </div>
-           </div>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="responsetime-prototype.html">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Priscilla - Response Time</span>
+              </a>
+              <a class="navbar-item is-active" href="preparationtime-prototype.html">
+                <span class="icon"><i class="fas fa-chart-area"></i></span>
+                <span>Evelyn - Preparation Time</span>
+              </a>
+              <a class="navbar-item" href="hospitalaccesstime-prototype.html">
+                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                <span>Chaitrika - Hospital Access Time</span>
+              </a>
+            </div>
+          </div>
         </div>
 
         <!-- Right navbar items -->
@@ -124,20 +124,49 @@
     <div class="container">
       <!-- Begin page content -->
       <div class="content">
-        <h1 class="title">
-          SF Emergency Response Visualizations
-        </h1>
-        <p class="subtitle">
-          Our midterm for CS 360 : Data Visualization
+
+        <h2>Visualization Prototypes</h2>
+        <p>
+          In my visualizations, I chose to focus on 'preparation time': how long it takes fire department units to prepare for a call, or the difference between when a call is sent from a 911 dispatcher (dispatch time) and when the unit leaves the station (response time).
+          I focus on two of the most common types of incidents, medical and structure fires, and on only the preparation time for the first response vehicle to any given call.
+        </p>
+        <p>
+          For each, I separate the data by weekday and hour of the day, then calculate the average preparation time for all matching responses.
+          Average preparation time is encoded as color, and the number of matching responses is encoded as the height of the bar.
+        </p>
+        <p>
+          (Prototypes created in Tableau)
+        </p>
+        <img src="resources/Eve-Prototype-Fire.png" height="1125" width="900"/>
+        <img src="resources/Eve-Prototype-Medical.png" height="1125" width="900"/>
+
+        <h3>Relevance to Overall Theme</h3>
+        <p>
+          Examining the preparation time at different times during the week shows discrepancies in how efficiently the system is able to respond to different incidents.
+          The visualizations show that the fire department is more or less prepared to send help to where it's needed depending on what time of day and what day of the week it is.
+          Many of these times when preparation times are higher happen during periods of the week when fewer incidents take place, but some have high rates of incidents AND high average preparation time (such as medical incidents at 2AM on Saturday and Sunday).
+          This demonstrates times when the fire department is less effective for the people who need it then.
+<!--          Unfortunately, we can't decide when to have medical emergencies or when buildings should catch fire.-->
+
         </p>
 
-        <h2>Theme</h2>
+        <h3>Planned Interactivity</h3>
+        <p>My primary interactivity I plan to implement will be data-on-demand in the form of a tooltip.
+          Hovering over any bar will show the specific incident count and average preparation time for that day and hour.</p>
+        <p>I will also add an overview below each visualization that shows how the overall average has changed overtime.
+        Brushing on overview will change which years are displayed on the main visualization.</p>
+        <p>I will also add checkboxes to select which neighborhoods are displayed, so users can explore the data specific to the areas they care most about. </p>
+        <img src="resources/Eve-Prototype-Medical-Overview.png" height="300" width="900"/>
 
-        <p>The focus of our visualizations will be looking at how effective the SF Emergency Response system is for the entire
-          SF community, looking into the response times for various locations, and changes during specific times of crisis. We will
-          be using the data to see if certain communities are being underserved by the current system, and in what ways.
-        </p>
-
+        <h3>Data Wrangling</h3>
+        <p>I did all data wrangling in Tableau after simply importing the whole dataset. I calculated preparation time as the call response time minus the call dispatch time.</p>
+        <p>For both visualizations, I also did the following filtering:</p>
+          <ul>
+            <li>Remove responses with "unit sequence" greater than 1, to show only the first responses, not any subsequent responses to the same call.</li>
+            <li>Remove responses from years with incomplete data (2000 and 2020)</li>
+            <li>Remove responses with call types other than the relevant one (medical incident or structure fire).</li>
+            <li>Remove responses with unusually long processing times (above an hour). These were rare and I considered them outliers.</li>
+          </ul>
       </div>
     </div>
     <!-- End page content -->
