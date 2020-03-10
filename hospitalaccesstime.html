@@ -131,9 +131,9 @@
         looking at hospital transit times, to see if any patterns emerge.</p>
 
         <h2>Data Wrangling</h2>
-        <p>To create these visualizations, I downloaded a subset of the original dataset, focusing on <strong>2018-2020</strong> and
+        <p>To create these visualizations, I downloaded a subset of the original dataset, filtering down to <strong>2018-2020</strong> Call Dates and
           the <strong>Medic</strong> and <strong>Private</strong> Unit Types to focus specifically on hospital related response times.
-          Once in Tableau, this subset was further filtered to only include the data from <strong>2019,</strong>
+          To create my prototypes in Tableau, this subset was further filtered to only include the data from <strong>2019,</strong>
           which was <strong>aggregated and depicted as averages for the year.</strong></p>
         <p>I created calculated values to find the difference in time between:
           <ul>
@@ -141,32 +141,31 @@
             <li>Recieved DtTm and On Scene DtTm</li>
             <li>On Scene DtTm and Hospital DtTm</li>
           </ul>
+          These values are all in <strong>minutes</strong>.
         </p>
-        <p>Due to errors in the dataset, there were negative response times calculated, which were filtered out</p>
+        <p>Due to errors in the original dataset, there were negative response times calculated, which were filtered out</p>
 
-        <h2>Planned Interactivity</h2>
-        <p>Both charts will be linked, so hovering over a neighborhood on one chart will highlight the same neighborhood on the other.</p>
-        <p>The bar chart will have brushing to focus on one specific neighborhood at a time, and will also ideally include a tooltip
-          showing the specific time difference.</p>
-
-        <h2>Relevance to Theme</h2>
-        <p>Our theme is to analyze the effectiveness of the SF Emergency Response system for the SF community as a whole, and hospital
-          access is crucial to ensuring the safety and health of the overall population. These visualizations will help to look at hospital
-          access across neighborhoods to see if all communities are being given the same chance at immediate medical care.</p>
+        <h2>Instructions</h2>
+        <h3>Data Encoding</h3>
+        <h3>Interactivity</h3>
 
 
-        <h2>Prototypes</h2>
+        <h2>Visualizations</h2>
         <h3>Response Time Averages by Neighborhood and Call Type in 2019</h3>
-        <p><img src="resources/Chay_Proto_Heatmap.png"></p>
+        <svg id="HeatVis"></svg>
         <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
           Fire Department Calls for Service<br>
           <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
 
         <h3>Response Time Averages by Neighborhood in 2019</h3>
-        <p><img src="resources/Chay_Proto_Bar.png"></p>
+        <svg id="BarVis"></svg>
         <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
           Fire Department Calls for Service<br>
           <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
+
+
+        <h2>Conclusions</h2>
+        <p>Findings and how they support the theme</p>
 
       </div>
     </div>
