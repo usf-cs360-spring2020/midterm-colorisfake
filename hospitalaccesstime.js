@@ -1,19 +1,12 @@
-const width = 960;
-const height = 800;
-
-
-/*******************************************************************************/
-
 
 /*
 * HEATMAP
 */
 
-
 const heatMargin = {
-  top: 10,
+  top: 120,
   bottom: 10,
-  left: 10,
+  left: 160,
   right: 10
 };
 
@@ -26,9 +19,9 @@ heatPlot.attr("transform", "translate(" + heatMargin.left + "," + heatMargin.top
 
 
 /* SCALES */
-let bounds = heatSvg.node().getBoundingClientRect();
-let plotWidth = bounds.width - heatMargin.right - heatMargin.left;
-let plotHeight = bounds.height - heatMargin.top - heatMargin.bottom;
+let heatBounds = heatSvg.node().getBoundingClientRect();
+let heatPlotWidth = heatBounds.width - heatMargin.right - heatMargin.left;
+let heatPlotHeight = heatBounds.height - heatMargin.top - heatMargin.bottom;
 
 const heatScales = {
   x: d3.scaleBand(),
@@ -36,10 +29,10 @@ const heatScales = {
   color: d3.scaleSequential(d3.interpolateBlues)
 };
 
-heatScales.x.range([width - heatMargin.left - heatMargin.right, 0]);
-heatScales.y.range([height - heatMargin.top - heatMargin.bottom, 0]);
+heatScales.x.range([960 - heatMargin.left - heatMargin.right, 0]);
+heatScales.y.range([800 - heatMargin.top - heatMargin.bottom, 0]);
 
-heatScales.color.domain([23.5, 106.0]);
+heatScales.color.domain([20, 110]);
 
 
 /* PLOT SETUP */
@@ -57,15 +50,15 @@ function drawHeatTitles() {
     const xMiddle = heatMargin.left + midpoint(heatScales.x.range());
     const yMiddle = heatMargin.top + midpoint(heatScales.y.range());
 
-    // const xTitleGroup = heatSvg.append('g');
-    // const xTitle = xTitleGroup.append('text')
-    //   .attr('class', 'axis-title')
-    //   .text('Call Type Groups');
-    //
-    // xTitle.attr('x', xMiddle);
-    // xTitle.attr('y', height);
-    // xTitle.attr('dy', -4);
-    // xTitle.attr('text-anchor', 'middle');
+    const xTitleGroup = heatSvg.append('g');
+    const xTitle = xTitleGroup.append('text')
+      .attr('class', 'axis-title')
+      .text('Call Type Groups');
+
+    xTitle.attr('x', xMiddle);
+    xTitle.attr('y', 0 + heatMargin.top - 18);
+    xTitle.attr('dy', -4);
+    xTitle.attr('text-anchor', 'middle');
 
     const yTitleGroup = heatSvg.append('g');
     yTitleGroup.attr('transform', translate(4, yMiddle));
@@ -77,19 +70,19 @@ function drawHeatTitles() {
     yTitle.attr('x', 0);
     yTitle.attr('y', 0);
 
-    //yTitle.attr('dy', -368);
-    //yTitle.attr('dx', 0);
+    yTitle.attr('dy', -353);
+    yTitle.attr('dx', 0);
 }
 
 
 /* LEGEND */
 function drawHeatLegend(){
 
-  const legendWidth = 250;
-  const legendHeight = 20;
+  const legendWidth = 400;
+  const legendHeight = 25;
 
   const colorGroup = heatSvg.append('g').attr('id', 'color-legend');
-  colorGroup.attr('transform', translate(width - heatMargin.right - legendWidth -20, heatMargin.top - 70));
+  colorGroup.attr('transform', translate(0 + 20, heatMargin.top - 110));
 
   const title = colorGroup.append('text')
     .attr('class', 'axis-title')
@@ -159,10 +152,10 @@ function drawHeatmap(data) {
   let xAxis = d3.axisTop(heatScales.x).tickPadding(0).tickSizeOuter(0);
   let yAxis = d3.axisRight(heatScales.y).tickPadding(0).tickSizeOuter(0);
 
-  xGroup.attr('transform', translate(0, heatMargin.top - 75));
+  xGroup.attr('transform', translate(0, heatMargin.top - 120));
   xGroup.call(xAxis);
 
-  //yGroup.attr('transform', translate(-181, 0));
+  yGroup.attr('transform', translate(-160, 0));
   yGroup.call(yAxis);
 
 
@@ -176,7 +169,7 @@ function drawHeatmap(data) {
   cols.attr("id", d => d.callType);
 
   cols.attr("transform", function(d) {
-    return translate(0, heatScales.y(d.neighborhood));
+    return translate(0, heatScales.y(d.neighborhoods));
   });
 
   let cells = cols.selectAll("rect")
@@ -185,7 +178,7 @@ function drawHeatmap(data) {
     .append("rect");
 
   cells.attr("x", d => heatScales.x(d.callType));
-  cells.attr("y", d => heatScales.y(d.neighborhood));
+  cells.attr("y", d => heatScales.y(d.neighborhoods));
   cells.attr("width", heatScales.x.bandwidth());
   cells.attr("height", heatScales.y.bandwidth());
 
@@ -234,14 +227,68 @@ const barLinePlot = barLineSvg.append("g").attr("id", "barLinePlot");
 barLinePlot.attr("transform", "translate(" + barLineMargin.left + "," + barLineMargin.top + ")");
 
 
+/* SCALES */
+let barLineBounds = barLineSvg.node().getBoundingClientRect();
+let barLinePlotWidth = barLineBounds.width - barLineMargin.right - barLineMargin.left;
+let barLinePlotHeight = barLineBounds.height - barLineMargin.top - barLineMargin.bottom;
+
+const barLineScales = {
+  x: d3.scaleBand(),
+  y: d3.scaleLinear(),
+};
+
+let barLineCountMin = 0;
+let barLineCountMax = 50;
+
+barLineScales.y
+    .domain([barLineCountMin, barLineCountMax])
+    .range([barLinePlotHeight, 0])
+    .nice();
+
+barLineScales.x
+  .rangeRound([0, barLinePlotWidth])
+  .paddingInner(0.1);
+
+  let yGroup = barLinePlot.append("g").attr("id", "y-axis-barline").attr('class', 'axis');
+  let yAxis = d3.axisLeft(barLineScales.y);
+
+  yAxis.ticks(5, 's').tickSizeOuter(0);
+  yGroup.call(yAxis);
+
+
+/* PLOT SETUP */
+drawBarLineTitles();
+drawBarLineLegend();
+
+
 /* LOAD THE DATA */
 d3.csv("data/Hospital_Access_Bar_Data.csv", parseBarLineData).then(drawBarLineCharts);
+
+
+/* AXIS TITLES */
+function drawBarLineTitles() {
+}
+
+
+/* LEGEND */
+function drawBarLineLegend(){
+}
 
 
 /*
 * Draw the heatmap
 */
 function drawBarLineCharts(data) {
+
+  /* DRAW AXIS */
+  let neighborhoods = data.map(row => row.neighborhoods);
+  barLineScales.x.domain(neighborhoods);
+
+  let xGroup = barLinePlot.append("g").attr("id", "x-axis-heat").attr('class', 'axis');
+  let xAxis = d3.axisBottom(barLineScales.x).tickPadding(0).tickSizeOuter(0);
+
+  xGroup.attr('transform', translate(0, barLineMargin.top - 120));
+  xGroup.call(xAxis);
 
 }
 

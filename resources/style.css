@@ -62,3 +62,30 @@ footer.smaller-footers-are-better {
     padding-top: 2rem;
     padding-bottom: 4rem;
 }
+
+
+svg {
+  width: 960px;
+  height: 500px;
+}
+
+svg#HeatVis {
+  width: 960px;
+  height: 800px;
+}
+
+#x-axis-heat line,
+#y-axis-heat line,
+#x-axis-barline line,
+#y-axis-barline line {
+  fill: none;
+  stroke: none;
+}
+
+#x-axis-heat path,
+#y-axis-heat path,
+#x-axis-barline path,
+#y-axis-barline path {
+  fill: none;
+  stroke: none;
+}
