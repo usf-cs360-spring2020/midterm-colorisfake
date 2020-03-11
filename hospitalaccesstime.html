@@ -22,8 +22,9 @@
     <script src="https://d3js.org/d3-time.v1.min.js"></script>
     <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
 
-<!--    My CSS! -->
+    <!-- My CSS! -->
     <link rel="stylesheet" href="resources/eve-style.css">
+
   </head>
 
   <body>
@@ -151,6 +152,11 @@
 
 
         <h2>Visualizations</h2>
+        <!-- Include d3.js v5 -->
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <!-- Include d3.js modules -->
+        <script src="https://d3js.org/d3-array.v2.min.js"></script>
+
         <h3>Response Time Averages by Neighborhood and Call Type in 2019</h3>
         <svg id="HeatVis"></svg>
         <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
@@ -158,10 +164,14 @@
           <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
 
         <h3>Response Time Averages by Neighborhood in 2019</h3>
-        <svg id="BarVis"></svg>
+        <svg id="BarLineVis"></svg>
         <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
           Fire Department Calls for Service<br>
           <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
+
+
+          <!-- Include custom javascript -->
+          <script src="hospitalaccesstime.js"></script>
 
 
         <h2>Conclusions</h2>

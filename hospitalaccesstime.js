@@ -1,10 +1,19 @@
 const width = 960;
 const height = 800;
 
+
+/*******************************************************************************/
+
+
+/*
+* HEATMAP
+*/
+
+
 const heatMargin = {
-  top: 75,
+  top: 10,
   bottom: 10,
-  left: 180,
+  left: 10,
   right: 10
 };
 
@@ -24,13 +33,13 @@ let plotHeight = bounds.height - heatMargin.top - heatMargin.bottom;
 const heatScales = {
   x: d3.scaleBand(),
   y: d3.scaleBand(),
-  color: d3.scaleSequential(d3.interpolateRdYlGn)
+  color: d3.scaleSequential(d3.interpolateBlues)
 };
 
 heatScales.x.range([width - heatMargin.left - heatMargin.right, 0]);
 heatScales.y.range([height - heatMargin.top - heatMargin.bottom, 0]);
 
-heatScales.color.domain([0.0358, 0.6900]);
+heatScales.color.domain([23.5, 106.0]);
 
 
 /* PLOT SETUP */
@@ -39,26 +48,37 @@ drawHeatLegend();
 
 
 /* LOAD THE DATA */
-d3.csv("mrc_heatmap.csv", parseHeatmapData).then(drawHeatmap);
+d3.csv("data/Hospital_Access_Heatmap_Data.csv", parseHeatmapData).then(drawHeatmap);
 
 
 /* AXIS TITLES */
 function drawHeatTitles() {
 
+    const xMiddle = heatMargin.left + midpoint(heatScales.x.range());
     const yMiddle = heatMargin.top + midpoint(heatScales.y.range());
+
+    // const xTitleGroup = heatSvg.append('g');
+    // const xTitle = xTitleGroup.append('text')
+    //   .attr('class', 'axis-title')
+    //   .text('Call Type Groups');
+    //
+    // xTitle.attr('x', xMiddle);
+    // xTitle.attr('y', height);
+    // xTitle.attr('dy', -4);
+    // xTitle.attr('text-anchor', 'middle');
 
     const yTitleGroup = heatSvg.append('g');
     yTitleGroup.attr('transform', translate(4, yMiddle));
 
     const yTitle = yTitleGroup.append('text')
       .attr('class', 'axis-title')
-      .text('College Name');
+      .text('Neighborhoods');
 
     yTitle.attr('x', 0);
     yTitle.attr('y', 0);
 
-    yTitle.attr('dy', -368);
-    yTitle.attr('dx', 0);
+    //yTitle.attr('dy', -368);
+    //yTitle.attr('dx', 0);
 }
 
 
@@ -73,7 +93,7 @@ function drawHeatLegend(){
 
   const title = colorGroup.append('text')
     .attr('class', 'axis-title')
-    .text('Fraction of Parents in Given Quintile');
+    .text('Time between Recieving Call and Arrival at Hospital (Minutes)');
 
   title.attr('dy', 12);
 
@@ -123,15 +143,15 @@ function drawHeatLegend(){
 function drawHeatmap(data) {
 
   data = data.sort(function(a, b) {
-    return a["name"] - b["name"];
+    return a["Neighborhooods"] - b["Neighborhooods"];
   });
 
   /* DRAW AXIS */
-  let colleges = data.map(row => row.name);
-  heatScales.y.domain(colleges);
+  let neighborhoods = data.map(row => row.neighborhoods);
+  heatScales.y.domain(neighborhoods);
 
-  let quintiles = data.map(row => row.parQ);
-  heatScales.x.domain(quintiles);
+  let callTypeGroups = data.map(row => row.callType);
+  heatScales.x.domain(callTypeGroups);
 
   let xGroup = heatPlot.append("g").attr("id", "x-axis-heat").attr('class', 'axis');
   let yGroup = heatPlot.append("g").attr("id", "y-axis-heat").attr('class', 'axis');
@@ -142,7 +162,7 @@ function drawHeatmap(data) {
   xGroup.attr('transform', translate(0, heatMargin.top - 75));
   xGroup.call(xAxis);
 
-  yGroup.attr('transform', translate(-181, 0));
+  //yGroup.attr('transform', translate(-181, 0));
   yGroup.call(yAxis);
 
 
@@ -153,10 +173,10 @@ function drawHeatmap(data) {
     .append("g");
 
   cols.attr("class", "cell");
-  cols.attr("id", d => d.parQ);
+  cols.attr("id", d => d.callType);
 
   cols.attr("transform", function(d) {
-    return translate(0, heatScales.y(d.name));
+    return translate(0, heatScales.y(d.neighborhood));
   });
 
   let cells = cols.selectAll("rect")
@@ -164,29 +184,15 @@ function drawHeatmap(data) {
     .enter()
     .append("rect");
 
-  cells.attr("x", d => heatScales.x(d.parQ));
-  cells.attr("y", d => heatScales.y(d.name));
+  cells.attr("x", d => heatScales.x(d.callType));
+  cells.attr("y", d => heatScales.y(d.neighborhood));
   cells.attr("width", heatScales.x.bandwidth());
   cells.attr("height", heatScales.y.bandwidth());
 
   /* COLOR */
-  cells.style("fill", d => heatScales.color(d.parQValue));
-  cells.style("stroke", d => heatScales.color(d.parQValue));
+  cells.style("fill", d => heatScales.color(d.recievingToHospital));
+  cells.style("stroke", d => heatScales.color(d.recievingToHospital));
 
-  /* DRAW MOBILITY RATES */
-  const mobilityGroup = heatPlot.append('g').attr('id', 'mobility');
-
-  let formatter = d3.format(".5f");
-
-  const mobilityValues = mobilityGroup
-    .selectAll("text")
-    .data(data)
-    .enter()
-    .append("text")
-      .attr("x", d => heatScales.x("Fraction of Parents in Q1") + 100)
-      .attr("y", d => heatScales.y(d.name) + 25)
-      .text(d => formatter(d.mobility))
-      .style("fill", "black");
 }
 
 
@@ -197,13 +203,72 @@ function parseHeatmapData(row){
 
   let keep = {};
 
-  keep.parQ = row["Measure Names"];
-  keep.name = row["Name"];
-  keep.parQValue = parseFloat(row["Measure Values"]);
-  keep.mobility = parseFloat(row["Mobility Rate"]);
+  keep.callType = row["Call Type Group"];
+  keep.neighborhoods = row["Neighborhooods"];
+  keep.recievingToHospital = parseFloat(row["Avg. Recieving Call to Hospital"]);
 
   return keep;
 }
+
+
+/*******************************************************************************/
+
+
+/*
+* BAR + LINE CHART
+*/
+
+
+const barLineMargin = {
+  top: 40,
+  bottom: 50,
+  left: 70,
+  right: 30
+};
+
+
+/* PLOT */
+let barLineSvg = d3.select("body").select("svg#BarLineVis");
+const barLinePlot = barLineSvg.append("g").attr("id", "barLinePlot");
+
+barLinePlot.attr("transform", "translate(" + barLineMargin.left + "," + barLineMargin.top + ")");
+
+
+/* LOAD THE DATA */
+d3.csv("data/Hospital_Access_Bar_Data.csv", parseBarLineData).then(drawBarLineCharts);
+
+
+/*
+* Draw the heatmap
+*/
+function drawBarLineCharts(data) {
+
+}
+
+
+/*
+ * Convert values as necessary and discard unused columns
+ */
+function parseBarLineData(row){
+
+  let keep = {};
+
+  keep.numType = row["Measure Names"];
+  keep.neighborhoods = row["Neighborhooods"];
+  keep.onSceneToHospital = parseFloat(row["Avg. On Scene to Hospital"]);
+  keep.recievingToOnScene = parseFloat(row["Avg. Recieving Call to On Scene"]);
+
+  return keep;
+}
+
+
+/*******************************************************************************/
+
+
+/*
+* SHARED FUNCTIONS
+*/
+
 
 /*
  * From bubble.js example:
