@@ -18,7 +18,6 @@ Potentially Life-Threatening,Outer Richmond,46.525514772
 Potentially Life-Threatening,Outer Mission,45.689703808
 Potentially Life-Threatening,Oceanview/Merced/Ingleside,48.368267831
 Potentially Life-Threatening,North Beach,48.6
-Potentially Life-Threatening,None,45.130434783
 Potentially Life-Threatening,Noe Valley,44.723756906
 Potentially Life-Threatening,Nob Hill,38.401333333
 Potentially Life-Threatening,Mission Bay,47.748010610
@@ -60,7 +59,6 @@ Non Life-threatening,Outer Richmond,53.123882503
 Non Life-threatening,Outer Mission,51.576301616
 Non Life-threatening,Oceanview/Merced/Ingleside,52.150246305
 Non Life-threatening,North Beach,54.797994269
-Non Life-threatening,None,45.85
 Non Life-threatening,Noe Valley,51.502164502
 Non Life-threatening,Nob Hill,44.221601490
 Non Life-threatening,Mission Bay,53.508856683
@@ -102,7 +100,6 @@ Fire,Outer Richmond,71.428571429
 Fire,Outer Mission,55.125
 Fire,Oceanview/Merced/Ingleside,79
 Fire,North Beach,59.714285714
-Fire,None
 Fire,Noe Valley
 Fire,Nob Hill,80.666666667
 Fire,Mission Bay,41
@@ -143,7 +140,6 @@ Alarm,Outer Richmond,71.25
 Alarm,Outer Mission,64.166666667
 Alarm,Oceanview/Merced/Ingleside,77
 Alarm,North Beach,58.6
-Alarm,None,35
 Alarm,Noe Valley,62.3
 Alarm,Nob Hill,41
 Alarm,Mission Bay,69.5

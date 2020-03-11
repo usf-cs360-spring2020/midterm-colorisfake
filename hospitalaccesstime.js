@@ -213,8 +213,8 @@ function parseHeatmapData(row){
 
 
 const barLineMargin = {
-  top: 40,
-  bottom: 50,
+  top: 100,
+  bottom: 20,
   left: 70,
   right: 30
 };
@@ -237,6 +237,8 @@ const barLineScales = {
   y: d3.scaleLinear(),
 };
 
+barLineScales.x.range([960 - barLineMargin.left - barLineMargin.right, 0]);
+
 let barLineCountMin = 0;
 let barLineCountMax = 50;
 
@@ -245,15 +247,11 @@ barLineScales.y
     .range([barLinePlotHeight, 0])
     .nice();
 
-barLineScales.x
-  .rangeRound([0, barLinePlotWidth])
-  .paddingInner(0.1);
+let yGroup = barLinePlot.append("g").attr("id", "y-axis-barline").attr('class', 'axis');
+let yAxis = d3.axisLeft(barLineScales.y);
 
-  let yGroup = barLinePlot.append("g").attr("id", "y-axis-barline").attr('class', 'axis');
-  let yAxis = d3.axisLeft(barLineScales.y);
-
-  yAxis.ticks(5, 's').tickSizeOuter(0);
-  yGroup.call(yAxis);
+yAxis.ticks(5, 's').tickSizeOuter(0);
+yGroup.call(yAxis);
 
 
 /* PLOT SETUP */
@@ -267,11 +265,75 @@ d3.csv("data/Hospital_Access_Bar_Data.csv", parseBarLineData).then(drawBarLineCh
 
 /* AXIS TITLES */
 function drawBarLineTitles() {
+
+  let xMiddle = barLineMargin.left + midpoint(barLineScales.x.range());
+  let yMiddle = barLineMargin.top + midpoint(barLineScales.y.range());
+
+  let xTitle = barLineSvg.append('text')
+    .attr('class', 'axis-title')
+    .text('Neighborhoods');
+
+  xTitle.attr('x', xMiddle);
+  xTitle.attr('y', 90);
+  xTitle.attr('dy', -8);
+  xTitle.attr('text-anchor', 'middle');
+
+  let yTitleGroup = barLineSvg.append('g');
+  yTitleGroup.attr('transform', translate(4, yMiddle));
+
+  let yTitle = yTitleGroup.append('text')
+    .attr('class', 'axis-title')
+    .text('Minutes');
+
+  yTitle.attr('x', 0);
+  yTitle.attr('y', 0);
+
+  yTitle.attr('dy', 15);
+  yTitle.attr('text-anchor', 'middle');
+  yTitle.attr('transform', 'rotate(-90)');
 }
 
 
 /* LEGEND */
 function drawBarLineLegend(){
+
+  let legendGroup = barLineSvg.append('g').attr('id', 'legend');
+  legendGroup.attr('transform', translate(barLineMargin.left - 10, -10));
+
+  let legendbox = legendGroup.append('rect')
+    .attr('x', 0)
+    .attr('y', 20)
+    .attr('width', 140)
+    .attr('height', 75)
+    .style('fill', 'none');
+
+  legendGroup.append('rect')
+    .attr('x', 10)
+    .attr('y', 28)
+    .attr('width', 15)
+    .attr('height', 15)
+    .style('fill', 'a3c7e1');
+
+  legendGroup.append('text')
+      .attr('class', 'legend-title')
+      .attr('x', 40)
+      .attr('y', 40)
+      .attr('font-size', 12)
+      .text('Avg. Minutes from On Scene to Hospital');
+
+  legendGroup.append('rect')
+    .attr('x', 10)
+    .attr('y', 58)
+    .attr('width', 15)
+    .attr('height', 15)
+    .style('fill', '395d87');
+
+  legendGroup.append('text')
+      .attr('class', 'legend-title')
+      .attr('x', 40)
+      .attr('y', 70)
+      .attr('font-size', 12)
+      .text('Avg. Minutes from Recieving Call to On Scene');
 }
 
 
@@ -284,11 +346,17 @@ function drawBarLineCharts(data) {
   let neighborhoods = data.map(row => row.neighborhoods);
   barLineScales.x.domain(neighborhoods);
 
-  let xGroup = barLinePlot.append("g").attr("id", "x-axis-heat").attr('class', 'axis');
+  let xGroup = barLinePlot.append("g").attr("id", "x-axis-barline").attr('class', 'axis');
   let xAxis = d3.axisBottom(barLineScales.x).tickPadding(0).tickSizeOuter(0);
 
-  xGroup.attr('transform', translate(0, barLineMargin.top - 120));
+  xGroup.attr('transform', translate(0, barLinePlotHeight));
   xGroup.call(xAxis);
+
+  /* Bar Chart */
+  barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
+
+  /* Line Chart */
+  lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
 
 }
 
@@ -302,8 +370,7 @@ function parseBarLineData(row){
 
   keep.numType = row["Measure Names"];
   keep.neighborhoods = row["Neighborhooods"];
-  keep.onSceneToHospital = parseFloat(row["Avg. On Scene to Hospital"]);
-  keep.recievingToOnScene = parseFloat(row["Avg. Recieving Call to On Scene"]);
+  keep.time = parseFloat(row["Avg. On Scene to Hospital Avg. Recieving Call to On Scene"]);
 
   return keep;
 }
