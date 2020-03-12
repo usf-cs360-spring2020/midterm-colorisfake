@@ -213,9 +213,9 @@ function parseHeatmapData(row){
 
 
 const barLineMargin = {
-  top: 100,
-  bottom: 20,
-  left: 70,
+  top: 45,
+  bottom: 150,
+  left: 50,
   right: 30
 };
 
@@ -240,7 +240,7 @@ const barLineScales = {
 barLineScales.x.range([960 - barLineMargin.left - barLineMargin.right, 0]);
 
 let barLineCountMin = 0;
-let barLineCountMax = 50;
+let barLineCountMax = 45;
 
 barLineScales.y
     .domain([barLineCountMin, barLineCountMax])
@@ -252,6 +252,11 @@ let yAxis = d3.axisLeft(barLineScales.y);
 
 yAxis.ticks(5, 's').tickSizeOuter(0);
 yGroup.call(yAxis);
+
+const barLineGridAxis = d3.axisLeft(barLineScales.y).tickSize(-barLinePlotWidth - 15).tickFormat('').ticks(0);
+let barLineGridGroup = barLinePlot.append("g").attr("id", "grid-axis")
+  .attr('class', 'axis')
+  .call(barLineGridAxis);
 
 
 /* PLOT SETUP */
@@ -274,7 +279,7 @@ function drawBarLineTitles() {
     .text('Neighborhoods');
 
   xTitle.attr('x', xMiddle);
-  xTitle.attr('y', 90);
+  xTitle.attr('y', 45);
   xTitle.attr('dy', -8);
   xTitle.attr('text-anchor', 'middle');
 
@@ -298,7 +303,7 @@ function drawBarLineTitles() {
 function drawBarLineLegend(){
 
   let legendGroup = barLineSvg.append('g').attr('id', 'legend');
-  legendGroup.attr('transform', translate(barLineMargin.left - 10, -10));
+  legendGroup.attr('transform', translate(barLineMargin.left, -30));
 
   let legendbox = legendGroup.append('rect')
     .attr('x', 0)
@@ -318,12 +323,12 @@ function drawBarLineLegend(){
       .attr('class', 'legend-title')
       .attr('x', 40)
       .attr('y', 40)
-      .attr('font-size', 12)
+      .attr('font-size', 11)
       .text('Avg. Minutes from On Scene to Hospital');
 
   legendGroup.append('rect')
     .attr('x', 10)
-    .attr('y', 58)
+    .attr('y', 52)
     .attr('width', 15)
     .attr('height', 15)
     .style('fill', '395d87');
@@ -331,8 +336,8 @@ function drawBarLineLegend(){
   legendGroup.append('text')
       .attr('class', 'legend-title')
       .attr('x', 40)
-      .attr('y', 70)
-      .attr('font-size', 12)
+      .attr('y', 62)
+      .attr('font-size', 11)
       .text('Avg. Minutes from Recieving Call to On Scene');
 }
 
@@ -350,14 +355,41 @@ function drawBarLineCharts(data) {
   let xAxis = d3.axisBottom(barLineScales.x).tickPadding(0).tickSizeOuter(0);
 
   xGroup.attr('transform', translate(0, barLinePlotHeight));
-  xGroup.call(xAxis);
+  xGroup.call(xAxis)
+    .selectAll("text")
+      .attr("y", 8)
+      .attr("x", -5)
+      .attr("dy", ".35em")
+      .attr("transform", "rotate(-90)")
+      .style("text-anchor", "end");
+
+  const barLineGroup = barLinePlot.append('g').attr('id', 'barline');
 
   /* Bar Chart */
   barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
+  const bars = barLineGroup
+    .selectAll("rect")
+    .data(barData, function(d) { return d[0]; })
+    .enter()
+    .append("rect")
+      .attr("x", d => (barLineScales.x(d.neighborhoods) + (barLineScales.x.bandwidth() / 2)))
+      .attr("y", d => barLineScales.y(d.time))
+      .attr("width", barLineScales.x.bandwidth() - 3)
+      .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
+      .style("fill", "a3c7e1");
 
   /* Line Chart */
   lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
-
+  const line = barLineGroup
+    .datum(lineData)
+    .append("path")
+    .attr("d", d3.line()
+      .x(function(d) { return (barLineScales.x(d.neighborhoods) + (barLineScales.x.bandwidth())) })
+      .y(function(d) { return barLineScales.y(d.time) })
+    )
+    .style("fill", "none")
+    .style("stroke", "395d87")
+    .style("stroke-width", 5);
 }
 
 
