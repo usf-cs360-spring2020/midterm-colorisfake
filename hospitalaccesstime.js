@@ -378,6 +378,24 @@ function drawBarLineCharts(data) {
       .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
       .style("fill", "a3c7e1");
 
+  bars.on("mouseover", function(d) {
+    bars.filter(e => (d.neighborhoods !== e.neighborhoods))
+      .transition()
+      .style("fill", "#bbbbbb");
+  });
+
+  bars.on("mouseover", function(d) {
+    bars.filter(e => (d.neighborhoods !== e.neighborhoods))
+      .transition()
+      .style("fill", "#bbbbbb");
+  });
+
+  bars.on("mouseout", function(d) {
+    bars.transition()
+      .style("fill", "a3c7e1");
+  });
+
+
   /* Line Chart */
   lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
   const line = barLineGroup
