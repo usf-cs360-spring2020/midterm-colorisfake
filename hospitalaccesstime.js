@@ -384,15 +384,8 @@ function drawBarLineCharts(data) {
       .style("fill", "#bbbbbb");
   });
 
-  bars.on("mouseover", function(d) {
-    bars.filter(e => (d.neighborhoods !== e.neighborhoods))
-      .transition()
-      .style("fill", "#bbbbbb");
-  });
-
   bars.on("mouseout", function(d) {
-    bars.transition()
-      .style("fill", "a3c7e1");
+    bars.style("fill", "a3c7e1");
   });
 
 
