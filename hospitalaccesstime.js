@@ -207,7 +207,7 @@ function drawHeatmap(data) {
       let tooltip = formatter(d.recievingToHospital) + " minutes";
 
       rows.append("text")
-        .attr("id", "heatTooltip")
+        .attr("id", "heatNumber")
         .attr("x", heatScales.x(d.callType))
         .attr("y", heatScales.y(d.neighborhoods) + 12)
         .attr("text-anchor", "start")
@@ -217,7 +217,7 @@ function drawHeatmap(data) {
         .text(tooltip);
     })
     .on("mouseout", function(d) {
-      d3.select("rows").select("#heatTooltip").remove();
+      d3.select("#heatNumber").remove();
     });
 }
 
@@ -516,18 +516,52 @@ function linking() {
   cells.on("mouseover", function(d) {
 
     bars.filter(e => e.neighborhoods == d.neighborhoods)
+    bars.filter(e => (d.neighborhoods !== e.neighborhoods))
       .transition()
-      .style("stroke", "lightseagreen")
-      .style("stroke-width", "3px");
+      .style("fill", "#bbbbbb");
+
+    let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+
+    let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
+    let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
+
+    barLineGroup.append("text")
+      .attr("id", "barTooltipN")
+      .attr("x", barLineBounds.width - barLineMargin.right - 50)
+      .attr("y", -75)
+      .attr("text-anchor", "end")
+      .attr("font-size", "12px")
+      .style("fill", "395d87")
+      .style("font-weight", "bold")
+      .text(d.neighborhoods);
+
+    barLineGroup.append("text")
+      .attr("id", "barTooltip1")
+      .attr("x", barLineBounds.width - barLineMargin.right - 50)
+      .attr("y", -35)
+      .attr("text-anchor", "end")
+      .attr("font-size", "12px")
+      .style("fill", "395d87")
+      .text(tooltip1);
+
+    barLineGroup.append("text")
+      .attr("id", "barTooltip2")
+      .attr("x", barLineBounds.width - barLineMargin.right - 50)
+      .attr("y", -55)
+      .attr("text-anchor", "end")
+      .attr("font-size", "12px")
+      .style("fill", "395d87")
+      .text(tooltip2);
   });
 
   cells.on("mouseout", function(d) {
-    d3.select(this)
-      .transition()
-      .style("fill", "lightgray");
 
     bars.filter(e => e.neighborhoods == d.neighborhoods)
-      .style("fill", "a3c7e1");;
+    bars.style("fill", "a3c7e1");
+
+    d3.select("#barTooltipN").remove();
+    d3.select("#barTooltip1").remove();
+    d3.select("#barTooltip2").remove();
   });
 }
 
