@@ -3,6 +3,7 @@
 */
 
 let activeNeighborhood;
+let formatter = d3.format(".2f");
 
 /*******************************************************************************/
 
@@ -169,6 +170,7 @@ function drawHeatmap(data) {
   yGroup.attr('transform', translate(-160, 0));
   yGroup.call(yAxis);
 
+  //heatData = data.filter(d => d.recievingToHospital >= 0);
 
   /* CREATE CELLS */
   let cols = heatPlot.selectAll("g.cell")
@@ -193,25 +195,41 @@ function drawHeatmap(data) {
     .attr("y", d => heatScales.y(d.neighborhoods))
     .attr("width", heatScales.x.bandwidth())
     .attr("height", heatScales.y.bandwidth())
+
+    /* remove null values */
+    .style("fill", "white")
+    .filter(d => d.recievingToHospital >= 0)
+
+    /* color in rest of the cells */
     .style("fill", d => heatScales.color(d.recievingToHospital))
     .style("stroke", d => heatScales.color(d.recievingToHospital))
-    .on("mouseover", function(d) {
-      activeNeighborhood = d.neighborhoods;
 
-      d3.selectAll("rect." + d.neighborhoods)
-        .attr("fill", "red")
+    .on("mouseover", function(d) {
+      let tooltip = formatter(d.recievingToHospital) + " minutes";
+
+      cols.append("rect")
+        .attr("id", "heatTooltipBack")
+        .attr("x", heatScales.x(d.callType))
+        .attr("y", heatScales.y(d.neighborhoods))
+        .attr("width", heatScales.x.bandwidth())
+        .attr("height", heatScales.y.bandwidth())
+        .style("fill", "grey")
+        .text(tooltip);
+
+      cols.append("text")
+        .attr("id", "heatTooltip")
+        .attr("x", heatScales.x(d.callType))
+        .attr("y", heatScales.y(d.neighborhoods) + 12)
+        .attr("text-anchor", "start")
+        .attr("font-size", "12px")
+        .style("fill", "black")
+        .style("font-weight", "bold")
+        .text(tooltip);
     })
     .on("mouseout", function(d) {
-      activeNeighborhood = null;
-
-      d3.selectAll("rect." + d.neighborhoods)
-        .attr("fill", d => heatScales.color(d.recievingToHospital))
+      d3.select("#heatTooltipBack").remove();
+      d3.select("#heatTooltip").remove();
     });
-
-  /* COLOR */
-  // cells.style("fill", d => heatScales.color(d.recievingToHospital));
-  // cells.style("stroke", d => heatScales.color(d.recievingToHospital));
-
 }
 
 
@@ -394,7 +412,6 @@ function drawBarLineCharts(data) {
       .style("text-anchor", "end");
 
   const barLineGroup = barLinePlot.append('g').attr('id', 'barline');
-  let formatter = d3.format(".2f");
 
   barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
   lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
@@ -412,13 +429,13 @@ function drawBarLineCharts(data) {
       .attr("width", barLineScales.x.bandwidth() - 3)
       .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
       .style("fill", "a3c7e1")
+
       .on("mouseover", function(d) {
         bars.filter(e => (d.neighborhoods !== e.neighborhoods))
           .transition()
           .style("fill", "#bbbbbb");
 
         let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-        console.log(lineMatch);
 
         let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
         let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
