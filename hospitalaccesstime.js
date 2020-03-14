@@ -147,9 +147,9 @@ function drawHeatLegend(){
 */
 function drawHeatmap(data) {
 
-  data = data.sort(function(a, b) {
-    return a["Neighborhooods"] - b["Neighborhooods"];
-  });
+  // data = data.sort(function(a, b) {
+  //   return a['recievingToHospital'] - b['recievingToHospital'];
+  // });
 
   /* DRAW AXIS */
   let neighborhoods = data.map(row => row.neighborhoods);
@@ -170,53 +170,43 @@ function drawHeatmap(data) {
   yGroup.attr('transform', translate(-160, 0));
   yGroup.call(yAxis);
 
-  //heatData = data.filter(d => d.recievingToHospital >= 0);
-
   /* CREATE CELLS */
-  let cols = heatPlot.selectAll("g.cell")
+  let rows = heatPlot.selectAll("g.cell")
     .data(data)
     .enter()
     .append("g");
 
-  cols.attr("class", "cell");
-  cols.attr("id", d => d.callType);
+  rows.attr("class", "cell");
+  rows.attr("id", d => d.neighborhoods);
 
-  cols.attr("transform", function(d) {
+  rows.attr("transform", function(d) {
     return translate(0, heatScales.y(d.neighborhoods));
   });
 
-  let cells = cols.selectAll("rect")
+  let cells = rows.selectAll("rect")
     .data(data)
     .attr("id", "cells")
     .enter()
     .append("rect")
-    .attr("class", d => d.neighborhoods)
-    .attr("x", d => heatScales.x(d.callType))
-    .attr("y", d => heatScales.y(d.neighborhoods))
-    .attr("width", heatScales.x.bandwidth())
-    .attr("height", heatScales.y.bandwidth())
+      .attr("class", d => d.neighborhoods)
+      .attr("x", d => heatScales.x(d.callType))
+      .attr("y", d => heatScales.y(d.neighborhoods))
+      .attr("width", heatScales.x.bandwidth())
+      .attr("height", heatScales.y.bandwidth())
 
-    /* remove null values */
-    .style("fill", "white")
-    .filter(d => d.recievingToHospital >= 0)
+      /* remove null values */
+      .style("fill", "white")
+      .filter(d => d.recievingToHospital >= 0)
 
-    /* color in rest of the cells */
-    .style("fill", d => heatScales.color(d.recievingToHospital))
-    .style("stroke", d => heatScales.color(d.recievingToHospital))
+      /* color in rest of the cells */
+      .style("fill", d => heatScales.color(d.recievingToHospital))
+      .style("stroke", d => heatScales.color(d.recievingToHospital));
 
-    .on("mouseover", function(d) {
+  cells.
+    on("mouseover", function(d) {
       let tooltip = formatter(d.recievingToHospital) + " minutes";
 
-      cols.append("rect")
-        .attr("id", "heatTooltipBack")
-        .attr("x", heatScales.x(d.callType))
-        .attr("y", heatScales.y(d.neighborhoods))
-        .attr("width", heatScales.x.bandwidth())
-        .attr("height", heatScales.y.bandwidth())
-        .style("fill", "grey")
-        .text(tooltip);
-
-      cols.append("text")
+      rows.append("text")
         .attr("id", "heatTooltip")
         .attr("x", heatScales.x(d.callType))
         .attr("y", heatScales.y(d.neighborhoods) + 12)
@@ -227,8 +217,7 @@ function drawHeatmap(data) {
         .text(tooltip);
     })
     .on("mouseout", function(d) {
-      d3.select("#heatTooltipBack").remove();
-      d3.select("#heatTooltip").remove();
+      d3.select("rows").select("#heatTooltip").remove();
     });
 }
 
@@ -428,59 +417,61 @@ function drawBarLineCharts(data) {
       .attr("y", d => barLineScales.y(d.time))
       .attr("width", barLineScales.x.bandwidth() - 3)
       .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
-      .style("fill", "a3c7e1")
+      .style("fill", "a3c7e1");
 
-      .on("mouseover", function(d) {
-        bars.filter(e => (d.neighborhoods !== e.neighborhoods))
-          .transition()
-          .style("fill", "#bbbbbb");
+  bars
+    .on("mouseover", function(d) {
+      bars.filter(e => (d.neighborhoods !== e.neighborhoods))
+        .transition()
+        .style("fill", "#bbbbbb");
 
-        let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+      let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
 
-        let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
-        let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
+      let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
+      let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
 
-        barLineGroup.append("text")
-          .attr("id", "barTooltipN")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -75)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "395d87")
-          .style("font-weight", "bold")
-          .text(d.neighborhoods);
+      barLineGroup.append("text")
+        .attr("id", "barTooltipN")
+        .attr("x", barLineBounds.width - barLineMargin.right - 50)
+        .attr("y", -75)
+        .attr("text-anchor", "end")
+        .attr("font-size", "12px")
+        .style("fill", "395d87")
+        .style("font-weight", "bold")
+        .text(d.neighborhoods);
 
-        barLineGroup.append("text")
-          .attr("id", "barTooltip1")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -35)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "395d87")
-          .text(tooltip1);
+      barLineGroup.append("text")
+        .attr("id", "barTooltip1")
+        .attr("x", barLineBounds.width - barLineMargin.right - 50)
+        .attr("y", -35)
+        .attr("text-anchor", "end")
+        .attr("font-size", "12px")
+        .style("fill", "395d87")
+        .text(tooltip1);
 
-        barLineGroup.append("text")
-          .attr("id", "barTooltip2")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -55)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "395d87")
-          .text(tooltip2);
-      })
-      .on("mouseout", function(d) {
-        bars.style("fill", "a3c7e1");
+      barLineGroup.append("text")
+        .attr("id", "barTooltip2")
+        .attr("x", barLineBounds.width - barLineMargin.right - 50)
+        .attr("y", -55)
+        .attr("text-anchor", "end")
+        .attr("font-size", "12px")
+        .style("fill", "395d87")
+        .text(tooltip2);
+    })
+    .on("mouseout", function(d) {
+      bars.style("fill", "a3c7e1");
 
-        d3.select("#barTooltipN").remove();
-        d3.select("#barTooltip1").remove();
-        d3.select("#barTooltip2").remove();
-      });
+      d3.select("#barTooltipN").remove();
+      d3.select("#barTooltip1").remove();
+      d3.select("#barTooltip2").remove();
+    });
 
 
   /* Line Chart */
   const line = barLineGroup
     .datum(lineData)
     .append("path")
+    .attr("id", "line")
     .attr("d", d3.line()
       .x(function(d) { return (barLineScales.x(d.neighborhoods) + (barLineScales.x.bandwidth())) })
       .y(function(d) { return barLineScales.y(d.time) })
@@ -508,45 +499,37 @@ function parseBarLineData(row){
 
 /*******************************************************************************/
 
+linking();
 
 /*
 * SHARED FUNCTIONS
 */
 
+function linking() {
+  const bars = d3.select("barLineGroup")
+      .select("bars");
 
-  // const bars = d3.select(barLineSvg)
-  //     .select("g#bars")
-  //     .selectAll("rect");
-  //
-  // const cells = d3.select(heatSvg)
-  //   .select("g#cells")
-  //   .selectAll("rect");
-  //
-  // bars.on("mouseover", function(d) {
-  //   d3.select(this)
-  //     .transition()
-  //     .style("fill", "lightseagreen");
-  //
-  //   lines.filter(e => e.neighborhoods === d.neighborhoods)
-  //     .raise()
-  //     .transition()
-  //     .style("stroke", "lightseagreen")
-  //     .style("stroke-width", "3px");
-  // });
-  //
-  // bars.on("mouseout", function(d) {
-  //   d3.select(this)
-  //     .transition()
-  //     .style("fill", "lightgray");
-  //
-  //   cells.filter(e => e.neighborhoods === d.neighborhoods)
-  //     .raise()
-  //     .transition()
-  //     .style("stroke", "lightgray")
-  //     .style("stroke-width", "1px");
-  // });
+  const cells = d3.select("rows")
+    .select("cells");
 
 
+  cells.on("mouseover", function(d) {
+
+    bars.filter(e => e.neighborhoods == d.neighborhoods)
+      .transition()
+      .style("stroke", "lightseagreen")
+      .style("stroke-width", "3px");
+  });
+
+  cells.on("mouseout", function(d) {
+    d3.select(this)
+      .transition()
+      .style("fill", "lightgray");
+
+    bars.filter(e => e.neighborhoods == d.neighborhoods)
+      .style("fill", "a3c7e1");;
+  });
+}
 
 /*
  * From bubble.js example:
