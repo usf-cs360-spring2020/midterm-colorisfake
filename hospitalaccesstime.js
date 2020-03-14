@@ -1,3 +1,11 @@
+/*
+* LINKING SET UP
+*/
+
+let activeNeighborhood;
+
+/*******************************************************************************/
+
 
 /*
 * HEATMAP
@@ -29,7 +37,7 @@ const heatScales = {
   color: d3.scaleSequential(d3.interpolateBlues)
 };
 
-heatScales.x.range([960 - heatMargin.left - heatMargin.right, 0]);
+heatScales.x.range([750 - heatMargin.left - heatMargin.right, 0]);
 heatScales.y.range([800 - heatMargin.top - heatMargin.bottom, 0]);
 
 heatScales.color.domain([20, 110]);
@@ -53,6 +61,7 @@ function drawHeatTitles() {
     const xTitleGroup = heatSvg.append('g');
     const xTitle = xTitleGroup.append('text')
       .attr('class', 'axis-title')
+      .attr("id", "axis-title")
       .text('Call Type Groups');
 
     xTitle.attr('x', xMiddle);
@@ -65,6 +74,7 @@ function drawHeatTitles() {
 
     const yTitle = yTitleGroup.append('text')
       .attr('class', 'axis-title')
+      .attr("id", "axis-title")
       .text('Neighborhoods');
 
     yTitle.attr('x', 0);
@@ -78,14 +88,15 @@ function drawHeatTitles() {
 /* LEGEND */
 function drawHeatLegend(){
 
-  const legendWidth = 400;
+  const legendWidth = 300;
   const legendHeight = 25;
 
   const colorGroup = heatSvg.append('g').attr('id', 'color-legend');
-  colorGroup.attr('transform', translate(0 + 20, heatMargin.top - 110));
+  colorGroup.attr('transform', translate(18, heatMargin.top - 110));
 
   const title = colorGroup.append('text')
-    .attr('class', 'axis-title')
+    .attr('class', 'legend-title')
+    .attr('id', 'legend-title')
     .text('Time between Recieving Call and Arrival at Hospital (Minutes)');
 
   title.attr('dy', 12);
@@ -174,17 +185,32 @@ function drawHeatmap(data) {
 
   let cells = cols.selectAll("rect")
     .data(data)
+    .attr("id", "cells")
     .enter()
-    .append("rect");
+    .append("rect")
+    .attr("class", d => d.neighborhoods)
+    .attr("x", d => heatScales.x(d.callType))
+    .attr("y", d => heatScales.y(d.neighborhoods))
+    .attr("width", heatScales.x.bandwidth())
+    .attr("height", heatScales.y.bandwidth())
+    .style("fill", d => heatScales.color(d.recievingToHospital))
+    .style("stroke", d => heatScales.color(d.recievingToHospital))
+    .on("mouseover", function(d) {
+      activeNeighborhood = d.neighborhoods;
 
-  cells.attr("x", d => heatScales.x(d.callType));
-  cells.attr("y", d => heatScales.y(d.neighborhoods));
-  cells.attr("width", heatScales.x.bandwidth());
-  cells.attr("height", heatScales.y.bandwidth());
+      d3.selectAll("rect." + d.neighborhoods)
+        .attr("fill", "red")
+    })
+    .on("mouseout", function(d) {
+      activeNeighborhood = null;
+
+      d3.selectAll("rect." + d.neighborhoods)
+        .attr("fill", d => heatScales.color(d.recievingToHospital))
+    });
 
   /* COLOR */
-  cells.style("fill", d => heatScales.color(d.recievingToHospital));
-  cells.style("stroke", d => heatScales.color(d.recievingToHospital));
+  // cells.style("fill", d => heatScales.color(d.recievingToHospital));
+  // cells.style("stroke", d => heatScales.color(d.recievingToHospital));
 
 }
 
@@ -213,7 +239,7 @@ function parseHeatmapData(row){
 
 
 const barLineMargin = {
-  top: 45,
+  top: 85,
   bottom: 150,
   left: 50,
   right: 30
@@ -237,7 +263,7 @@ const barLineScales = {
   y: d3.scaleLinear(),
 };
 
-barLineScales.x.range([960 - barLineMargin.left - barLineMargin.right, 0]);
+barLineScales.x.range([550 - barLineMargin.left - barLineMargin.right, 0]);
 
 let barLineCountMin = 0;
 let barLineCountMax = 45;
@@ -276,10 +302,11 @@ function drawBarLineTitles() {
 
   let xTitle = barLineSvg.append('text')
     .attr('class', 'axis-title')
+    .attr('id', 'axis-title')
     .text('Neighborhoods');
 
-  xTitle.attr('x', xMiddle);
-  xTitle.attr('y', 45);
+  xTitle.attr('x', barLineBounds.width - barLineMargin.right - 50);
+  xTitle.attr('y', 85);
   xTitle.attr('dy', -8);
   xTitle.attr('text-anchor', 'middle');
 
@@ -288,6 +315,7 @@ function drawBarLineTitles() {
 
   let yTitle = yTitleGroup.append('text')
     .attr('class', 'axis-title')
+    .attr('id', 'axis-title')
     .text('Minutes');
 
   yTitle.attr('x', 0);
@@ -303,7 +331,7 @@ function drawBarLineTitles() {
 function drawBarLineLegend(){
 
   let legendGroup = barLineSvg.append('g').attr('id', 'legend');
-  legendGroup.attr('transform', translate(barLineMargin.left, -30));
+  legendGroup.attr('transform', translate(barLineMargin.left - 10, 5));
 
   let legendbox = legendGroup.append('rect')
     .attr('x', 0)
@@ -317,28 +345,30 @@ function drawBarLineLegend(){
     .attr('y', 28)
     .attr('width', 15)
     .attr('height', 15)
-    .style('fill', 'a3c7e1');
+    .style('fill', '395d87');
 
   legendGroup.append('text')
       .attr('class', 'legend-title')
-      .attr('x', 40)
+      .attr('id', 'legend-title')
+      .attr('x', 30)
       .attr('y', 40)
       .attr('font-size', 11)
-      .text('Avg. Minutes from On Scene to Hospital');
+      .text('Avg. Minutes from Recieving Call to On Scene');
 
   legendGroup.append('rect')
     .attr('x', 10)
     .attr('y', 52)
     .attr('width', 15)
     .attr('height', 15)
-    .style('fill', '395d87');
+    .style('fill', 'a3c7e1');
 
   legendGroup.append('text')
       .attr('class', 'legend-title')
-      .attr('x', 40)
+      .attr('id', 'legend-title')
+      .attr('x', 30)
       .attr('y', 62)
       .attr('font-size', 11)
-      .text('Avg. Minutes from Recieving Call to On Scene');
+      .text('Avg. Minutes from On Scene to Hospital');
 }
 
 
@@ -357,40 +387,80 @@ function drawBarLineCharts(data) {
   xGroup.attr('transform', translate(0, barLinePlotHeight));
   xGroup.call(xAxis)
     .selectAll("text")
-      .attr("y", 8)
+      .attr("y", 4)
       .attr("x", -5)
       .attr("dy", ".35em")
       .attr("transform", "rotate(-90)")
       .style("text-anchor", "end");
 
   const barLineGroup = barLinePlot.append('g').attr('id', 'barline');
+  let formatter = d3.format(".2f");
+
+  barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
+  lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
 
   /* Bar Chart */
-  barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
   const bars = barLineGroup
     .selectAll("rect")
+    .attr("id", "bars")
     .data(barData, function(d) { return d[0]; })
     .enter()
     .append("rect")
+      .attr("class", d => d.neighborhoods)
       .attr("x", d => (barLineScales.x(d.neighborhoods) + (barLineScales.x.bandwidth() / 2)))
       .attr("y", d => barLineScales.y(d.time))
       .attr("width", barLineScales.x.bandwidth() - 3)
       .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
-      .style("fill", "a3c7e1");
+      .style("fill", "a3c7e1")
+      .on("mouseover", function(d) {
+        bars.filter(e => (d.neighborhoods !== e.neighborhoods))
+          .transition()
+          .style("fill", "#bbbbbb");
 
-  bars.on("mouseover", function(d) {
-    bars.filter(e => (d.neighborhoods !== e.neighborhoods))
-      .transition()
-      .style("fill", "#bbbbbb");
-  });
+        let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+        console.log(lineMatch);
 
-  bars.on("mouseout", function(d) {
-    bars.style("fill", "a3c7e1");
-  });
+        let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
+        let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
+
+        barLineGroup.append("text")
+          .attr("id", "barTooltipN")
+          .attr("x", barLineBounds.width - barLineMargin.right - 50)
+          .attr("y", -75)
+          .attr("text-anchor", "end")
+          .attr("font-size", "12px")
+          .style("fill", "395d87")
+          .style("font-weight", "bold")
+          .text(d.neighborhoods);
+
+        barLineGroup.append("text")
+          .attr("id", "barTooltip1")
+          .attr("x", barLineBounds.width - barLineMargin.right - 50)
+          .attr("y", -35)
+          .attr("text-anchor", "end")
+          .attr("font-size", "12px")
+          .style("fill", "395d87")
+          .text(tooltip1);
+
+        barLineGroup.append("text")
+          .attr("id", "barTooltip2")
+          .attr("x", barLineBounds.width - barLineMargin.right - 50)
+          .attr("y", -55)
+          .attr("text-anchor", "end")
+          .attr("font-size", "12px")
+          .style("fill", "395d87")
+          .text(tooltip2);
+      })
+      .on("mouseout", function(d) {
+        bars.style("fill", "a3c7e1");
+
+        d3.select("#barTooltipN").remove();
+        d3.select("#barTooltip1").remove();
+        d3.select("#barTooltip2").remove();
+      });
 
 
   /* Line Chart */
-  lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
   const line = barLineGroup
     .datum(lineData)
     .append("path")
@@ -425,6 +495,40 @@ function parseBarLineData(row){
 /*
 * SHARED FUNCTIONS
 */
+
+
+  // const bars = d3.select(barLineSvg)
+  //     .select("g#bars")
+  //     .selectAll("rect");
+  //
+  // const cells = d3.select(heatSvg)
+  //   .select("g#cells")
+  //   .selectAll("rect");
+  //
+  // bars.on("mouseover", function(d) {
+  //   d3.select(this)
+  //     .transition()
+  //     .style("fill", "lightseagreen");
+  //
+  //   lines.filter(e => e.neighborhoods === d.neighborhoods)
+  //     .raise()
+  //     .transition()
+  //     .style("stroke", "lightseagreen")
+  //     .style("stroke-width", "3px");
+  // });
+  //
+  // bars.on("mouseout", function(d) {
+  //   d3.select(this)
+  //     .transition()
+  //     .style("fill", "lightgray");
+  //
+  //   cells.filter(e => e.neighborhoods === d.neighborhoods)
+  //     .raise()
+  //     .transition()
+  //     .style("stroke", "lightgray")
+  //     .style("stroke-width", "1px");
+  // });
+
 
 
 /*

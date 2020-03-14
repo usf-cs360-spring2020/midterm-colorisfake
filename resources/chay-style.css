@@ -4,8 +4,24 @@ svg {
 }
 
 svg#HeatVis {
-  width: 960px;
+  width: 760px;
   height: 800px;
+}
+
+svg#BarLineVis {
+  width: 550px;
+  height: 600px;
+
+}
+
+#axis-title {
+  font-size: 14px;
+  fill: #4a4948;
+}
+
+#legend-title {
+  font-size: 10px;
+  fill: semiblack;
 }
 
 #x-axis-heat line,
