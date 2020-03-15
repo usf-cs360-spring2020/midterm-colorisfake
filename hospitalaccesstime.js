@@ -468,14 +468,17 @@ function drawHeatmap(data) {
 
 
 
-    const bars = d3.select("barLineGroup")
+    const barsMatch = d3.select("barLineGroup")
       .select("bars");
 
     cells.
       on("mouseover", function(d) {
-        let tooltip = formatter(d.recievingToHospital) + " minutes";
 
-        rows.append("text")
+        let tooltip = formatter(d.recievingToHospital) + " minutes";
+        console.log(tooltip);
+        console.log(d.neighborhoods);
+
+        d3.select(this).append("text")
           .attr("id", "heatNumber")
           .attr("x", heatScales.x(d.callType))
           .attr("y", heatScales.y(d.neighborhoods) + 12)
@@ -485,9 +488,15 @@ function drawHeatmap(data) {
           .style("font-weight", "bold")
           .text(tooltip);
 
+          console.log("found:", d3.selectAll("#heatNumber").size());
+
+          //it is getting appended somewhere, just not visible, but this
+          //eliminates the multiple appending issue from before
+
+
 
         /* Linking to bar chart? */
-        bars.filter(e => (d.neighborhoods !== e.neighborhoods))
+        barsMatch.filter(e => (d.neighborhoods !== e.neighborhoods))
           .transition()
           .style("fill", "#bbbbbb");
 
@@ -496,7 +505,7 @@ function drawHeatmap(data) {
         let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
         let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
 
-        bars.append("text")
+        barsMatch.append("text")
           .attr("id", "heatBarTooltipN")
           .attr("x", barLineBounds.width - barLineMargin.right - 50)
           .attr("y", -75)
@@ -506,7 +515,7 @@ function drawHeatmap(data) {
           .style("font-weight", "bold")
           .text(d.neighborhoods);
 
-        bars.append("text")
+        barsMatch.append("text")
           .attr("id", "heatBarTooltip1")
           .attr("x", barLineBounds.width - barLineMargin.right - 50)
           .attr("y", -35)
@@ -515,7 +524,7 @@ function drawHeatmap(data) {
           .style("fill", "395d87")
           .text(tooltip1);
 
-        bars.append("text")
+        barsMatch.append("text")
           .attr("id", "heatBarTooltip2")
           .attr("x", barLineBounds.width - barLineMargin.right - 50)
           .attr("y", -55)
@@ -528,9 +537,10 @@ function drawHeatmap(data) {
     })
     .on("mouseout", function(d) {
       d3.selectAll("#heatNumber").remove();
+      console.log("found now:", d3.selectAll("#heatNumber").size());
 
       /* Linking to bar chart? */
-      bars.style("fill", "a3c7e1");
+      barsMatch.style("fill", "a3c7e1");
 
       d3.select("#heatBarTooltipN").remove();
       d3.select("#heatBarTooltip1").remove();
