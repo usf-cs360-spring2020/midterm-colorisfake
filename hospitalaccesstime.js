@@ -527,9 +527,7 @@ function drawHeatmap(data) {
 
     })
     .on("mouseout", function(d) {
-
-      d3.select("#heatNumber").remove();
-
+      d3.selectAll("#heatNumber").remove();
 
       /* Linking to bar chart? */
       bars.style("fill", "a3c7e1");
