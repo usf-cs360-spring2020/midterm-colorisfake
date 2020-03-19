@@ -571,63 +571,6 @@ function parseHeatmapData(row){
 */
 
 /*
-* Brushing
-*/
-function brush(d){
-  let bars = d3.select("bars");
-  let barLineGroup = d3.select("barLineGroup");
-
-  bars.filter(e => (d.neighborhoods !== e.neighborhoods))
-    .transition()
-    .style("fill", "#bbbbbb");
-
-  let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-
-  let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
-  let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
-
-  barLineGroup.append("text")
-    .attr("id", "barTooltipN")
-    .attr("x", barLineBounds.width - barLineMargin.right - 50)
-    .attr("y", -75)
-    .attr("text-anchor", "end")
-    .attr("font-size", "12px")
-    .style("fill", "395d87")
-    .style("font-weight", "bold")
-    .text(d.neighborhoods);
-
-  barLineGroup.append("text")
-    .attr("id", "barTooltip1")
-    .attr("x", barLineBounds.width - barLineMargin.right - 50)
-    .attr("y", -35)
-    .attr("text-anchor", "end")
-    .attr("font-size", "12px")
-    .style("fill", "395d87")
-    .text(tooltip1);
-
-  barLineGroup.append("text")
-    .attr("id", "barTooltip2")
-    .attr("x", barLineBounds.width - barLineMargin.right - 50)
-    .attr("y", -55)
-    .attr("text-anchor", "end")
-    .attr("font-size", "12px")
-    .style("fill", "395d87")
-    .text(tooltip2);
-}
-
-function unbrush(d){
-  let bars = d3.select("bars");
-  let barLineGroup = d3.select("barLineGroup");
-
-  bars.style("fill", "a3c7e1");
-
-  d3.select("#barTooltipN").remove();
-  d3.select("#barTooltip1").remove();
-  d3.select("#barTooltip2").remove();
-}
-
-
-/*
  * From bubble.js example:
  * calculates the midpoint of a range given as a 2 element array
  */
