@@ -188,7 +188,7 @@ function drawBarLineCharts(data) {
       .attr("y", d => barLineScales.y(d.time))
       .attr("width", barLineScales.x.bandwidth() - 3)
       .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
-      .style("fill", "a3c7e1")
+      .style("fill", "#a3c7e1")
       .on("mouseover", function(d) {
         bars.filter(e => (d.neighborhoods !== e.neighborhoods))
           .transition()
@@ -205,7 +205,7 @@ function drawBarLineCharts(data) {
           .attr("y", -75)
           .attr("text-anchor", "end")
           .attr("font-size", "12px")
-          .style("fill", "395d87")
+          .style("fill", "#395d87")
           .style("font-weight", "bold")
           .text(d.neighborhoods);
 
@@ -215,7 +215,7 @@ function drawBarLineCharts(data) {
           .attr("y", -35)
           .attr("text-anchor", "end")
           .attr("font-size", "12px")
-          .style("fill", "395d87")
+          .style("fill", "#395d87")
           .text(tooltip1);
 
         barLineGroup.append("text")
@@ -224,12 +224,12 @@ function drawBarLineCharts(data) {
           .attr("y", -55)
           .attr("text-anchor", "end")
           .attr("font-size", "12px")
-          .style("fill", "395d87")
+          .style("fill", "#395d87")
           .text(tooltip2);
       })
       .on("mouseout", function(d) {
-        //bars.transition().style("fill", "a3c7e1");
-        bars.style("fill", "a3c7e1");
+        bars.transition().style("fill", "#a3c7e1");
+        //bars.style("fill", "#a3c7e1");
 
         d3.select("#barTooltipN").remove();
         d3.select("#barTooltip1").remove();
@@ -247,7 +247,7 @@ function drawBarLineCharts(data) {
       .y(function(d) { return barLineScales.y(d.time) })
     )
     .style("fill", "none")
-    .style("stroke", "395d87")
+    .style("stroke", "#395d87")
     .style("stroke-width", 5);
 }
 
