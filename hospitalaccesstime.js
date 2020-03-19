@@ -410,9 +410,11 @@ function drawHeatLegend(){
 */
 function drawHeatmap(data) {
 
-  data = data.sort(function(a, b) {
-    // return a['recievingToHospital'] - b['recievingToHospital'];
-  });
+  // data = data.sort(function(a, b) {
+  //   if(a.callType === b.callType){
+  //     return a['recievingToHospital'] - b['recievingToHospital'];
+  //   }
+  // });
 
   /* DRAW AXIS */
   let neighborhoods = data.map(row => row.neighborhoods);
@@ -467,9 +469,7 @@ function drawHeatmap(data) {
       .style("stroke", d => heatScales.color(d.recievingToHospital));
 
 
-
-    const barsMatch = d3.select("barLineGroup")
-      .select("bars");
+    const barsMatch = d3.select("bars");
 
     cells.
       on("mouseover", function(d) {
