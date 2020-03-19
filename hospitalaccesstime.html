@@ -146,11 +146,15 @@
           These values are all in <strong>minutes</strong>.
         </p>
         <p>Due to errors in the original dataset, there were negative response times calculated, which were filtered out.
-           The "None" neighborhood rows were also removed, as they did not contribute to the analysis of response times based on neighborhood.</p>
+           The <strong>"None"</strong> neighborhood rows were also removed, as they did not contribute to the analysis of response times based on neighborhood.</p>
+        <p>The <strong>"Null"</strong> category of the Call Type Groups was included in the heatmap dataset. Given that this category of calls had hospital response
+           times, it can be assumed that this category still demarcates significant emergencies occuring that just did not fit into any of the
+           other categories, or were not marked with a category. There were enough data entries in this category that it is significant to include
+           in the visualizations.</p>
 
         <p><strong>These edited Tableau datasets were exported to be used in these visualizations.</strong></p>
 
-        <h2>Instructions</h2>
+        <h2>Background</h2>
 
         <h3>Data Encoding</h3>
         <p><strong>Heatmap:</strong> The heatmap compares rows of neighborhoods against columns marking specific Call Type Groups. The coloring
@@ -162,29 +166,23 @@
         <p>Hover over a specific bar on the Bar & Line chart in order to highlight it and see the specific times and neighborhood associated with
           that bar and that point on the line.</p>
         <p>Hover over an individual cell on the heatmap to see the specific time associated with that neighborhood and call type group, as well
-          as highlight the relevant neighborhood on the Bar & Line chart, in order to view both the overall time and the time broken up by segement
-          of the overall trip.</p>
+          as highlight the relevant neighborhood on the Bar & Line chart. This allows for comparisons of the different time intervals for a given
+          neighborhood across both visualizations.</p>
 
         <h2>Visualizations</h2>
 
-        <h3>Response Time Averages by Neighborhood and Call Type in 2019</h3>
+        <h3>Hospital Related Response Time Averages by Neighborhood in 2019</h3>
         <svg id="HeatVis"></svg>
         <svg id="BarLineVis"></svg>
         <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
           Fire Department Calls for Service<br>
           <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
 
-        <!-- <h3>Response Time Averages by Neighborhood in 2019</h3>
-        <svg id="BarLineVis"></svg>
-        <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
-          Fire Department Calls for Service<br>
-          <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p> -->
-
           <!-- Include custom javascript -->
           <script src="hospitalaccesstime.js"></script>
 
         <h2>Conclusions</h2>
-        <p>Findings and how they support the theme</p>
+        <p>Using these visualizations, we can see that </p>
 
         <h2>Attribution</h2>
         <p>Code examples used:
