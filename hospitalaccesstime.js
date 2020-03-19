@@ -450,7 +450,6 @@ function drawHeatmap(data) {
 
   let cells = rows.selectAll("rect")
     .data(data)
-    .attr("id", "cells")
     .enter()
     .append("rect")
       .attr("class", d => d.neighborhoods)
