@@ -151,7 +151,7 @@ function drawBarLineLegend(){
 
 
 /*
-* Draw the heatmap
+* Draw the bar & line chart
 */
 function drawBarLineCharts(data) {
 
