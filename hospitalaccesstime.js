@@ -410,9 +410,9 @@ function drawHeatLegend(){
 */
 function drawHeatmap(data) {
 
-  // data = data.sort(function(a, b) {
-  //   return a['recievingToHospital'] - b['recievingToHospital'];
-  // });
+  data = data.sort(function(a, b) {
+    // return a['recievingToHospital'] - b['recievingToHospital'];
+  });
 
   /* DRAW AXIS */
   let neighborhoods = data.map(row => row.neighborhoods);
@@ -452,13 +452,14 @@ function drawHeatmap(data) {
     .enter()
     .append("rect")
       .attr("class", d => d.neighborhoods)
+      .attr("id", d => (d.neighborhoods + " " + d.callType))
       .attr("x", d => heatScales.x(d.callType))
       .attr("y", d => heatScales.y(d.neighborhoods))
       .attr("width", heatScales.x.bandwidth())
       .attr("height", heatScales.y.bandwidth())
 
       /* remove null values */
-      .style("fill", "white")
+      .style("fill", "grey")
       .filter(d => d.recievingToHospital >= 0)
 
       /* color in rest of the cells */
@@ -477,9 +478,17 @@ function drawHeatmap(data) {
         console.log(tooltip);
         console.log(d.neighborhoods);
 
-        d3.select(this).append("text")
-          .attr("id", "heatNumber")
+        rows.append("rect")
+          .attr("id", "heatBack")
           .attr("x", heatScales.x(d.callType))
+          .attr("y", heatScales.y(d.neighborhoods))
+          .style("fill", "pink")
+          .attr("width", heatScales.x.bandwidth())
+          .attr("height", heatScales.y.bandwidth());
+
+        rows.append("text")
+          .attr("id", "heatNumber")
+          .attr("x", heatScales.x(d.callType) + 4)
           .attr("y", heatScales.y(d.neighborhoods) + 12)
           .attr("text-anchor", "start")
           .attr("font-size", "12px")
@@ -489,61 +498,56 @@ function drawHeatmap(data) {
 
           console.log("found:", d3.selectAll("#heatNumber").size());
 
-          //it is getting appended somewhere, just not visible, but this
-          //eliminates the multiple appending issue from before
-
-
-
         /* Linking to bar chart? */
-        barsMatch.filter(e => (d.neighborhoods !== e.neighborhoods))
-          .transition()
-          .style("fill", "#bbbbbb");
-
-        let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-
-        let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
-        let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
-
-        barsMatch.append("text")
-          .attr("id", "heatBarTooltipN")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -75)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "395d87")
-          .style("font-weight", "bold")
-          .text(d.neighborhoods);
-
-        barsMatch.append("text")
-          .attr("id", "heatBarTooltip1")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -35)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "395d87")
-          .text(tooltip1);
-
-        barsMatch.append("text")
-          .attr("id", "heatBarTooltip2")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -55)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "395d87")
-          .text(tooltip2);
-
+        // barsMatch.filter(e => (d.neighborhoods !== e.neighborhoods))
+        //   .transition()
+        //   .style("fill", "#bbbbbb");
+        //
+        // let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+        //
+        // let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
+        // let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
+        //
+        // barsMatch.append("text")
+        //   .attr("id", "heatBarTooltipN")
+        //   .attr("x", barLineBounds.width - barLineMargin.right - 50)
+        //   .attr("y", -75)
+        //   .attr("text-anchor", "end")
+        //   .attr("font-size", "12px")
+        //   .style("fill", "395d87")
+        //   .style("font-weight", "bold")
+        //   .text(d.neighborhoods);
+        //
+        // barsMatch.append("text")
+        //   .attr("id", "heatBarTooltip1")
+        //   .attr("x", barLineBounds.width - barLineMargin.right - 50)
+        //   .attr("y", -35)
+        //   .attr("text-anchor", "end")
+        //   .attr("font-size", "12px")
+        //   .style("fill", "395d87")
+        //   .text(tooltip1);
+        //
+        // barsMatch.append("text")
+        //   .attr("id", "heatBarTooltip2")
+        //   .attr("x", barLineBounds.width - barLineMargin.right - 50)
+        //   .attr("y", -55)
+        //   .attr("text-anchor", "end")
+        //   .attr("font-size", "12px")
+        //   .style("fill", "395d87")
+        //   .text(tooltip2);
 
     })
     .on("mouseout", function(d) {
       d3.selectAll("#heatNumber").remove();
+      d3.selectAll("#heatBack").remove();
       console.log("found now:", d3.selectAll("#heatNumber").size());
 
       /* Linking to bar chart? */
-      barsMatch.style("fill", "a3c7e1");
-
-      d3.select("#heatBarTooltipN").remove();
-      d3.select("#heatBarTooltip1").remove();
-      d3.select("#heatBarTooltip2").remove();
+      // barsMatch.style("fill", "a3c7e1");
+      //
+      // d3.select("#heatBarTooltipN").remove();
+      // d3.select("#heatBarTooltip1").remove();
+      // d3.select("#heatBarTooltip2").remove();
     });
 }
 
