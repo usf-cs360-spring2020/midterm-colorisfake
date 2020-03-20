@@ -69,7 +69,12 @@ drawBarLineLegend();
 
 
 /* LOAD THE DATA */
-d3.csv("data/Hospital_Access_Bar_Data.csv", parseBarLineData).then(drawBarLineCharts);
+d3.csv("data/Hospital_Access_Bar_Data.csv", parseBarLineData).then(function(data) {
+  barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
+  lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
+
+  drawBarLineCharts(data);
+});
 
 
 /* AXIS TITLES */
@@ -173,8 +178,8 @@ function drawBarLineCharts(data) {
 
   const barLineGroup = barLinePlot.append('g').attr('id', 'barline');
 
-  barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
-  lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
+  // barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
+  // lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
 
   /* Bar Chart */
   const bars = barLineGroup
@@ -190,50 +195,11 @@ function drawBarLineCharts(data) {
       .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
       .style("fill", "#a3c7e1")
       .on("mouseover", function(d) {
-        bars.filter(e => (d.neighborhoods !== e.neighborhoods))
-          .transition()
-          .style("fill", "#bbbbbb");
-
         let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-
-        let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
-        let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
-
-        barLineGroup.append("text")
-          .attr("id", "barTooltipN")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -75)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "#395d87")
-          .style("font-weight", "bold")
-          .text(d.neighborhoods);
-
-        barLineGroup.append("text")
-          .attr("id", "barTooltip1")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -35)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "#395d87")
-          .text(tooltip1);
-
-        barLineGroup.append("text")
-          .attr("id", "barTooltip2")
-          .attr("x", barLineBounds.width - barLineMargin.right - 50)
-          .attr("y", -55)
-          .attr("text-anchor", "end")
-          .attr("font-size", "12px")
-          .style("fill", "#395d87")
-          .text(tooltip2);
+        barMouseover(d, lineMatch);
       })
       .on("mouseout", function(d) {
-        bars.transition().style("fill", "#a3c7e1");
-        //bars.style("fill", "#a3c7e1");
-
-        d3.select("#barTooltipN").remove();
-        d3.select("#barTooltip1").remove();
-        d3.select("#barTooltip2").remove();
+        barMouseout(d);
       });
 
 
@@ -497,57 +463,17 @@ function drawHeatmap(data) {
 
           console.log("found:", d3.selectAll("#heatNumber").size());
 
-        /* Linking to bar chart? */
-        // barsMatch.filter(e => (d.neighborhoods !== e.neighborhoods))
-        //   .transition()
-        //   .style("fill", "#bbbbbb");
-        //
-        // let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-        //
-        // let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
-        // let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
-        //
-        // barsMatch.append("text")
-        //   .attr("id", "heatBarTooltipN")
-        //   .attr("x", barLineBounds.width - barLineMargin.right - 50)
-        //   .attr("y", -75)
-        //   .attr("text-anchor", "end")
-        //   .attr("font-size", "12px")
-        //   .style("fill", "395d87")
-        //   .style("font-weight", "bold")
-        //   .text(d.neighborhoods);
-        //
-        // barsMatch.append("text")
-        //   .attr("id", "heatBarTooltip1")
-        //   .attr("x", barLineBounds.width - barLineMargin.right - 50)
-        //   .attr("y", -35)
-        //   .attr("text-anchor", "end")
-        //   .attr("font-size", "12px")
-        //   .style("fill", "395d87")
-        //   .text(tooltip1);
-        //
-        // barsMatch.append("text")
-        //   .attr("id", "heatBarTooltip2")
-        //   .attr("x", barLineBounds.width - barLineMargin.right - 50)
-        //   .attr("y", -55)
-        //   .attr("text-anchor", "end")
-        //   .attr("font-size", "12px")
-        //   .style("fill", "395d87")
-        //   .text(tooltip2);
+          let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+          barMouseover(d, lineMatch);
 
-    })
-    .on("mouseout", function(d) {
-      d3.selectAll("#heatNumber").remove();
-      d3.selectAll("#heatBack").remove();
-      console.log("found now:", d3.selectAll("#heatNumber").size());
+      })
+      .on("mouseout", function(d) {
+        d3.selectAll("#heatNumber").remove();
+        d3.selectAll("#heatBack").remove();
+        console.log("found now:", d3.selectAll("#heatNumber").size());
 
-      /* Linking to bar chart? */
-      // barsMatch.style("fill", "a3c7e1");
-      //
-      // d3.select("#heatBarTooltipN").remove();
-      // d3.select("#heatBarTooltip1").remove();
-      // d3.select("#heatBarTooltip2").remove();
-    });
+        barMouseout(d);
+      });
 }
 
 
@@ -567,6 +493,68 @@ function parseHeatmapData(row){
 
 
 /*******************************************************************************/
+
+
+
+function barMouseover(d, lineMatch){
+
+  let barLineGroup = d3.select("g#barline");
+  let bars = barLineGroup.selectAll("rect");
+
+  console.log(d3.select("g#bars").size());
+  console.log(d3.select("g#barline").size());
+
+  bars.filter(e => (d.neighborhoods !== e.neighborhoods))
+    .transition()
+    .style("fill", "#bbbbbb");
+
+  let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
+  let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
+
+  barLineGroup.append("text")
+    .attr("id", "barTooltipN")
+    .attr("x", barLineBounds.width - barLineMargin.right - 50)
+    .attr("y", -75)
+    .attr("text-anchor", "end")
+    .attr("font-size", "12px")
+    .style("fill", "#395d87")
+    .style("font-weight", "bold")
+    .text(d.neighborhoods);
+
+  barLineGroup.append("text")
+    .attr("id", "barTooltip1")
+    .attr("x", barLineBounds.width - barLineMargin.right - 50)
+    .attr("y", -35)
+    .attr("text-anchor", "end")
+    .attr("font-size", "12px")
+    .style("fill", "#395d87")
+    .text(tooltip1);
+
+  barLineGroup.append("text")
+    .attr("id", "barTooltip2")
+    .attr("x", barLineBounds.width - barLineMargin.right - 50)
+    .attr("y", -55)
+    .attr("text-anchor", "end")
+    .attr("font-size", "12px")
+    .style("fill", "#395d87")
+    .text(tooltip2);
+}
+
+function barMouseout(d){
+
+  let barLineGroup = d3.select("g#barline");
+  let bars = barLineGroup.selectAll("rect");
+
+  bars.transition().style("fill", "#a3c7e1");
+
+  d3.select("g#barline").select("#barTooltipN").remove();
+  d3.select("g#barline").select("#barTooltip1").remove();
+  d3.select("g#barline").select("#barTooltip2").remove();
+}
+
+
+/*******************************************************************************/
+
 
 
 /*
