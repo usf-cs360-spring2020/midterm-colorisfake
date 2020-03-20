@@ -471,6 +471,7 @@ function heatMouseover(d){
 
   rows.append("rect")
     .attr("id", "heatBack")
+    .attr('pointer-events', 'none')
     .attr("x", heatScales.x(d.callType))
     .attr("y", heatScales.y(d.neighborhoods))
     .style("fill", "pink")
@@ -487,7 +488,7 @@ function heatMouseover(d){
     .style("font-weight", "bold")
     .text(tooltip);
 
-    console.log("found:", d3.selectAll("#heatNumber").size());
+    console.log("found heat number:", d3.selectAll("#heatNumber").size());
 }
 
 /*
@@ -509,9 +510,6 @@ function barMouseover(d, lineMatch){
 
   let barLineGroup = d3.select("g#barline");
   let bars = barLineGroup.selectAll("rect");
-
-  console.log(d3.select("g#bars").size());
-  console.log(d3.select("g#barline").size());
 
   bars.filter(e => (d.neighborhoods !== e.neighborhoods))
     .transition()
