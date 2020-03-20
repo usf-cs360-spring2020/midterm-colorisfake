@@ -7,6 +7,8 @@ let formatter = d3.format(".2f");
 
 var barData;
 var lineData;
+var heatData;
+
 
 /*******************************************************************************/
 
@@ -14,7 +16,6 @@ var lineData;
 /*
 * BAR + LINE CHART
 */
-
 
 const barLineMargin = {
   top: 85,
@@ -178,9 +179,6 @@ function drawBarLineCharts(data) {
 
   const barLineGroup = barLinePlot.append('g').attr('id', 'barline');
 
-  // barData = data.filter(d => d.numType === "Avg. On Scene to Hospital");
-  // lineData = data.filter(d => d.numType === "Avg. Recieving Call to On Scene");
-
   /* Bar Chart */
   const bars = barLineGroup
     .selectAll("rect")
@@ -197,9 +195,13 @@ function drawBarLineCharts(data) {
       .on("mouseover", function(d) {
         let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
         barMouseover(d, lineMatch);
+
+        //heatMouseoverFromBar(d);
       })
       .on("mouseout", function(d) {
         barMouseout(d);
+
+        //heatMouseoutFromBar(d);
       });
 
 
@@ -234,7 +236,6 @@ function parseBarLineData(row){
 
 
 /*******************************************************************************/
-
 
 
 /*
@@ -436,42 +437,15 @@ function drawHeatmap(data) {
 
     const barsMatch = d3.select("bars");
 
-    cells.
-      on("mouseover", function(d) {
+    cells
+      .on("mouseover", function(d) {
+        heatMouseover(d);
 
-        let tooltip = formatter(d.recievingToHospital) + " minutes";
-        console.log(tooltip);
-        console.log(d.neighborhoods);
-
-        rows.append("rect")
-          .attr("id", "heatBack")
-          .attr("x", heatScales.x(d.callType))
-          .attr("y", heatScales.y(d.neighborhoods))
-          .style("fill", "pink")
-          .attr("width", heatScales.x.bandwidth())
-          .attr("height", heatScales.y.bandwidth());
-
-        rows.append("text")
-          .attr("id", "heatNumber")
-          .attr("x", heatScales.x(d.callType) + 4)
-          .attr("y", heatScales.y(d.neighborhoods) + 12)
-          .attr("text-anchor", "start")
-          .attr("font-size", "12px")
-          .style("fill", "black")
-          .style("font-weight", "bold")
-          .text(tooltip);
-
-          console.log("found:", d3.selectAll("#heatNumber").size());
-
-          let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-          barMouseover(d, lineMatch);
-
+        let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+        barMouseover(d, lineMatch);
       })
       .on("mouseout", function(d) {
-        d3.selectAll("#heatNumber").remove();
-        d3.selectAll("#heatBack").remove();
-        console.log("found now:", d3.selectAll("#heatNumber").size());
-
+        heatMouseout(d);
         barMouseout(d);
       });
 }
@@ -495,7 +469,115 @@ function parseHeatmapData(row){
 /*******************************************************************************/
 
 
+/*
+* MOUSE OVER EVENTS
+*/
 
+
+/*
+* Handle mouse over events for the heatmap
+*/
+function heatMouseover(d){
+
+  let rows = heatPlot.selectAll("g.cell");
+
+  let tooltip = formatter(d.recievingToHospital) + " minutes";
+  console.log(tooltip);
+  console.log(d.neighborhoods);
+
+  rows.append("rect")
+    .attr("id", "heatBack")
+    .attr("x", heatScales.x(d.callType))
+    .attr("y", heatScales.y(d.neighborhoods))
+    .style("fill", "pink")
+    .attr("width", heatScales.x.bandwidth())
+    .attr("height", heatScales.y.bandwidth());
+
+  rows.append("text")
+    .attr("id", "heatNumber")
+    .attr("x", heatScales.x(d.callType) + 4)
+    .attr("y", heatScales.y(d.neighborhoods) + 12)
+    .attr("text-anchor", "start")
+    .attr("font-size", "12px")
+    .style("fill", "black")
+    .style("font-weight", "bold")
+    .text(tooltip);
+
+    console.log("found:", d3.selectAll("#heatNumber").size());
+}
+
+/*
+* Handle mouse out events for the heatmap
+*/
+function heatMouseout(d){
+  let rows = heatPlot.selectAll("g.cell");
+
+  rows.selectAll("#heatNumber").remove();
+  rows.selectAll("#heatBack").remove();
+  console.log("found now:", d3.selectAll("#heatNumber").size());
+}
+
+
+
+
+
+
+/*
+* Handle mouse over events for the heatmap
+*/
+function heatMouseoverFromBar(d){
+
+  let rows = heatPlot.selectAll("g.cell");
+  let selectedRows = rows.filter(e => (d.neighborhoods === e.neighborhoods));
+
+  for(let cell in selectedRows){
+    let tooltip = formatter(cell.recievingToHospital) + " minutes";
+
+    rows.append("rect")
+      .attr("id", "heatBack" + cell.callType)
+      .attr("x", heatScales.x(cell.callType))
+      .attr("y", heatScales.y(cell.neighborhoods))
+      .style("fill", "pink")
+      .attr("width", heatScales.x.bandwidth())
+      .attr("height", heatScales.y.bandwidth());
+
+    rows.append("text")
+      .attr("id", "heatNumber" + cell.callType)
+      .attr("x", heatScales.x(cell.callType) + 4)
+      .attr("y", heatScales.y(cell.neighborhoods) + 12)
+      .attr("text-anchor", "start")
+      .attr("font-size", "12px")
+      .style("fill", "black")
+      .style("font-weight", "bold")
+      .text(tooltip);
+  }
+}
+
+/*
+* Handle mouse out events for the heatmap
+*/
+function heatMouseoutFromBar(d){
+
+  let rows = heatPlot.selectAll("g.cell");
+  let selectedRows = rows.filter(e => (d.neighborhoods === e.neighborhoods));
+
+  for(let cell in selectedRows){
+
+    let number = "#heatNumber" + cell.callType;
+    let back = "#heatBack" + cell.callType;
+
+    rows.selectAll(number).remove();
+    rows.selectAll(back).remove();
+  }
+}
+
+
+
+
+
+/*
+* Handle mouse over events for the bar chart
+*/
 function barMouseover(d, lineMatch){
 
   let barLineGroup = d3.select("g#barline");
@@ -540,6 +622,9 @@ function barMouseover(d, lineMatch){
     .text(tooltip2);
 }
 
+/*
+* Handle mouse out events for the bar chart
+*/
 function barMouseout(d){
 
   let barLineGroup = d3.select("g#barline");
@@ -556,7 +641,6 @@ function barMouseout(d){
 /*******************************************************************************/
 
 
-
 /*
 * SHARED FUNCTIONS
 */
@@ -568,7 +652,6 @@ function barMouseout(d){
 function midpoint(range) {
   return range[0] + (range[1] - range[0]) / 2.0;
 }
-
 
 /*
  * From bubble.js example:
