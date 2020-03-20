@@ -22,8 +22,10 @@
     <script src="https://d3js.org/d3-time.v1.min.js"></script>
     <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
 
-<!--    My CSS! -->
+    <!-- My CSS! -->
     <link rel="stylesheet" href="resources/eve-style.css">
+    <link rel="stylesheet" href="resources/chay-style.css">
+
   </head>
 
   <body>
@@ -131,9 +133,9 @@
         looking at hospital transit times, to see if any patterns emerge.</p>
 
         <h2>Data Wrangling</h2>
-        <p>To create these visualizations, I downloaded a subset of the original dataset, focusing on <strong>2018-2020</strong> and
+        <p>To create these visualizations, I downloaded a subset of the original dataset, filtering down to <strong>2018-2020</strong> Call Dates and
           the <strong>Medic</strong> and <strong>Private</strong> Unit Types to focus specifically on hospital related response times.
-          Once in Tableau, this subset was further filtered to only include the data from <strong>2019,</strong>
+          To create my prototypes in Tableau, this subset was further filtered to only include the data from <strong>2019,</strong>
           which was <strong>aggregated and depicted as averages for the year.</strong></p>
         <p>I created calculated values to find the difference in time between:
           <ul>
@@ -141,32 +143,75 @@
             <li>Recieved DtTm and On Scene DtTm</li>
             <li>On Scene DtTm and Hospital DtTm</li>
           </ul>
+          These values are all in <strong>minutes</strong>.
         </p>
-        <p>Due to errors in the dataset, there were negative response times calculated, which were filtered out</p>
+        <p>Due to errors in the original dataset, there were negative response times calculated, which were filtered out.
+           The <strong>"None"</strong> neighborhood rows were also removed, as they did not contribute to the analysis of response times based on neighborhood.</p>
+        <p>The <strong>"Null"</strong> category of the Call Type Groups was included in the heatmap dataset. Given that this category of calls had hospital response
+           times, it can be assumed that this category still demarcates significant emergencies occuring that just did not fit into any of the
+           other categories, or were not marked with a category. There were enough data entries in this category that it is significant to include
+           in the visualizations.</p>
 
-        <h2>Planned Interactivity</h2>
-        <p>Both charts will be linked, so hovering over a neighborhood on one chart will highlight the same neighborhood on the other.</p>
-        <p>The bar chart will have brushing to focus on one specific neighborhood at a time, and will also ideally include a tooltip
-          showing the specific time difference.</p>
+        <p><strong>These edited Tableau datasets were exported to be used in these visualizations.</strong></p>
 
-        <h2>Relevance to Theme</h2>
-        <p>Our theme is to analyze the effectiveness of the SF Emergency Response system for the SF community as a whole, and hospital
-          access is crucial to ensuring the safety and health of the overall population. These visualizations will help to look at hospital
-          access across neighborhoods to see if all communities are being given the same chance at immediate medical care.</p>
+        <h2>Background</h2>
 
+        <h3>Data Encoding</h3>
+        <p><strong>Heatmap:</strong> The heatmap compares rows of neighborhoods against columns marking specific Call Type Groups. The coloring
+          marks the time in minutes from recieving a call to arrival at the hospital. Darker colors indicate longer time spans. The grey cells mark
+          where data was missing from the original dataset. The heatmap was simply sorted alphabetically by neighborhood, as each column looked at a
+          different set of data, and sorting by any one column's values would give unintended importance to that one Call Type Group in the visualization.</p>
+        <p><strong>Bar & Line Chart:</strong> The chart has neighborhoods on the x-axis and minutes on the y-axis. The line denotes the time
+          in minutes from recieving a call to arriving on scene. The bars denote the time in minutes from on scene to arriving at the hospital.</p>
 
-        <h2>Prototypes</h2>
-        <h3>Response Time Averages by Neighborhood and Call Type in 2019</h3>
-        <p><img src="resources/Chay_Proto_Heatmap.png"></p>
+        <h3>Interactivity</h3>
+        <p>Hover over a specific bar on the Bar & Line chart in order to highlight it and see the specific times and neighborhood associated with
+          that bar and that point on the line.</p>
+        <p>Hover over an individual cell on the heatmap to see the specific time associated with that neighborhood and call type group, as well
+          as highlight the relevant neighborhood on the Bar & Line chart. This allows for comparisons of the different time intervals for a given
+          neighborhood across both visualizations.</p>
+
+        <h2>Visualizations</h2>
+
+        <h3>Hospital Related Response Time Averages by Neighborhood in 2019</h3>
+        <svg id="HeatVis"></svg>
+        <svg id="BarLineVis"></svg>
         <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
           Fire Department Calls for Service<br>
           <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
 
-        <h3>Response Time Averages by Neighborhood in 2019</h3>
-        <p><img src="resources/Chay_Proto_Bar.png"></p>
-        <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
-          Fire Department Calls for Service<br>
-          <strong>Source:</strong> https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3</p>
+          <!-- Include custom javascript -->
+          <script src="hospitalaccesstime.js"></script>
+
+        <h2>Conclusions</h2>
+        <p>The overall theme of this project was to assess the effectiveness of the SF response system for the entire SF community, and hospital
+           access is a critical part of evaluating whether or not the current system functions equally for all neighborhoods and populations. Using
+           these visualizations, there are a couple different conclusions that can be drawn regarding this.</p>
+        <p>It can be seen that, in 2019, the overall average response time for life-threatening and non-life-threatening
+           emergencies is fairly consistant across all neighborhoods. However, for fire related emergencies, certain neighborhoods face much longer
+           overall times than others, namely: Castro/Upper Market, Lakeshore, Presidio, and Seacliff. This might suggest that the fire response teams
+           assigned to these specific neighborhoods need extra resources or manpower to speed up the process.</p>
+        <p>Another interesting point that can be seen is the disparity in response times for South of Market specifically. This neighborhood had a
+           drastically low average time between recieving a call and arriving on scene, but it had the highest average time between on scene to arriving
+           at the hospital. Because of these disparate values, the average overall time across Call Type Groups is on the lower end of the heatmap scale,
+           implying fast response times for the process. In truth, this neighborhood faces long transit times to get hospital treatment,
+           and when it comes to medical care, a few minutes can be the difference between life and death.</p>
+        <p>Overall, it seems that, while the current response system functions fairly well for most neighborhoods, there are a handful of areas where it
+           should be improved. Populations in certain neighborhoods face much longer wait times than others, lowering their chances at recieving the
+           same important, possibly life-saving medical care as other neighborhoods. Assessing these specific areas and providing them more resources
+           would help improve medical access for the entire SF community, and increase the effectiveness of the SF response system.</p>
+
+        <h2>Attribution</h2>
+        <p>Code examples used:
+          <ul>
+            <li><a href="https://blockbuilder.org/sjengle/47c5c20a18ec29f4e2b82905bdb7fe95">Zillow Affordability Heatmap</a></li>
+            <li><a href="https://gist.github.com/sjengle/01c24c71016a97938beae8c778c15911">Letter Count Bar Chart</a></li>
+            <li><a href="https://observablehq.com/d/5ca62cc3579dc2ce">Interactivity Lab</a></li>
+            <li><a href="https://observablehq.com/collection/@sjengle/linked-views">Linked Views</a></li>
+            <li><a href="https://observablehq.com/collection/@sjengle/interactive-scatterplot">Interactive Scatterplot</a></li>
+            <li><a href="http://bl.ocks.org/mattykuch/40ba19de703632ea2afbbc5156b9471f">Linked Charts (Line and Bar) with D3.js</a></li>
+          </ul>
+        </p>
 
       </div>
     </div>
