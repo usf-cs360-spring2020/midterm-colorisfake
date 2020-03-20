@@ -195,13 +195,9 @@ function drawBarLineCharts(data) {
       .on("mouseover", function(d) {
         let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
         barMouseover(d, lineMatch);
-
-        //heatMouseoverFromBar(d);
       })
       .on("mouseout", function(d) {
         barMouseout(d);
-
-        //heatMouseoutFromBar(d);
       });
 
 
@@ -377,12 +373,6 @@ function drawHeatLegend(){
 */
 function drawHeatmap(data) {
 
-  // data = data.sort(function(a, b) {
-  //   if(a.callType === b.callType){
-  //     return a['recievingToHospital'] - b['recievingToHospital'];
-  //   }
-  // });
-
   /* DRAW AXIS */
   let neighborhoods = data.map(row => row.neighborhoods);
   heatScales.y.domain(neighborhoods);
@@ -432,15 +422,9 @@ function drawHeatmap(data) {
 
       /* color in rest of the cells */
       .style("fill", d => heatScales.color(d.recievingToHospital))
-      .style("stroke", d => heatScales.color(d.recievingToHospital));
-
-
-    const barsMatch = d3.select("bars");
-
-    cells
+      .style("stroke", d => heatScales.color(d.recievingToHospital))
       .on("mouseover", function(d) {
         heatMouseover(d);
-
         let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
         barMouseover(d, lineMatch);
       })
@@ -516,63 +500,6 @@ function heatMouseout(d){
   rows.selectAll("#heatBack").remove();
   console.log("found now:", d3.selectAll("#heatNumber").size());
 }
-
-
-
-
-
-
-/*
-* Handle mouse over events for the heatmap
-*/
-function heatMouseoverFromBar(d){
-
-  let rows = heatPlot.selectAll("g.cell");
-  let selectedRows = rows.filter(e => (d.neighborhoods === e.neighborhoods));
-
-  for(let cell in selectedRows){
-    let tooltip = formatter(cell.recievingToHospital) + " minutes";
-
-    rows.append("rect")
-      .attr("id", "heatBack" + cell.callType)
-      .attr("x", heatScales.x(cell.callType))
-      .attr("y", heatScales.y(cell.neighborhoods))
-      .style("fill", "pink")
-      .attr("width", heatScales.x.bandwidth())
-      .attr("height", heatScales.y.bandwidth());
-
-    rows.append("text")
-      .attr("id", "heatNumber" + cell.callType)
-      .attr("x", heatScales.x(cell.callType) + 4)
-      .attr("y", heatScales.y(cell.neighborhoods) + 12)
-      .attr("text-anchor", "start")
-      .attr("font-size", "12px")
-      .style("fill", "black")
-      .style("font-weight", "bold")
-      .text(tooltip);
-  }
-}
-
-/*
-* Handle mouse out events for the heatmap
-*/
-function heatMouseoutFromBar(d){
-
-  let rows = heatPlot.selectAll("g.cell");
-  let selectedRows = rows.filter(e => (d.neighborhoods === e.neighborhoods));
-
-  for(let cell in selectedRows){
-
-    let number = "#heatNumber" + cell.callType;
-    let back = "#heatBack" + cell.callType;
-
-    rows.selectAll(number).remove();
-    rows.selectAll(back).remove();
-  }
-}
-
-
-
 
 
 /*
