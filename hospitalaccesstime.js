@@ -504,8 +504,7 @@ function heatMouseout(d){
 function barMouseover(d){
 
   let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-  console.log(lineMatch.neighborhoods);
-  console.log(d.neighborhoods);
+  let bar = barData.filter(e => e.neighborhoods === d.neighborhoods);
 
   let barLineGroup = d3.select("g#barline");
   let bars = barLineGroup.selectAll("rect");
@@ -514,7 +513,7 @@ function barMouseover(d){
     .transition()
     .style("fill", "#bbbbbb");
 
-  let tooltip1 = "On Scene to Hospital: " + formatter(d.time) + " minutes";
+  let tooltip1 = "On Scene to Hospital: " + formatter(bar[0].time) + " minutes";
   let tooltip2 = "Recieving Call to On Scene: " + formatter(lineMatch[0].time) + " minutes";
 
   barLineGroup.append("text")
