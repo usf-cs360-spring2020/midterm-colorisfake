@@ -104,6 +104,7 @@ Fire,Noe Valley
 Fire,Nob Hill,80.666666667
 Fire,Mission Bay,41
 Fire,Mission,44.5
+Fire,McLaren Park
 Fire,Marina,57.5
 Fire,Lone Mountain-USF,27.5
 Fire,Lincoln Park,61
@@ -185,9 +186,11 @@ Null,Noe Valley,43.5
 Null,Nob Hill,40.933333333
 Null,Mission Bay,53
 Null,Mission,44.239130435
+Null,McLaren Park
 Null,Marina,42.571428571
 Null,Lone Mountain-USF,33.538461538
 Null,Lakeshore,56.444444444
+Null,Lincoln Park
 Null,Japantown,42.444444444
 Null,Inner Sunset,44.916666667
 Null,Inner Richmond,42.714285714

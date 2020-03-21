@@ -4,6 +4,7 @@
 
 let activeNeighborhood;
 let formatter = d3.format(".2f");
+let idformatter = d3.format(".0f");
 
 var barData;
 var lineData;
@@ -410,7 +411,7 @@ function drawHeatmap(data) {
     .enter()
     .append("rect")
       .attr("class", d => d.neighborhoods)
-      .attr("id", d => (d.neighborhoods + " " + d.callType))
+      .attr("id", d => d.callType[0] + d.callType[1] + d.callType[2])
       .attr("x", d => heatScales.x(d.callType))
       .attr("y", d => heatScales.y(d.neighborhoods))
       .attr("width", heatScales.x.bandwidth())
@@ -424,9 +425,16 @@ function drawHeatmap(data) {
       .style("fill", d => heatScales.color(d.recievingToHospital))
       .style("stroke", d => heatScales.color(d.recievingToHospital))
       .on("mouseover", function(d) {
-        heatMouseover(d);
+
         let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+
+        console.log(lineData[20]);
+        console.log(d.neighborhoods);
+        console.log("Linematch: " + lineMatch.neighborhoods);
+
+
         barMouseover(d, lineMatch);
+        heatMouseover(d);
       })
       .on("mouseout", function(d) {
         heatMouseout(d);
@@ -441,6 +449,7 @@ function drawHeatmap(data) {
 function parseHeatmapData(row){
 
   let keep = {};
+
 
   keep.callType = row["Call Type Group"];
   keep.neighborhoods = row["Neighborhooods"];
@@ -476,10 +485,24 @@ function heatMouseover(d){
     .attr("y", heatScales.y(d.neighborhoods))
     .style("fill", "pink")
     .attr("width", heatScales.x.bandwidth())
-    .attr("height", heatScales.y.bandwidth());
+    .attr("height", heatScales.y.bandwidth())
+    // .on("mouseout", function(d) {
+    //   barMouseout(d);
+    //   heatMouseout(d);
+    // });
+
+  // let cellID = "#" + d.callType[0] + d.callType[1] + d.callType[2];
+  // d3.select(cellID)
+  //   .transition()
+  //   .style("fill", "pink")
+  //   .style("stroke", "pink");;
+  //
+  //   console.log("cell id found: " + d3.select(cellID).size());
+
 
   rows.append("text")
     .attr("id", "heatNumber")
+    .attr('pointer-events', 'none')
     .attr("x", heatScales.x(d.callType) + 4)
     .attr("y", heatScales.y(d.neighborhoods) + 12)
     .attr("text-anchor", "start")
@@ -498,6 +521,14 @@ function heatMouseout(d){
   let rows = heatPlot.selectAll("g.cell");
 
   rows.selectAll("#heatNumber").remove();
+
+  // let cellID = "#" + d.callType[0] + d.callType[1] + d.callType[2];
+  // d3.select(cellID)
+  //   .transition()
+  //   .style("fill", heatScales.color(d.recievingToHospital))
+  //   .style("stroke", heatScales.color(d.recievingToHospital));
+
+
   rows.selectAll("#heatBack").remove();
   console.log("found now:", d3.selectAll("#heatNumber").size());
 }
