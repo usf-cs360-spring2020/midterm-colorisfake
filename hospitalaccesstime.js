@@ -8,7 +8,6 @@ let idformatter = d3.format(".0f");
 
 var barData;
 var lineData;
-var heatData;
 
 
 /*******************************************************************************/
@@ -194,8 +193,7 @@ function drawBarLineCharts(data) {
       .attr("height", d => barLinePlotHeight - barLineScales.y(d.time))
       .style("fill", "#a3c7e1")
       .on("mouseover", function(d) {
-        let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-        barMouseover(d, lineMatch);
+        barMouseover(d);
       })
       .on("mouseout", function(d) {
         barMouseout(d);
@@ -411,7 +409,7 @@ function drawHeatmap(data) {
     .enter()
     .append("rect")
       .attr("class", d => d.neighborhoods)
-      .attr("id", d => d.callType[0] + d.callType[1] + d.callType[2])
+      .attr("id", d => d.callType)
       .attr("x", d => heatScales.x(d.callType))
       .attr("y", d => heatScales.y(d.neighborhoods))
       .attr("width", heatScales.x.bandwidth())
@@ -425,15 +423,7 @@ function drawHeatmap(data) {
       .style("fill", d => heatScales.color(d.recievingToHospital))
       .style("stroke", d => heatScales.color(d.recievingToHospital))
       .on("mouseover", function(d) {
-
-        let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
-
-        console.log(lineData[20]);
-        console.log(d.neighborhoods);
-        console.log("Linematch: " + lineMatch.neighborhoods);
-
-
-        barMouseover(d, lineMatch);
+        barMouseover(d);
         heatMouseover(d);
       })
       .on("mouseout", function(d) {
@@ -475,8 +465,6 @@ function heatMouseover(d){
   let rows = heatPlot.selectAll("g.cell");
 
   let tooltip = formatter(d.recievingToHospital) + " minutes";
-  console.log(tooltip);
-  console.log(d.neighborhoods);
 
   rows.append("rect")
     .attr("id", "heatBack")
@@ -486,19 +474,6 @@ function heatMouseover(d){
     .style("fill", "pink")
     .attr("width", heatScales.x.bandwidth())
     .attr("height", heatScales.y.bandwidth())
-    // .on("mouseout", function(d) {
-    //   barMouseout(d);
-    //   heatMouseout(d);
-    // });
-
-  // let cellID = "#" + d.callType[0] + d.callType[1] + d.callType[2];
-  // d3.select(cellID)
-  //   .transition()
-  //   .style("fill", "pink")
-  //   .style("stroke", "pink");;
-  //
-  //   console.log("cell id found: " + d3.select(cellID).size());
-
 
   rows.append("text")
     .attr("id", "heatNumber")
@@ -510,8 +485,6 @@ function heatMouseover(d){
     .style("fill", "black")
     .style("font-weight", "bold")
     .text(tooltip);
-
-    console.log("found heat number:", d3.selectAll("#heatNumber").size());
 }
 
 /*
@@ -521,23 +494,18 @@ function heatMouseout(d){
   let rows = heatPlot.selectAll("g.cell");
 
   rows.selectAll("#heatNumber").remove();
-
-  // let cellID = "#" + d.callType[0] + d.callType[1] + d.callType[2];
-  // d3.select(cellID)
-  //   .transition()
-  //   .style("fill", heatScales.color(d.recievingToHospital))
-  //   .style("stroke", heatScales.color(d.recievingToHospital));
-
-
   rows.selectAll("#heatBack").remove();
-  console.log("found now:", d3.selectAll("#heatNumber").size());
 }
 
 
 /*
 * Handle mouse over events for the bar chart
 */
-function barMouseover(d, lineMatch){
+function barMouseover(d){
+
+  let lineMatch = lineData.filter(e => e.neighborhoods === d.neighborhoods);
+  console.log(lineMatch.neighborhoods);
+  console.log(d.neighborhoods);
 
   let barLineGroup = d3.select("g#barline");
   let bars = barLineGroup.selectAll("rect");
