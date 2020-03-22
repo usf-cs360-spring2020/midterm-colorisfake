@@ -62,3 +62,24 @@ footer.smaller-footers-are-better {
     padding-top: 2rem;
     padding-bottom: 4rem;
 }
+
+/* Thank you Sophie Engle for the following CSS */
+.tooltip {
+    position: absolute;
+    width: auto;
+    height: auto;
+    padding: 8px;
+    background: #ddd;
+    pointer-events: none;
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+
+text, .tooltip {
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+table, .tooltip {
+    border-spacing: 5px;
+}

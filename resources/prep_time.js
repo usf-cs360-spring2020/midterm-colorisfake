@@ -151,6 +151,9 @@ function drawVises(theData) {
     for (const call_type in organized) {
         drawVis(call_type, organized[call_type]);
     }
+
+    // Enable Interactivity
+    enableHover();
 }
 
 /**
@@ -159,12 +162,14 @@ function drawVises(theData) {
  * @param data the organized data for that call type
  */
 function drawVis(call_type, data) {
+
     // Find the right SVG and plot element
     let id = c.vis.call_type_ids[call_type];
     let this_svg = d3.select(`svg.visualization#${id}`);
+
+    // Figure out other useful info
     let plot = this_svg.select('g#plot');
     let call_type_name = c.vis.call_type_ids[call_type];
-
     let axisG = this_svg.select('g#axes');
     let axis = axes.incidents[call_type_name];
 
@@ -172,6 +177,7 @@ function drawVis(call_type, data) {
     let i = 0;
     let differential = 0;
 
+    // Do work for each weekday
     for (let weekday in data) {
         let weekday_data = data[weekday];
 
@@ -197,8 +203,8 @@ function drawVis(call_type, data) {
             .attr('fill', 'red')
             .attr('fill-opacity', 0.3);
 
-
-        // Loop though each hour, draw a bar for each
+        // Loop though each hour, create a data element for each
+        let aggregate = [];
         for (let hour in weekday_data) {
             let hour_data = weekday_data[hour];
 
@@ -212,16 +218,42 @@ function drawVis(call_type, data) {
             });
             let avg_prep_time = total_time / incident_count;
 
-            // Make the bar
+            // Calculate info for the bar
             let y_scaled = scales.incidents[call_type_name](incident_count);
             let zero_value = scales.incidents[call_type_name](0);
             let color = scales.color[call_type_name](avg_prep_time);
-            sub.append('rect')
-                .attr('width', scales.hour.bandwidth())
-                .attr('height', zero_value - y_scaled) // TODO
-                .attr('fill', color) // TODO
-                .attr('x', scales.hour(hour))
-                .attr('y', y_scaled);
+
+            // Make a data element for the bar
+            let aggregated_hour_data = {
+                'Incident Count': incident_count,
+                'Avg. Prep. Time  ': `${avg_prep_time.toFixed(2)} mins`,
+                'Hour': hour,
+                'Weekday': weekday,
+                'Incident Type' : call_type,
+                y_scaled : y_scaled,
+                zero_value : zero_value,
+                color : color
+            };
+            aggregate.push(aggregated_hour_data);
+        }
+
+        // Append rectangles!
+        let selection = sub.selectAll('rect.visBar')
+            .data(aggregate)
+            .enter()
+            .append('rect')
+            .attr('class', 'visBar')
+            .attr('height', d => d.zero_value - d.y_scaled)
+            .attr('width', scales.hour.bandwidth())
+            .attr('fill', d => d.color)
+            .attr('x', d => scales.hour(d['Hour']))
+            .attr('y', d => d.y_scaled);
+
+        // Clean up for tooltip
+        for (let thing of aggregate) {
+            delete thing.y_scaled;
+            delete thing.zero_value;
+            delete thing.color;
         }
     }
 
@@ -279,6 +311,45 @@ function drawXAxis(group) {
 function drawText(group) {
 
 }
+
+// Hover tooltip interactivity
+function enableHover() {
+    let bars = d3.selectAll('rect.visBar');
+    // console.log('found', bars.size(), 'bars');
+
+    bars.on("mouseover.hover", function(d) {
+        let me = d3.select(this);
+        let div = d3.select("body").append("div");
+
+        div.attr("id", "details");
+        div.attr("class", "tooltip");
+
+        let rows = div.append("table")
+            .selectAll("tr")
+            .data(Object.keys(d))
+            .enter()
+            .append("tr");
+
+        rows.append("th").text(key => key).style('padding-right', '10px');
+        rows.append("td").text(key => d[key]);
+    });
+
+    bars.on("mousemove.hover2", function(d) {
+        let div = d3.select("div#details");
+
+        // get height of tooltip
+        let bbox = div.node().getBoundingClientRect();
+
+        div.style("left", d3.event.pageX + "px")
+        div.style("top",  (d3.event.pageY - bbox.height) + "px");
+    });
+
+    bars.on("mouseout.hover2", function(d) {
+        d3.selectAll("div#details").remove();
+        // d3.select(status).text("hover: none");
+    });
+}
+
 
 /**
  * Convert a csv row to a row of data for the visualization
