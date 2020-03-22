@@ -104,11 +104,14 @@ function prepVis() {
     // Make some axes
     axes.incidents = {};
     axes.incidents['fire'] = d3.axisLeft(scales.incidents['fire'])
-        .ticks(3);
+        .ticks(4);
     axes.incidents['medical'] = d3.axisLeft(scales.incidents['medical'])
-        .ticks(3);
+        .ticks(4);
     axes.incidents['traffic'] = d3.axisLeft(scales.incidents['traffic'])
-        .ticks(3);
+        .ticks(4);
+
+    axes.hours = d3.axisBottom(scales.hour)
+        .ticks(24);
 
 
     // Load the data, then call another function
@@ -152,6 +155,9 @@ function drawVis(call_type, data) {
     let plot = this_svg.select('g#plot');
     let call_type_name = c.vis.call_type_ids[call_type];
 
+    let axisG = this_svg.select('g#axes');
+    let axis = axes.incidents[call_type_name];
+
     // Draw a subplot for each weekday
     let i = 0;
     let differential = 0;
@@ -169,8 +175,6 @@ function drawVis(call_type, data) {
             .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
 
         // Draw y axis
-        let axisG = this_svg.select('g#axes');
-        let axis = axes.incidents[call_type_name];
         drawYAxis(axisG, weekday_data, axis, i, differential);
 
         differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
@@ -210,6 +214,9 @@ function drawVis(call_type, data) {
                 .attr('y', y_scaled);
         }
     }
+
+    // Draw x axis
+    drawXAxis(axisG);
 }
 
 /**
@@ -228,7 +235,20 @@ function drawYAxis(group, data, axis, i, differential) {
 
     axisGroup.call(axis);
 
-    console.log('hello', group.size());
+    // console.log('hello', group.size());
+}
+
+/**
+ * Draw the x axis for hours on one visualization
+ * @param group the d3 selection where the axis should be drawn
+ */
+function drawXAxis(group) {
+    let axisGroup = group.append('g')
+        .attr('class', 'xAxis')
+        .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + c.plot.height));
+        // .attr('transform', translate(   /))
+
+    axisGroup.call(axes.hours);
 }
 
 
