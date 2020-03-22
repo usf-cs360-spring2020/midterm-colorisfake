@@ -61,6 +61,10 @@ function prepVis() {
         .attr('width', c.plot.width)
         .attr('height', c.plot.height);
 
+    svgs.select('g#axes')
+        .attr('transform', translate(c.svg.pad.left, c.svg.pad.top));
+
+
     c.sub.width = c.plot.width - c.sub.margins.left - c.sub.margins.right;
     c.sub.height = (c.plot.height / c.vis.weekdays) - c.sub.margins.top - c.sub.margins.bottom;
 
@@ -69,7 +73,8 @@ function prepVis() {
     plot.append('rect')
         .attr('width', c.plot.width)
         .attr('height', c.plot.height)
-        .style('fill', 'lemonChiffon');
+        .style('fill', 'yellow')
+        .style('fill-opacity', .2);
 
 
     // Make the scales
@@ -95,6 +100,15 @@ function prepVis() {
         .domain([0.8608115115257102, 1.5448774151841203]);
     scales.color['traffic'] = d3.scaleSequential(d3.interpolateGreys)
         .domain([0.8386801541069366, 1.8966183574492759]);
+
+    // Make some axes
+    axes.incidents = {};
+    axes.incidents['fire'] = d3.axisLeft(scales.incidents['fire'])
+        .ticks(3);
+    axes.incidents['medical'] = d3.axisLeft(scales.incidents['medical'])
+        .ticks(3);
+    axes.incidents['traffic'] = d3.axisLeft(scales.incidents['traffic'])
+        .ticks(3);
 
 
     // Load the data, then call another function
@@ -136,6 +150,7 @@ function drawVis(call_type, data) {
     let id = c.vis.call_type_ids[call_type];
     let this_svg = d3.select(`svg.visualization#${id}`);
     let plot = this_svg.select('g#plot');
+    let call_type_name = c.vis.call_type_ids[call_type];
 
     // Draw a subplot for each weekday
     let i = 0;
@@ -153,6 +168,11 @@ function drawVis(call_type, data) {
             // .attr('y', differential)
             .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
 
+        // Draw y axis
+        let axisG = this_svg.select('g#axes');
+        let axis = axes.incidents[call_type_name];
+        drawYAxis(axisG, weekday_data, axis, i, differential);
+
         differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
         i += 1;
 
@@ -160,7 +180,8 @@ function drawVis(call_type, data) {
         let test = sub.append('rect')
             .attr('width', c.sub.width)
             .attr('height', c.sub.height)
-            .attr('fill', 'lightPink');
+            .attr('fill', 'red')
+            .attr('fill-opacity', 0.3);
 
 
         // Loop though each hour, draw a bar for each
@@ -178,9 +199,9 @@ function drawVis(call_type, data) {
             let avg_prep_time = total_time / incident_count;
 
             // Make the bar
-            let y_scaled = scales.incidents[c.vis.call_type_ids[call_type]](incident_count);
-            let zero_value = scales.incidents[c.vis.call_type_ids[call_type]](0);
-            let color = scales.color[c.vis.call_type_ids[call_type]](avg_prep_time);
+            let y_scaled = scales.incidents[call_type_name](incident_count);
+            let zero_value = scales.incidents[call_type_name](0);
+            let color = scales.color[call_type_name](avg_prep_time);
             sub.append('rect')
                 .attr('width', scales.hour.bandwidth())
                 .attr('height', zero_value - y_scaled) // TODO
@@ -190,6 +211,27 @@ function drawVis(call_type, data) {
         }
     }
 }
+
+/**
+ * Draw one Y axis for one weekday on one visualization
+ * @param group the d3 selection where the axis should be drawn
+ * @param data the data to use
+ * @param axis the axis to use
+ * @param i the weekday index
+ * @param differential how much to shift the y havue by
+ */
+function drawYAxis(group, data, axis, i, differential) {
+    let axisGroup = group.append('g')
+        .attr('class', 'yAxis')
+        .attr('id', i)
+        .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
+
+    axisGroup.call(axis);
+
+    console.log('hello', group.size());
+}
+
+
 
 /**
  * Convert a csv row to a row of data for the visualization
