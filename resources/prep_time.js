@@ -18,7 +18,7 @@ let c = {
             top: 2,
             right: 5,
             bottom: 2,
-            left: 100
+            left: 120
         },
         padding_between_hours : 0.05
     },
@@ -36,6 +36,16 @@ let c = {
 let axes = {};
 
 let scales = {};
+
+let weekday_names = {
+    0 : 'Monday',
+    1: 'Tuesday',
+    2: 'Wednesday',
+    3: 'Thursday',
+    4: 'Friday',
+    5: 'Saturday',
+    6: 'Sunday'
+};
 
 /**
  * Prepare the page for the visualization to be drawn
@@ -220,7 +230,7 @@ function drawVis(call_type, data) {
 }
 
 /**
- * Draw one Y axis for one weekday on one visualization
+ * Draw one Y axis for one weekday on one visualization, and the weekday
  * @param group the d3 selection where the axis should be drawn
  * @param data the data to use
  * @param axis the axis to use
@@ -234,6 +244,17 @@ function drawYAxis(group, data, axis, i, differential) {
         .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
 
     axisGroup.call(axis);
+
+    let mid = midpoint(scales.incidents['medical']);
+
+
+    let title = group.append('text')
+        .text(weekday_names[i])
+        .attr('class','sub_label_weekday')
+        .attr('id', i)
+        .style('font-size', '.8rem')
+        .attr('x', 10)// .attr('x', c.sub.margins.left - 100)
+        .attr('y', differential + 40); //.attr('y', c.sub.margins.top + differential + mid);
 
     // console.log('hello', group.size());
 }
@@ -251,7 +272,13 @@ function drawXAxis(group) {
     axisGroup.call(axes.hours);
 }
 
+/**
+ * Draw pesky text on one visualization
+ * @param group the d3 selection of a group where the text should be written
+ */
+function drawText(group) {
 
+}
 
 /**
  * Convert a csv row to a row of data for the visualization
