@@ -62,3 +62,76 @@ footer.smaller-footers-are-better {
     padding-top: 2rem;
     padding-bottom: 4rem;
 }
+
+
+/* Make the little '01 '02 '03 etc smaller*/
+.xAxisOverview text {
+    font-size: 8pt;
+    color: #333333;
+}
+
+/* Make incident count axes numbers smaller*/
+.yAxis text {
+    font-size: 8pt;
+    color: #333333;
+}
+
+/* Make the swatches for the legend have a border */
+.legendQuant rect.swatch {
+    outline: 0.05rem solid #333333;
+}
+/* Make the text labels in the legend smaller  */
+.legendQuant text {
+    font-size: 9pt;
+    color : #333333;
+    font-weight: normal;
+}
+
+
+/* Make the big titles for each visualization big */
+.visTitle {
+    font-size: 20pt;
+}
+
+/* Make the medium titles for overviews medium */
+.visTitleMidi {
+    font-size: 12pt;
+}
+
+
+/* Make the little axis titles like 'hour of day' and such little */
+.axisTitle {
+    font-size: 8pt;
+}
+
+/* Make the bigger axis titles like 'weekday' and such bigger */
+.axisTitleBigger {
+    font-size: 14pt;
+}
+
+/* Used for Sophie's brushing */
+.dim {
+    fill-opacity: 0.3;
+}
+
+
+/* Thank you Sophie Engle for the following CSS */
+.tooltip {
+    position: absolute;
+    width: auto;
+    height: auto;
+    padding: 8px;
+    background: rgba(230, 230, 230, 0.8);;
+    pointer-events: none;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+text, .tooltip {
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+table, .tooltip {
+    border-spacing: 5px;
+}
