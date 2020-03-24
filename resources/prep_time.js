@@ -163,7 +163,7 @@ function prepVis() {
 
 
     // Load the data, then call another function
-    let theData = d3.csv('resources/datasets/eve-all-data.csv', rowConverter)
+    let theData = d3.csv('resources/datasets/eve-data-no-neighborhood.csv', rowConverter)
         .then(drawVises);
 }
 
