@@ -211,6 +211,10 @@ function drawVis(call_type, data) {
     let axisG = this_svg.select('g#axes');
     let axis = axes.incidents[call_type_name];
 
+    let datathingthisisdumb = {};
+    datathingthisisdumb[call_type] = data;
+    console.log(aggregateData(datathingthisisdumb));
+
     // Draw a subplot for each weekday
     let i = 0;
     let differential = 0;
@@ -434,31 +438,69 @@ function organize(data) {
 }
 
 /**
- * Calculate the max and min values for incident count and avg. prep. time, over a given subset of data
+ * Aggregate a given subset of data, and calculate max and min values for incident count and avg. prep. time
  * @param data the data to average
+ * @return the aggregated data, as well as max and mins
  */
-function calculateMaxMins(data) {
+function aggregateData(data) {
     let answer = {};
 
-    for (let incident of data.keys()) {
+    for (let incident in data) {
         answer[incident] = {};
         let incident_obj = data[incident];
 
-        for (let weekday of incident_obj.keys()) {
-            answer[incident][weekday] = {};
-            let weekday_obj = incident_obj[weekday];
+        console.log('incident', incident);
+        let call_type_name = c.vis.call_type_ids[incident];
 
-            for (let hour of weekday_obj.keys()) {
-                answer[incident][weekday][hour] = {};
-                let rows = weekday_obj[hour];
+        let max_incident_count = 0;
+        let min_incident_count = 1000000000000000;
 
-                for (let row of rows) {
+        let max_avg_resp = 0.0;
+        let min_avg_resp = 1000000000.0;
 
-                }
+        // Do work for each weekday
+        for (let weekday in incident_obj) {
+            let weekday_data = incident_obj[weekday];
+
+            // Loop though each hour, create a data element for each
+            answer[incident][weekday] = [];
+            let aggregate_bars = answer[incident][weekday];
+            for (let hour in weekday_data) {
+                let hour_data = weekday_data[hour];
+
+                // Calculate incident count and average preparation time
+                let incident_count = 0;
+                let total_time = 0.0;
+                hour_data.forEach(function (row) {
+                    let incidents = parseInt(row['Number of Records']);
+                    incident_count += incidents;
+                    total_time += parseFloat(row['Avg. Processing Minutes']) * incidents;
+                });
+                let avg_prep_time = total_time / incident_count;
+
+                // Calculate info for the bar
+                console.log('call_type_name', call_type_name);
+                let y_scaled = scales.incidents[call_type_name](incident_count);
+                let zero_value = scales.incidents[call_type_name](0);
+                let color = scales.color[call_type_name](avg_prep_time);
+
+                // Make a data element for the bar
+                let aggregated_hour_data = {
+                    'Incident Count': incident_count,
+                    'Avg. Prep. Time  ': `${avg_prep_time.toFixed(2)} mins`,
+                    'Hour': hour,
+                    'Weekday': weekday,
+                    'Incident Type': incident,
+                    y_scaled: y_scaled,
+                    zero_value: zero_value,
+                    color: color
+                };
+                aggregate_bars.push(aggregated_hour_data);
             }
-
         }
     }
+
+    return answer;
 }
 
 prepVis();
