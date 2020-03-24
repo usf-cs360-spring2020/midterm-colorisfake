@@ -34,9 +34,9 @@ let c = {
 
     overviewPlot : {
         margins: {
-            top: 5,
-            right : 5,
-            bottom : 5,
+            top: 15,
+            right : 0,
+            bottom : 15,
             left : 500
         }
     }
@@ -113,7 +113,7 @@ function prepVis() {
 
     // Setup the overview area
     c.overviewPlot.height = c.svg.pad.top - c.overviewPlot.margins.top - c.overviewPlot.margins.bottom;
-    c.overviewPlot.width = c.svg.width - c.overviewPlot.margins.left - c.overviewPlot.margins.right;
+    c.overviewPlot.width = c.svg.width - c.overviewPlot.margins.left - c.overviewPlot.margins.right - c.svg.pad.right;
     let overviews = svgs.select('g#overview')
         .attr('transform', translate(c.overviewPlot.margins.left, c.overviewPlot.margins.top))
         .attr('width', c.overviewPlot.width)
