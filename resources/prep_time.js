@@ -4,7 +4,7 @@ let c = {
         height: 700,
         width: 900,
         pad: {
-            top: 150,
+            top: 200,
             right: 20,
             bottom: 40,
             left: 10
@@ -34,7 +34,7 @@ let c = {
 
     overviewPlot : {
         margins: {
-            top: 15,
+            top: 40,
             right : 0,
             bottom : 30,
             left : 500
@@ -237,7 +237,7 @@ function prepVis() {
 
     // Setup the overview area
     c.overviewPlot.height = c.svg.pad.top - c.overviewPlot.margins.top - c.overviewPlot.margins.bottom;
-    c.overviewPlot.width = c.svg.width - c.overviewPlot.margins.left - c.overviewPlot.margins.right - c.svg.pad.right;
+    c.overviewPlot.width = c.svg.width - c.overviewPlot.margins.left - c.overviewPlot.margins.right - c.svg.pad.right - c.sub.margins.right;
     let overviews = svgs.select('g#overview')
         .attr('transform', translate(c.overviewPlot.margins.left, c.overviewPlot.margins.top))
         .attr('width', c.overviewPlot.width)
@@ -262,24 +262,24 @@ function prepVis() {
     scales.incidents = {};
     scales.incidents['fire'] = d3.scaleLinear()
         .range([c.sub.height,0])
-        .domain([-20,1426]);
+        .domain([0,1426]);
     scales.incidents['medical'] = d3.scaleLinear()
         .range([c.sub.height,0])
-        .domain([-200,13237]);
+        .domain([0,13237]);
     scales.incidents['traffic'] = d3.scaleLinear()
         .range([c.sub.height,0])
-        .domain([-15,900]);
+        .domain([0,900]);
 
     scales.incidentsOverview = {};
     scales.incidentsOverview['fire'] = d3.scaleLinear()
         .range([c.overviewPlot.height,0])
-        .domain([0-100,11267 + 200]);
+        .domain([0,11267 + 200]);
     scales.incidentsOverview['medical'] = d3.scaleLinear()
         .range([c.overviewPlot.height,0])
-        .domain([0-100,116657]);
+        .domain([0,116657]);
     scales.incidentsOverview['traffic'] = d3.scaleLinear()
         .range([c.overviewPlot.height,0])
-        .domain([0-100,4907+200]);
+        .domain([0,4907+200]);
 
     scales.color = {};
     scales.color['fire'] = d3.scaleSequential(d3.interpolateOranges)
@@ -520,6 +520,16 @@ function drawXAxisOverview(group) {
  * @param group the group to draw it in
  */
 function drawOverviewText(group) {
+
+    // Overview title
+    group.append('text')
+        .text('Changes by Year')
+        .attr('class','visTitleMidi')
+        // .attr('id', subPlot_index)
+        .attr('x', 40)
+        .attr('y', -10);
+
+
     // 'Incident Count'
     let y_group = group.append('g')
         // .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
@@ -559,13 +569,13 @@ function drawText(group, call_type) {
         .attr('class','visTitle')
         // .attr('id', subPlot_index)
         .attr('x', 30)
-        .attr('y', 50);
+        .attr('y', 80);
     group.append('text')
         .text(title2)
         .attr('class','visTitle')
         // .attr('id', subPlot_index)
         .attr('x', 30)
-        .attr('y', 50+35);
+        .attr('y', 80+35);
 
     // 'Hour of day'
     group.append('text')

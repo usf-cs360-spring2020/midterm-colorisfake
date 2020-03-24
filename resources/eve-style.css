@@ -95,6 +95,12 @@ table, .tooltip {
     font-size: 20pt;
 }
 
+/* Make the medium titles for overviews medium */
+.visTitleMidi {
+    font-size: 12pt;
+}
+
+
 /* Make the little axis titles like 'hour of day' and such little */
 .axisTitle {
     font-size: 8pt;
