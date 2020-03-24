@@ -41,11 +41,8 @@ let c = {
         }
     }
 };
-
 let axes = {};
-
 let scales = {};
-
 let weekday_names = {
     0 : 'Monday',
     1: 'Tuesday',
@@ -55,218 +52,9 @@ let weekday_names = {
     5: 'Saturday',
     6: 'Sunday'
 };
+let megaData = {};
 
-/**
- * Draw the overviews
- * @param call_type the call type to draw
- * @param data the data to use to draw them
- */
-function makeOverview(call_type, data) {
-    let coded_call_type = c.vis.call_type_ids[call_type];
-
-    let overview = d3.select(`svg.visualization#${coded_call_type}`).selectAll('g#overview');
-    // console.log('overview selection size', overview.size());
-    let overviewPlot = overview.append('g')
-        .attr('class', 'plotArea');
-    // console.log('overviewPlot selection size', overviewPlot.size(), call_type);
-
-    // console.log('data in makeOverview: ', data, call_type);
-
-    let processed_data = process_data_overview(data, call_type);
-    // console.log('processed_data in makeOverview', processed_data, call_type);
-
-    let selection = overviewPlot.selectAll('rect.visBar#overview')
-        .data(processed_data)
-        .enter();
-    // console.log('enter set size', call_type, selection.size());
-
-    selection.append('rect')
-        .attr('class', 'visBar overview')
-        .attr('x', d => scales.year(d['Year']))
-        .attr('y', d => d.y_scaled)
-        .attr('width', d => scales.year.bandwidth())
-        .attr('height', d => d.zero_value - d.y_scaled)
-        .attr('fill', d => d.color);
-
-    // calculateMinMax(processed_data);
-
-    // Clean up data elements for tooltip's use later
-    for (let thing of processed_data) {
-        delete thing.y_scaled;
-        delete thing.zero_value;
-        delete thing.color;
-    }
-
-    let axisGOverview = overview.append('g')
-        .attr('class', 'overviewAxis');
-    drawXAxisOverview(axisGOverview);
-    drawYAxisOverview(axisGOverview, {}, axes.incidentsOverview[coded_call_type], 0, 0);
-
-    let overviewText = overview.append('g')
-        .attr('class', 'overviewText');
-    drawOverviewText(axisGOverview);
-
-    // Define brushing behavior
-    makeBrushing(coded_call_type);
-}
-
-/**
- * Enable brushing  interactivity
- * @param call_type the call type to use
- */
-function makeBrushing(call_type) {
-    let this_svg = d3.select(`svg.visualization#${call_type}`);
-    let this_overview = this_svg.select('g#overview');
-    // console.log(this_overview.size());
-    // Make a SVG for the focus chart
-    // const svg = d3.create("svg")
-    //     .attr("viewBox", [0, 0, width, focusHeight])
-    //     .style("display", "block");
-
-    let overviewBars = this_overview.selectAll('rect.visBar');
-
-    // Define the brush
-    const brush = d3.brushX()
-        // .extent([[margin.left, 0.5], [width - margin.right, focusHeight - margin.bottom + 0.5]])
-        .extent([[0,0], [c.overviewPlot.width, c.overviewPlot.height]])
-        .on("brush", brushed)
-        .on("end", brushended);
-    // console.log('extent', [0,0], [c.overviewPlot.width, c.overviewPlot.height])
-
-    // Some sort of selection
-    // const defaultSelection = [x(d3.utcYear.offset(x.domain()[1], -1)),        x.range()[1]];
-    const defaultSelection = [scales.year.range()[0], scales.year.range()[1]];
-    // console.log('defaultSelection', defaultSelection);
-
-    // Draw the x axis
-    // svg.append("g")
-    //     .call(xAxis, x, focusHeight);
-
-    // Draw the area
-    // svg.append("path")
-    //     .datum(data)
-    //     .attr("fill", "steelblue")
-    //     .attr("d", area(x, y.copy().range([focusHeight - margin.bottom, 4])));
-
-    // Make the brush?
-    const gb = this_overview.append("g")
-        .attr('class', 'brushThing')
-        // .attr('x', 0)
-        // .attr('y', 0)
-        // .attr('width', c.overviewPlot.width)
-        // .attr('height', c.overviewPlot.height)
-        // .attr("viewBox", [0, 0, c.overviewPlot.width, c.overviewPlot.height])
-        .call(brush)
-        .call(brush.move, defaultSelection);
-
-    // Some functions
-    function brushed() {
-        if (d3.event.selection) {
-            const [x0, x1] = d3.event.selection;
-            console.log('brushed, selection is', x0, x1);
-
-            overviewBars.classed('dim', function(d) {
-                let this_bar = d3.select(this);
-                let cx = (+(this_bar.attr('x')) + ((+this_bar.attr('width')) / 2));
-                console.log('me x cx', this_bar.attr('x'), cx);
-                return !(cx < x1 && cx > x0);
-            });
-        }
-    }
-
-    function brushended() {
-        // if (!d3.event.selection) {
-        //     gb.call(brush.move, defaultSelection);
-        // }
-        console.log('brushended');
-    }
-}
-
-/**
- * Calculate the min and max overview values
- * @param processed_data the data to calculate from
- */
-function calculateMinMax(processed_data) {
-    let minInc = 1000000000;
-    let maxInc = 0;
-    let minTime = 10000000000.0;
-    let maxTime = 0.0;
-    for (let thingy of processed_data) {
-        // Update the min/max records
-        if (thingy['Incident Count'] < minInc) {
-            minInc = thingy['Incident Count'];
-        } else if (thingy['Incident Count'] > maxInc) {
-            maxInc = thingy['Incident Count'];
-        }
-
-        if (thingy['Avg. Prep. Time'] < minTime) {
-            minTime = thingy['Avg. Prep. Time'];
-        } else if (thingy['Avg. Prep. Time'] > maxTime) {
-            maxTime = thingy['Avg. Prep. Time'];
-        }
-    }
-
-    console.log('max and min are', minTime, maxTime, minInc, maxInc);
-}
-
-/**
- * Process the data for an overview into the data for its bars
- * @param data all data to use
- * @param incident the incident type
- */
-function process_data_overview(data, incident) {
-    let coded_incident = c.vis.call_type_ids[incident];
-    let year_org = {};
-    let year_data = [];
-
-    for (let weekday in data) {
-
-        for (let hour in data[weekday]) {
-
-            for (let thing of data[weekday][hour]) {
-                let year = thing['Year of Entry Date and Time'];
-
-                // Make sure the organized data has an object for this year
-                if (! (year in year_org))
-                    year_org[year] = [];
-                // let  = organized[type];
-
-                year_org[year].push(thing);
-            }
-        }
-    }
-
-    for (let year in year_org) {
-        let incident_count = 0;
-        let total_time = 0.0;
-        for (let thing of year_org[year]) {
-            let incidents = parseInt(thing['Number of Records']);
-            incident_count += incidents;
-            total_time += parseFloat(thing['Avg. Processing Minutes']) * incidents;
-        }
-        let avg_prep_time = total_time / incident_count;
-
-        let y_scaled = scales.incidentsOverview[coded_incident](incident_count);
-        let zero_value = scales.incidentsOverview[coded_incident](0);
-        let color = scales.color[coded_incident](avg_prep_time);
-        year_data.push({
-            'Incident Count': incident_count,
-            'Avg. Prep. Time': `${avg_prep_time.toFixed(2)} mins`,
-            'Year': year,
-            'Incident Type': incident,
-            y_scaled: y_scaled,     // TODO fix
-            zero_value: zero_value, // TODO fix
-            color: color
-        });
-    }
-
-    // Finish scales
-    // console.log(Object.keys(year_org) );
-    scales.year.domain(Object.keys(year_org));
-
-    return year_data;
-}
-
+// Main methods
 /**
  * Prepare the page for the visualization to be drawn
  */
@@ -394,7 +182,6 @@ function prepVis() {
     let theData = d3.csv('resources/datasets/eve-data-no-neighborhood.csv', rowConverter)
         .then(drawVises);
 }
-
 /**
  * Draw the visualizations after the page has been prepped and the data loaded
  * @param theData the data loaded from csv
@@ -422,18 +209,6 @@ function drawVises(theData) {
     // Enable Interactivity
     enableHover();
 }
-
-/**
- * Redraw the visualization with new data
- * @param data the set of data to include
- */
-function refresh(data) {
-    let agg = aggregateData(data);
-    // console.log('agg', agg);
-
-    // TODO figure out how this will work
-}
-
 /**
  * Draw a single svg worth of visualization, for one call type
  * @param call_type the call type (as written in the data)
@@ -452,11 +227,11 @@ function drawVis(call_type, data) {
     let axis = axes.incidents[call_type_name];
 
     // Aggregate the data newly
-    let datathingthisisdumb = {};
-    datathingthisisdumb[call_type] = data;
-    let agg = aggregateData(datathingthisisdumb);
-    // console.log('agg', agg);
+    megaData[call_type] = data;
+    let agg = aggregateData(megaData);
     let aggregated = agg.data;
+    console.log(call_type, 'megaData', megaData[call_type]);
+    console.log(call_type, 'aggregated', aggregated);
 
         // Draw a subplot for each weekday
     let i = 0;
@@ -518,6 +293,7 @@ function drawVis(call_type, data) {
     // enableBrushing(call_type);
 }
 
+// Extras for the main visualization
 /**
  * Draw one Y axis for one weekday on one visualization, and the weekday
  * @param group the d3 selection where the axis should be drawn
@@ -547,26 +323,6 @@ function drawYAxis(group, data, axis, i, differential) {
 
     // console.log('hello', group.size());
 }
-
-/**
- * Draw one Y axis for the overview on one visualization
- * @param group the d3 selection where the axis should be drawn
- * @param data the data to use
- * @param axis the axis to use
- * @param i the weekday index
- * @param differential how much to shift the y havue by
- */
-function drawYAxisOverview(group, data, axis, i, differential) {
-    let axisGroup = group.append('g')
-        .attr('class', 'yAxis')
-        .attr('id', i)
-        // .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
-        .attr('transform', translate(0, c.sub.margins.top));
-
-    axisGroup.call(axis);
-
-}
-
 /**
  * Draw the x axis for hours on one visualization
  * @param group the d3 selection where the axis should be drawn
@@ -579,57 +335,6 @@ function drawXAxis(group) {
 
     axisGroup.call(axes.hours);
 }
-
-/**
- * Draw the x axis for hours on one visualization's overview
- * @param group the d3 selection where the axis should be drawn
- */
-function drawXAxisOverview(group) {
-    let axisGroup = group.append('g')
-        .attr('class', 'xAxisOverview')
-        .attr('transform', translate(0, c.sub.margins.top + c.overviewPlot.height));
-    // .attr('transform', translate(   /))
-
-    axisGroup.call(axes.years);
-}
-
-/**
- * Draw some pesky text
- * @param group the group to draw it in
- */
-function drawOverviewText(group) {
-
-    // Overview title
-    group.append('text')
-        .text('Changes by Year')
-        .attr('class','visTitleMidi')
-        // .attr('id', subPlot_index)
-        .attr('x', 40)
-        .attr('y', -10);
-
-
-    // 'Incident Count'
-    let y_group = group.append('g')
-        // .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
-        .attr('transform', translate(-40, c.overviewPlot.height + 5))
-    y_group.append('text')
-        .text('Incident Count :')
-        .attr('class','axisTitle')
-        .attr('transform', 'rotate(270)')
-
-        // .attr('id', subPlot_index)
-        .attr('x', 0)
-        .attr('y', 0);
-
-    // 'Hour of day'
-    group.append('text')
-        .text('Year :')
-        .attr('class','axisTitle')
-        // .attr('id', subPlot_index)
-        .attr('x', -35)
-        .attr('y', c.overviewPlot.height + 20);
-}
-
 /**
  * Draw pesky text on one visualization
  * @param group the d3 selection of a group where the text should be written
@@ -683,7 +388,6 @@ function drawText(group, call_type) {
         .attr('x', 0)
         .attr('y', 0);
 }
-
 // Hover tooltip interactivity
 function enableHover() {
     let bars = d3.selectAll('rect.visBar');
@@ -724,46 +428,230 @@ function enableHover() {
     // Thank you Sophie Engle for this code
 }
 
-// /**
-//  * Enable brushing interactivity for one visualization
-//  * @param incident_type the type of incident
-//  */
-// function enableBrushing(incident_type) {
-//     let svg = d3.select(`svg.visualization#${incident_type}`);
-//
-//     let plot = svg.select('g.plot');
-//     let bars = plot.selectAll('rect.visBar');
-//
-//     let brush = d3.brush()
-//         .on("start.brush2 brush.brush2 end.brush2", brushed);
-//
-//     function brushed() {
-//         if (d3.event.selection) {
-//             const [[x0, y0], [x1, y1]] = d3.event.selection;
-//
-//             // show what we interacted with
-//             // d3.select(status).text("brush: " + d3.event.selection);
-//
-//             bars.classed("dim", function (d) {
-//                 let cx = +d3.select(this).attr("cx");
-//                 let cy = +d3.select(this).attr("cy");
-//                 return !(x0 <= cx && cx < x1 &&
-//                     y0 <= cy && cy < y1);
-//             });
-//         } else {
-//             d3.select(status).text("brush: none");
-//             bars.classed("dim", false);
-//         }
-//     }
-//
-//     // place brush BEHIND points so we still get pointer events
-//     svg.insert("g", ":first-child").attr("class", "brush").call(brush);
-//
-//
-//     // Thank you Sophie Engle for this code
-// }
+// Overview main method
+/**
+ * Draw the overviews
+ * @param call_type the call type to draw
+ * @param data the data to use to draw them
+ */
+function makeOverview(call_type, data) {
+    let coded_call_type = c.vis.call_type_ids[call_type];
+
+    let overview = d3.select(`svg.visualization#${coded_call_type}`).selectAll('g#overview');
+    // console.log('overview selection size', overview.size());
+    let overviewPlot = overview.append('g')
+        .attr('class', 'plotArea');
+    // console.log('overviewPlot selection size', overviewPlot.size(), call_type);
+
+    // console.log('data in makeOverview: ', data, call_type);
+
+    let processed_data = process_data_overview(data, call_type);
+    // console.log('processed_data in makeOverview', processed_data, call_type);
+
+    let selection = overviewPlot.selectAll('rect.visBar#overview')
+        .data(processed_data)
+        .enter();
+    // console.log('enter set size', call_type, selection.size());
+
+    selection.append('rect')
+        .attr('class', 'visBar overview')
+        .attr('id', d=>  d['Year'])
+        .attr('x', d => scales.year(d['Year']))
+        .attr('y', d => d.y_scaled)
+        .attr('width', d => scales.year.bandwidth())
+        .attr('height', d => d.zero_value - d.y_scaled)
+        .attr('fill', d => d.color);
+
+    // calculateMinMax(processed_data);
+
+    // Clean up data elements for tooltip's use later
+    for (let thing of processed_data) {
+        delete thing.y_scaled;
+        delete thing.zero_value;
+        delete thing.color;
+    }
+
+    let axisGOverview = overview.append('g')
+        .attr('class', 'overviewAxis');
+    drawXAxisOverview(axisGOverview);
+    drawYAxisOverview(axisGOverview, {}, axes.incidentsOverview[coded_call_type], 0, 0);
+
+    let overviewText = overview.append('g')
+        .attr('class', 'overviewText');
+    drawOverviewText(axisGOverview);
+
+    // Define brushing behavior
+    makeBrushing(coded_call_type);
+}
+
+// Overview extras
+/**
+ * Draw the x axis for hours on one visualization's overview
+ * @param group the d3 selection where the axis should be drawn
+ */
+function drawXAxisOverview(group) {
+    let axisGroup = group.append('g')
+        .attr('class', 'xAxisOverview')
+        .attr('transform', translate(0, c.sub.margins.top + c.overviewPlot.height));
+    // .attr('transform', translate(   /))
+
+    axisGroup.call(axes.years);
+}
+/**
+ * Draw one Y axis for the overview on one visualization
+ * @param group the d3 selection where the axis should be drawn
+ * @param data the data to use
+ * @param axis the axis to use
+ * @param i the weekday index
+ * @param differential how much to shift the y havue by
+ */
+function drawYAxisOverview(group, data, axis, i, differential) {
+    let axisGroup = group.append('g')
+        .attr('class', 'yAxis')
+        .attr('id', i)
+        // .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
+        .attr('transform', translate(0, c.sub.margins.top));
+
+    axisGroup.call(axis);
+
+}
+/**
+ * Draw some pesky text
+ * @param group the group to draw it in
+ */
+function drawOverviewText(group) {
+
+    // Overview title
+    group.append('text')
+        .text('Changes by Year')
+        .attr('class','visTitleMidi')
+        // .attr('id', subPlot_index)
+        .attr('x', 40)
+        .attr('y', -10);
 
 
+    // 'Incident Count'
+    let y_group = group.append('g')
+        // .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
+        .attr('transform', translate(-40, c.overviewPlot.height + 5))
+    y_group.append('text')
+        .text('Incident Count :')
+        .attr('class','axisTitle')
+        .attr('transform', 'rotate(270)')
+
+        // .attr('id', subPlot_index)
+        .attr('x', 0)
+        .attr('y', 0);
+
+    // 'Hour of day'
+    group.append('text')
+        .text('Year :')
+        .attr('class','axisTitle')
+        // .attr('id', subPlot_index)
+        .attr('x', -35)
+        .attr('y', c.overviewPlot.height + 20);
+}
+
+// Interactivity
+/**
+ * Enable brushing  interactivity
+ * @param call_type the call type to use
+ */
+function makeBrushing(call_type) {
+    let this_svg = d3.select(`svg.visualization#${call_type}`);
+    let this_overview = this_svg.select('g#overview');
+    // console.log(this_overview.size());
+    // Make a SVG for the focus chart
+    // const svg = d3.create("svg")
+    //     .attr("viewBox", [0, 0, width, focusHeight])
+    //     .style("display", "block");
+
+    let overviewBars = this_overview.selectAll('rect.visBar');
+
+    // Define the brush
+    const brush = d3.brushX()
+        // .extent([[margin.left, 0.5], [width - margin.right, focusHeight - margin.bottom + 0.5]])
+        .extent([[0,0], [c.overviewPlot.width, c.overviewPlot.height]])
+        .on("brush", brushed)
+        .on("end", brushended);
+    // console.log('extent', [0,0], [c.overviewPlot.width, c.overviewPlot.height])
+
+    // Some sort of selection
+    // const defaultSelection = [x(d3.utcYear.offset(x.domain()[1], -1)),        x.range()[1]];
+    const defaultSelection = [scales.year.range()[0], scales.year.range()[1]];
+    // console.log('defaultSelection', defaultSelection);
+
+    // Draw the x axis
+    // svg.append("g")
+    //     .call(xAxis, x, focusHeight);
+
+    // Draw the area
+    // svg.append("path")
+    //     .datum(data)
+    //     .attr("fill", "steelblue")
+    //     .attr("d", area(x, y.copy().range([focusHeight - margin.bottom, 4])));
+
+    // Make the brush?
+    const gb = this_overview.append("g")
+        .attr('class', 'brushThing')
+        // .attr('x', 0)
+        // .attr('y', 0)
+        // .attr('width', c.overviewPlot.width)
+        // .attr('height', c.overviewPlot.height)
+        // .attr("viewBox", [0, 0, c.overviewPlot.width, c.overviewPlot.height])
+        .call(brush)
+        .call(brush.move, defaultSelection);
+
+    // Some functions
+    function brushed() {
+        if (d3.event.selection) {
+            const [x0, x1] = d3.event.selection;
+            // console.log('brushed, selection is', x0, x1);
+
+            overviewBars.classed('dim', function(d) {
+                let this_bar = d3.select(this);
+                let cx = (+(this_bar.attr('x')) + ((+this_bar.attr('width')) / 2));
+                // console.log('me x cx', this_bar.attr('x'), cx);
+                return !(cx < x1 && cx > x0);
+            });
+        }
+    }
+
+    function brushended() {
+        console.log('brushended');
+        if (!d3.event.selection) {
+            gb.call(brush.move, defaultSelection);
+        }
+
+        const [x0, x1] = d3.event.selection;
+
+        // Calculate which years to include
+        let allowed_years = [];
+        overviewBars.each(function(d) {
+            let this_bar = d3.select(this);
+            let cx = (+(this_bar.attr('x')) + ((+this_bar.attr('width')) / 2));
+
+            if (cx < x1 && cx > x0) {
+                allowed_years.push(this_bar.attr('id'));
+            }
+        });
+
+        refreshVis(call_type, allowed_years);
+    }
+}
+/**
+ * Redraw a visualization with new data
+ * @param call_type the call type to redraw
+ * @param allowed_years the set of data to include
+ */
+function refreshVis(call_type, allowed_years) {
+    // let agg = aggregateData(data);
+    // console.log('agg', agg);
+
+    // TODO figure out how this will work
+}
+
+// Data organizers, converters
 /**
  * Convert a csv row to a row of data for the visualization
  * @param row the raw row of data from the csv file
@@ -772,7 +660,6 @@ function enableHover() {
 function rowConverter(row) {
     return row;
 }
-
 /**
  * Take long data and make it into a more organized format
  * @param data the long data
@@ -807,7 +694,63 @@ function organize(data) {
 
     return organized;
 }
+/**
+ * Process the data for an overview into the data for its bars
+ * @param data all data to use
+ * @param incident the incident type
+ */
+function process_data_overview(data, incident) {
+    let coded_incident = c.vis.call_type_ids[incident];
+    let year_org = {};
+    let year_data = [];
 
+    for (let weekday in data) {
+
+        for (let hour in data[weekday]) {
+
+            for (let thing of data[weekday][hour]) {
+                let year = thing['Year of Entry Date and Time'];
+
+                // Make sure the organized data has an object for this year
+                if (! (year in year_org))
+                    year_org[year] = [];
+                // let  = organized[type];
+
+                year_org[year].push(thing);
+            }
+        }
+    }
+
+    for (let year in year_org) {
+        let incident_count = 0;
+        let total_time = 0.0;
+        for (let thing of year_org[year]) {
+            let incidents = parseInt(thing['Number of Records']);
+            incident_count += incidents;
+            total_time += parseFloat(thing['Avg. Processing Minutes']) * incidents;
+        }
+        let avg_prep_time = total_time / incident_count;
+
+        let y_scaled = scales.incidentsOverview[coded_incident](incident_count);
+        let zero_value = scales.incidentsOverview[coded_incident](0);
+        let color = scales.color[coded_incident](avg_prep_time);
+        year_data.push({
+            'Incident Count': incident_count,
+            'Avg. Prep. Time': `${avg_prep_time.toFixed(2)} mins`,
+            'Year': year,
+            'Incident Type': incident,
+            y_scaled: y_scaled,     // TODO fix
+            zero_value: zero_value, // TODO fix
+            color: color
+        });
+    }
+
+    // Finish scales
+    // console.log(Object.keys(year_org) );
+    scales.year.domain(Object.keys(year_org));
+
+    return year_data;
+}
 /**
  * Aggregate a given subset of data, and calculate max and min values for incident count and avg. prep. time
  * @param data the data to average
@@ -890,19 +833,87 @@ function aggregateData(data) {
     return answer;
 }
 
+// Run the show!
 prepVis();
 
+// Sophie's helper methods
 /**
  * Sophie's helpful helper method to make translating easier. Thank you, Sophie!
  */
 function translate(x, y) {
     return 'translate(' + x + ',' + y + ')';
 }
-
 /**
  * Calculates the midpoint of a range given as a 2 element array
  * @source Sophie! Thank you.
  */
 function midpoint(range) {
     return range[0] + (range[1] - range[0]) / 2.0;
+}
+
+
+// Junk
+// /**
+//  * Enable brushing interactivity for one visualization
+//  * @param incident_type the type of incident
+//  */
+// function enableBrushing(incident_type) {
+//     let svg = d3.select(`svg.visualization#${incident_type}`);
+//
+//     let plot = svg.select('g.plot');
+//     let bars = plot.selectAll('rect.visBar');
+//
+//     let brush = d3.brush()
+//         .on("start.brush2 brush.brush2 end.brush2", brushed);
+//
+//     function brushed() {
+//         if (d3.event.selection) {
+//             const [[x0, y0], [x1, y1]] = d3.event.selection;
+//
+//             // show what we interacted with
+//             // d3.select(status).text("brush: " + d3.event.selection);
+//
+//             bars.classed("dim", function (d) {
+//                 let cx = +d3.select(this).attr("cx");
+//                 let cy = +d3.select(this).attr("cy");
+//                 return !(x0 <= cx && cx < x1 &&
+//                     y0 <= cy && cy < y1);
+//             });
+//         } else {
+//             d3.select(status).text("brush: none");
+//             bars.classed("dim", false);
+//         }
+//     }
+//
+//     // place brush BEHIND points so we still get pointer events
+//     svg.insert("g", ":first-child").attr("class", "brush").call(brush);
+//
+//
+//     // Thank you Sophie Engle for this code
+// }
+/**
+ * Calculate the min and max overview values
+ * @param processed_data the data to calculate from
+ */
+function calculateMinMax(processed_data) {
+    let minInc = 1000000000;
+    let maxInc = 0;
+    let minTime = 10000000000.0;
+    let maxTime = 0.0;
+    for (let thingy of processed_data) {
+        // Update the min/max records
+        if (thingy['Incident Count'] < minInc) {
+            minInc = thingy['Incident Count'];
+        } else if (thingy['Incident Count'] > maxInc) {
+            maxInc = thingy['Incident Count'];
+        }
+
+        if (thingy['Avg. Prep. Time'] < minTime) {
+            minTime = thingy['Avg. Prep. Time'];
+        } else if (thingy['Avg. Prep. Time'] > maxTime) {
+            maxTime = thingy['Avg. Prep. Time'];
+        }
+    }
+
+    console.log('max and min are', minTime, maxTime, minInc, maxInc);
 }
