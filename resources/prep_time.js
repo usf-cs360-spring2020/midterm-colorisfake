@@ -602,8 +602,6 @@ function makeBrushing(call_type) {
 
         refreshVis(call_type, allowed_years);
     }
-
-    // Thank you https://observablehq.com/@d3/focus-context for inspiration
 }
 /**
  * Redraw a visualization with new data

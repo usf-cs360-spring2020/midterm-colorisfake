@@ -137,65 +137,82 @@
       <!-- Begin page content -->
       <div class="content">
 
+        <h2>Visualizations</h2>
+        <p>
+          In my visualizations, I chose to focus on 'preparation time': how long it takes fire department units to prepare for a call, or the difference between when a call is sent from a 911 dispatcher (dispatch time) and when the unit leaves the station (response time).
+          I focus on three of the most common types of incidents - medical incidents, structure fires, and traffic collisions - and only on the preparation time for the first response vehicle dispatched to any given call.
+        </p>
+        <p>
+          For each, I separate the data by weekday and hour of the day, then calculate the average preparation time for all matching responses.
+          Average preparation time is encoded as color, and the number of matching responses is encoded as the height of the bar.
+        </p>
+        <p>
+          So, <strong>higher bars</strong> represent higher call volumes at a given time on a given weekday.
+          <strong>Darker bars</strong> represent a longer preparation time during that same interval.
+        </p>
 
-        <svg class="visualization" id="fire"></svg>
-        <svg class="visualization" id="medical"></svg>
-        <svg class="visualization" id="traffic"></svg>
+        <h3>Interactivity</h3>
+        <p>Each of these visualizations has two types of interactivity: data-on-demand hover tooltip and overview + detail brushing.</p>
+        <p>
+          The user can hover their cursor over any bar (including in the overview) to view more detailed information about the data it represents.
+        </p>
+        <p>
+          The user can also adjust which years the visualization is including data from.
+          Move the edges of the overview plot's brushed area by clicking and dragging, then release to update the main plot.
+        </p>
+
+        <svg class="visualization" id="fire"></svg><br><br>
+        <svg class="visualization" id="medical"></svg><br><br>
+        <svg class="visualization" id="traffic"></svg><br><br>
         <script src="resources/prep_time.js"></script>
 
-<!--        <h2>Visualization Prototypes</h2>-->
-<!--        <p>-->
-<!--          In my visualizations, I chose to focus on 'processing time': how long it takes fire department units to prepare for a call, or the difference between when a call is sent from a 911 dispatcher (dispatch time) and when the unit leaves the station (response time).-->
-<!--          I focus on two of the most common types of incidents, medical and structure fires, and on only the processing time for the first response vehicle to any given call.-->
-<!--        </p>-->
-<!--        <p>-->
-<!--          For each, I separate the data by weekday and hour of the day, then calculate the average processing time for all matching responses.-->
-<!--          Average processing time is encoded as color, and the number of matching responses is encoded as the height of the bar.-->
-<!--        </p>-->
-<!--        <p>-->
-<!--          (Prototypes created in Tableau)-->
-<!--        </p>-->
-<!--        <img src="resources/Eve-Prototype-Fire.png" height="1125" width="900"/>-->
-<!--        <img src="resources/Eve-Prototype-Medical.png" height="1125" width="900"/>-->
-
-<!--        <h3>Relevance to Overall Theme</h3>-->
-<!--        <p>-->
-<!--          Examining the processing time at different times during the week shows discrepancies in how efficiently the system is able to respond to different incidents.-->
-<!--          The visualizations show that the fire department is more or less prepared to send help to where it's needed depending on what time of day and what day of the week it is.-->
-<!--          Many of these times when processing times are higher happen during periods of the week when fewer incidents take place, but some have high rates of incidents AND high average processing time (such as medical incidents at 2AM on Saturday and Sunday).-->
-<!--          This demonstrates times when the fire department is less effective for the people who need it then.-->
-<!--&lt;!&ndash;          Unfortunately, we can't decide when to have medical emergencies or when buildings should catch fire.&ndash;&gt;-->
-
-<!--        </p>-->
-
-<!--        <h3>Planned Interactivity</h3>-->
-<!--        <p>My primary interactivity I plan to implement will be data-on-demand in the form of a tooltip.-->
-<!--          Hovering over any bar will show the specific incident count and average processing time for that day and hour.</p>-->
-<!--        <p>I will also add an overview below each visualization that shows how the overall average has changed overtime.-->
-<!--        Brushing on overview will change which years are displayed on the main visualization.</p>-->
-<!--        <p>I will also add checkboxes to select which neighborhoods are displayed, so users can explore the data specific to the areas they care most about. </p>-->
-<!--        <img src="resources/Eve-Prototype-Medical-Overview.png" height="300" width="900"/>-->
-
-<!--        <h3>Data Wrangling</h3>-->
-<!--        <p>I did all data wrangling in Tableau after simply importing the whole dataset. I added a calculated "processing time" field defined as the call response time minus the call dispatch time.</p>-->
-<!--        <p>For both visualizations, I also did the following filtering:</p>-->
-<!--          <ul>-->
-<!--            <li>Remove responses with "unit sequence" greater than 1, to show only the first responses, not any subsequent responses to the same call.</li>-->
-<!--            <li>Remove responses from years with incomplete data (2000 and 2020)</li>-->
-<!--            <li>Remove responses with call types other than the relevant one (medical incident or structure fire).</li>-->
-<!--            <li>Remove responses with unusually long processing times (above an hour). These were rare and I considered them outliers.</li>-->
-<!--          </ul>-->
+        <h3>Findings and Relevance to Overall Theme</h3>
+        <p>
+          Examining the processing time at different times during the week shows discrepancies in how efficiently the system is able to respond to different incidents.
+          The visualizations show that the fire department is more or less prepared to send help to where it's needed depending on what time of day and what day of the week it is.
+        </p>
+        <p>
+          Many of these times when processing times are higher happen during periods of the week when fewer incidents take place, but some have high rates of incidents AND high average processing time (such as medical incidents at 2AM on Saturday and Sunday).
+          This demonstrates times when the fire department is less effective for the people who need it then.
+        </p>
+        <p>
+          On the other hand, exploring the data using the detail + overview interactivity reveals that the SF Fire Department's preparation times have decreased over the past two decades, despite rising call volumes.
+          Especially for Medical incidents, today the system has a lower average preparation time than twenty years ago, which is a good thing for San Franciscans and worth celebrating!
+        </p>
 
         <h3>Data Wrangling</h3>
-        <p>After loading the entire dataset (downloaded February 20, 2020. 35 columns and 5210953 rows) into Tableau, worksheet created for each visualization (based on data downloaded in February 2020) into Tableau I created a prototype worksheet for each visualization I planned.
-          They were each created as follows:</p>
+        <p>After loading the entire dataset (downloaded February 20, 2020: 35 columns and 5210953 rows) into Tableau, worksheet created for each visualization (based on data downloaded in February 2020) into Tableau, I created a worksheet to export the data I needed for my final visualization.
+          It was created as follows:</p>
         <ul>
-          <li></li>
-    <!--      TODO fill out-->
+          <li>Filtered by Call Type : removed all but "Medical Incident", "Structure Fire", and "Traffic Collision".</li>
+          <li>Filtered by Year of Entry Date and Time : removed 2000 and 2020 </li>
+          <li>Filtered by Unit Sequence in Call Dispatch : kept only 1</li>
+          <li>Filtered by Processing Minutes (Response Date and Time minus Dispatch Date and Time) : kept only 0 to 60</li>
+          <li>Filtered by Neighborhood : removed "none"</li>
+          <li>Added Hour of Entry Date and Time as a column</li>
+          <li>Added rows in the following order: Call Type, Year of Entry Date and Time, Weekday of Entry Date and Time, Sum of Number of Records</li>
+          <li>Added Average of Processing Minutes as a mark for color.</li>
         </ul>
 
-          , I exported the data used by tableau for that worksheet, and saved it as a file onto my computer.
-          I used Sublime Text to convert the file from tab-separated-value format to comma-separated-value. Next, I opened the file in Microsoft Excel, then saved it back as a .csv file to fix its text encoding. Finally, I opened the csv file in Atom and used it to convert from carriage return line format to standard unix line format.
+        <p>I then exported the data used by tableau for that worksheet (Worksheet > Export > Data), and saved it as a file onto my computer.
+          I used Sublime Text to convert the file from tab-separated-value format to comma-separated-value.
+          Next, I opened the file in Microsoft Excel, then saved it back as a .csv file to fix its text encoding.
+          Finally, I opened the csv file in Atom and used it to convert from carriage return line format to standard unix line format.</p>
+
+        <p>Once I had the data in a format to add to d3, I did further wrangling with Javascript to filter by year, depending on the brushing performed by the user. This gets re-run each time the user brushes on the overview of a visualization.</p>
+
+
+        <h3>Inspirations</h3>
+        <p>
+          I was inspired by <a href="https://observablehq.com/@d3/focus-context">Mike Bostocks's Focus + Context example</a> for my the brushed overview interactivity.
+        </p>
+        <p>
+          I used Professor Sophie Engles lectures and examples extensively for reference.
+        </p>
+        <p>
+          I used <a href="https://d3-legend.susielu.com">Susie Lu's D3 Legend package.</a>
+        </p>
+        <p></p>
       </div>
       <!-- End page content -->
     </div>

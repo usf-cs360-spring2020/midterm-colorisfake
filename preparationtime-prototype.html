@@ -135,6 +135,10 @@
           Average preparation time is encoded as color, and the number of matching responses is encoded as the height of the bar.
         </p>
         <p>
+          So, <em>higher bars</em> represent higher call volumes at a given time on a given weekday.
+          <em>Darker bars</em> represent a longer preparation time during that same interval.
+        </p>
+        <p>
           (Prototypes created in Tableau)
         </p>
         <img src="resources/Eve-Prototype-Fire.png" height="1125" width="900"/>
@@ -146,9 +150,15 @@
           The visualizations show that the fire department is more or less prepared to send help to where it's needed depending on what time of day and what day of the week it is.
           Many of these times when preparation times are higher happen during periods of the week when fewer incidents take place, but some have high rates of incidents AND high average preparation time (such as medical incidents at 2AM on Saturday and Sunday).
           This demonstrates times when the fire department is less effective for the people who need it then.
-<!--          Unfortunately, we can't decide when to have medical emergencies or when buildings should catch fire.-->
-
         </p>
+
+        <h3>Peer Feedback (Updated)</h3>
+        <p>Peer feedback was very helpful! Based on suggestions from classmates, I made the following changes:</p>
+        <ul>
+          <li>I changed the color scale used between the different visualizations, to differentiate them.</li>
+          <li>I used color schemes for each visualization that remind people of the type of incident they focus on.</li>
+          <li>I added a tooltip for data-on-demand interactivity so users can see the raw values being visualized.</li>
+        </ul>
 
         <h3>Planned Interactivity</h3>
         <p>My primary interactivity I plan to implement will be data-on-demand in the form of a tooltip.
@@ -156,6 +166,10 @@
         <p>I will also add an overview below each visualization that shows how the overall average has changed overtime.
         Brushing on overview will change which years are displayed on the main visualization.</p>
         <p>I will also add checkboxes to select which neighborhoods are displayed, so users can explore the data specific to the areas they care most about. </p>
+        <p>
+          <em>Update:</em> I did not implement this neighborhood selection interactivity, because that would have resulted in too large of a dataset.
+          I had to prioritize smooth interaction and fast loading times instead.
+        </p>
         <img src="resources/Eve-Prototype-Medical-Overview.png" height="300" width="900"/>
 
         <h3>Data Wrangling</h3>
