@@ -62,13 +62,32 @@ let weekday_names = {
  * @param data the data to use to draw them
  */
 function makeOverview(call_type, data) {
-    let overviews = d3.selectAll('svg.visualization').selectAll('g#overview');
+    let coded_call_type = c.vis.call_type_ids[call_type];
 
-    console.log('data in makeOverview: ', data);
+    let overview = d3.select(`svg.visualization#${coded_call_type}`).selectAll('g#overview');
+    // console.log('overview selection size', overview.size());
+    let overviewPlot = overview.append('g');
+    console.log('overviewPlot selection size', overviewPlot.size(), call_type);
+
+    // console.log('data in makeOverview: ', data, call_type);
 
     let processed_data = process_data_overview(data, call_type);
-    console.log('processed_data in makeOverview', processed_data);
+    console.log('processed_data in makeOverview', processed_data, call_type);
 
+    let selection = overviewPlot.selectAll('rect.bar')
+        .data(processed_data)
+        .enter();
+    console.log('enter set size', call_type, selection.size());
+
+    selection.append('rect')
+        .attr('class', 'bar')
+        .attr('x', d => scales.year(d['Year']))
+        .attr('y', d => d.y_scaled)
+        .attr('width', d => scales.year.bandwidth())
+        .attr('height', d => d.zero_value - d.y_scaled)
+        .attr('fill', d => d.color);
+
+    console.log('finished');
 }
 
 /**
@@ -77,7 +96,9 @@ function makeOverview(call_type, data) {
  * @param incident the incident type
  */
 function process_data_overview(data, incident) {
+    let coded_incident = c.vis.call_type_ids[incident];
     let year_org = {};
+    let year_data = [];
 
     for (let weekday in data) {
 
@@ -104,20 +125,27 @@ function process_data_overview(data, incident) {
             incident_count += incidents;
             total_time += parseFloat(thing['Avg. Processing Minutes']) * incidents;
         }
-
         let avg_prep_time = total_time / incident_count;
-        year_org[year] = {
+
+        let y_scaled = scales.incidentsOverview[coded_incident](incident_count);
+        let zero_value = scales.incidentsOverview[coded_incident](0);
+        let color = scales.color[coded_incident](avg_prep_time);
+        year_data.push({
             'Incident Count': incident_count,
-            'Avg. Prep. Time  ': `${avg_prep_time.toFixed(2)} mins`,
+            'Avg. Prep. Time': `${avg_prep_time.toFixed(2)} mins`,
             'Year': year,
             'Incident Type': incident,
-            // y_scaled: y_scaled, // TODO scaled values here
-            // zero_value: zero_value, // TODO scaled values here
-            // color: color        // TODO scaled values here
-        };
+            y_scaled: y_scaled, // TODO scaled values here
+            zero_value: zero_value, // TODO scaled values here
+            color: color        // TODO scaled values here
+        });
     }
 
-    return year_org;
+    // Finish scales
+    // console.log(Object.keys(year_org) );
+    scales.year.domain(Object.keys(year_org));
+
+    return year_data;
 }
 
 /**
@@ -199,12 +227,31 @@ function prepVis() {
         .range([c.sub.height,0])
         .domain([-15,900]);
 
+    scales.incidentsOverview = {};
+    scales.incidentsOverview['fire'] = d3.scaleLinear()
+        .range([c.sub.height,0])
+        .domain([-20,1426]);
+    scales.incidentsOverview['medical'] = d3.scaleLinear()
+        .range([c.sub.height,0])
+        .domain([-200,13237]);
+    scales.incidentsOverview['traffic'] = d3.scaleLinear()
+        .range([c.sub.height,0])
+        .domain([-15,900]);
+
     scales.color = {};
     scales.color['fire'] = d3.scaleSequential(d3.interpolateOranges)
         .domain([0.8862924282193209, 1.84355555554]);
     scales.color['medical'] = d3.scaleSequential(d3.interpolateBlues)
         .domain([0.8608115115257102, 1.5448774151841203]);
     scales.color['traffic'] = d3.scaleSequential(d3.interpolateGreys)
+        .domain([0.8386801541069366, 1.8966183574492759]);
+
+    scales.colorOverview = {};
+    scales.colorOverview['fire'] = d3.scaleSequential(d3.interpolateOranges)
+        .domain([0.8862924282193209, 1.84355555554]);
+    scales.colorOverview['medical'] = d3.scaleSequential(d3.interpolateBlues)
+        .domain([0.8608115115257102, 1.5448774151841203]);
+    scales.colorOverview['traffic'] = d3.scaleSequential(d3.interpolateGreys)
         .domain([0.8386801541069366, 1.8966183574492759]);
 
     // Make some axes
