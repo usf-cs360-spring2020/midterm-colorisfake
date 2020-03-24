@@ -218,11 +218,11 @@ function prepVis() {
         .attr('width', c.plot.width)
         .attr('height', c.plot.height);
     // Make some test rectangles
-    plot.append('rect')
-        .attr('width', c.plot.width)
-        .attr('height', c.plot.height)
-        .style('fill', 'yellow')
-        .style('fill-opacity', .2);
+    // plot.append('rect')
+    //     .attr('width', c.plot.width)
+    //     .attr('height', c.plot.height)
+    //     .style('fill', 'yellow')
+    //     .style('fill-opacity', .2);
 
 
     // Setup the axes area
@@ -243,11 +243,11 @@ function prepVis() {
         .attr('width', c.overviewPlot.width)
         .attr('height', c.overviewPlot.height);
     // Test rectangles
-    overviews.append('rect')
-        .attr('width', c.overviewPlot.width)
-        .attr('height', c.overviewPlot.height)
-        .attr('fill', 'green')
-        .attr('fill-opacity', 0.3);
+    // overviews.append('rect')
+    //     .attr('width', c.overviewPlot.width)
+    //     .attr('height', c.overviewPlot.height)
+    //     .attr('fill', 'green')
+    //     .attr('fill-opacity', 0.3);
 
     // Make the scales
     scales.hour = d3.scaleBand()
@@ -283,11 +283,11 @@ function prepVis() {
 
     scales.color = {};
     scales.color['fire'] = d3.scaleSequential(d3.interpolateOranges)
-        .domain([0.8862924282193209, 1.84355555554]);
+        .domain([0.5, 1.84355555554]);
     scales.color['medical'] = d3.scaleSequential(d3.interpolateBlues)
-        .domain([0.8608115115257102, 1.5448774151841203]);
+        .domain([0.5, 1.5448774151841203]);
     scales.color['traffic'] = d3.scaleSequential(d3.interpolateGreys)
-        .domain([0.8386801541069366, 1.8966183574492759]);
+        .domain([0.5, 1.8966183574492759]);
 
     // Make some axes
     axes.incidents = {};
@@ -400,11 +400,11 @@ function drawVis(call_type, data) {
             .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
 
         // Make a test rectangle for each weekday subplot
-        let test = sub.append('rect')
-            .attr('width', c.sub.width)
-            .attr('height', c.sub.height)
-            .attr('fill', 'red')
-            .attr('fill-opacity', 0.3);
+        // let test = sub.append('rect')
+        //     .attr('width', c.sub.width)
+        //     .attr('height', c.sub.height)
+        //     .attr('fill', 'red')
+        //     .attr('fill-opacity', 0.3);
 
         // Draw y axis
         drawYAxis(axisG, weekday_data, axis, i, differential);
@@ -642,6 +642,46 @@ function enableHover() {
         d3.selectAll("div#details").remove();
         // d3.select(status).text("hover: none");
     });
+
+    // Thank you Sophie Engle for this code
+}
+
+/**
+ * Enable brushing interactivity
+ */
+function enableBrushing() {
+    const svg = d3.selectAll('svg');
+
+    // used to test out interactivity in this cell
+    // const status = html`<code>brush: none</code>`;
+
+    let brush = d3.brush()
+        .on("start.brush2 brush.brush2 end.brush2", brushed);
+
+    function brushed() {
+        if (d3.event.selection) {
+            const [[x0, y0], [x1, y1]] = d3.event.selection;
+
+            // show what we interacted with
+            d3.select(status).text("brush: " + d3.event.selection);
+
+            circles.classed("dim", function(d) {
+                let cx = +d3.select(this).attr("cx");
+                let cy = +d3.select(this).attr("cy");
+                return !(x0 <= cx && cx < x1 &&
+                    y0 <= cy && cy < y1);
+            });
+        }
+        else {
+            d3.select(status).text("brush: none");
+            circles.classed("dim", false);
+        }
+    }
+
+    // place brush BEHIND points so we still get pointer events
+    svg.insert("g", ":first-child").attr("class", "brush").call(brush);
+
+    // Thank you Sophie Engle for this code
 }
 
 

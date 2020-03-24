@@ -110,3 +110,8 @@ table, .tooltip {
 .axisTitleBigger {
     font-size: 14pt;
 }
+
+/* Used for Sophie's brushing */
+.dim {
+    fill-opacity: 0.3;
+}
