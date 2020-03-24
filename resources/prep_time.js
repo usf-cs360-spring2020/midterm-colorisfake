@@ -721,22 +721,30 @@ function refreshVis(call_type, allowed_years) {
         let aggregated_new = aggregated_refresh.data[decoded_call_type][weekday];
         let selection = sub.selectAll('rect.visBar')
             .data(aggregated_new);
-        console.log('update set size', selection.size());
-        selection.each(function (d) {
-            console.log('update thing is d', d);
-        });
+        // console.log('update set size', selection.size());
+        console.log('update selection', selection);
+        selection.attr('height', d => d.zero_value - d.y_scaled)
+            // .attr('width', scales.hour.bandwidth())
+            .attr('fill', d => d.color)
+            .attr('y', d => d.y_scaled);
 
-        selection.enter();
-        console.log('enter set size', selection.size());
-        selection.each(function (d) {
-            console.log('enter thing is d', d);
-        });
 
-        selection.exit();
-        console.log('exit set size', selection.size());
-        selection.each(function (d) {
-            console.log('exit thing is d', d);
-        });
+        // selection.each(function (d) {
+        //     console.log('update thing is d', d);
+        //     // console.log('select thing is', d3.select(d));
+        // });
+
+        // selection.enter();
+        // console.log('enter set size', selection.size());
+        // selection.each(function (d) {
+        //     console.log('enter thing is d', d);
+        // });
+        //
+        // selection.exit();
+        // console.log('exit set size', selection.size());
+        // selection.each(function (d) {
+        //     console.log('exit thing is d', d);
+        // });
 
             // .append('rect')
             // .attr('class', 'visBar')
