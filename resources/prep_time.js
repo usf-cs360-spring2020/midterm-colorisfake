@@ -623,7 +623,7 @@ function makeBrushing(call_type) {
     }
 
     function brushended() {
-        console.log('brushended');
+        // console.log('brushended');
         if (!d3.event.selection) {
             gb.call(brush.move, defaultSelection);
         }
@@ -686,8 +686,6 @@ function refreshVis(call_type, allowed_years) {
     // console.log('aggregated in refresh', aggregated_refresh);
     // Data is changed now!
 
-    // TODO figure out how this will work
-
     // TODO Refresh scales
     // scales.color[call_type].domain()
 
@@ -721,38 +719,11 @@ function refreshVis(call_type, allowed_years) {
         let aggregated_new = aggregated_refresh.data[decoded_call_type][weekday];
         let selection = sub.selectAll('rect.visBar')
             .data(aggregated_new);
-        // console.log('update set size', selection.size());
-        console.log('update selection', selection);
-        selection.attr('height', d => d.zero_value - d.y_scaled)
+        selection.transition()
+            .attr('height', d => d.zero_value - d.y_scaled)
             // .attr('width', scales.hour.bandwidth())
             .attr('fill', d => d.color)
             .attr('y', d => d.y_scaled);
-
-
-        // selection.each(function (d) {
-        //     console.log('update thing is d', d);
-        //     // console.log('select thing is', d3.select(d));
-        // });
-
-        // selection.enter();
-        // console.log('enter set size', selection.size());
-        // selection.each(function (d) {
-        //     console.log('enter thing is d', d);
-        // });
-        //
-        // selection.exit();
-        // console.log('exit set size', selection.size());
-        // selection.each(function (d) {
-        //     console.log('exit thing is d', d);
-        // });
-
-            // .append('rect')
-            // .attr('class', 'visBar')
-            // .attr('height', d => d.zero_value - d.y_scaled)
-            // .attr('width', scales.hour.bandwidth())
-            // .attr('fill', d => d.color)
-            // .attr('x', d => scales.hour(d['Hour']))
-            // .attr('y', d => d.y_scaled);
 
         // Clean up data elements for tooltip's use later
         for (let thing of aggregated_new) {
