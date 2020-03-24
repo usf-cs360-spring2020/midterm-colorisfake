@@ -430,6 +430,9 @@ function drawVis(call_type, data) {
 
     // Draw x axis
     drawXAxis(axisG);
+
+    // Draw some pesky text
+    drawText(this_svg.select('g#text'), call_type);
 }
 
 /**
@@ -491,9 +494,67 @@ function drawXAxisOverview(group) {
 /**
  * Draw pesky text on one visualization
  * @param group the d3 selection of a group where the text should be written
+ * @param call_type the type of call
  */
-function drawText(group) {
+function drawText(group, call_type) {
+    let title = `Incident Volume and Average`;
+    let title2 = `Prep. Time for ${call_type}s`;
 
+    // let titlesG = group.append('g#title');
+
+    // Vis title
+    group.append('text')
+        .text(title)
+        .attr('class','visTitle')
+        // .attr('id', subPlot_index)
+        .attr('x', 30)
+        .attr('y', 50);
+    group.append('text')
+        .text(title2)
+        .attr('class','visTitle')
+        // .attr('id', subPlot_index)
+        .attr('x', 30)
+        .attr('y', 50+35);
+
+    // 'Hour of day'
+    group.append('text')
+        .text('Hour of Day :')
+        .attr('class','axisTitle')
+        // .attr('id', subPlot_index)
+        .attr('x', c.svg.pad.left + 77)
+        .attr('y', c.svg.pad.top + c.plot.height + 22);
+
+    // Weekday
+    group.append('text')
+        .text('Weekday')
+        .attr('class','axisTitleBigger')
+        // .attr('id', subPlot_index)
+        .attr('x', c.svg.pad.left + 5 )
+        .attr('y', c.svg.pad.top - 5);
+
+    // 'Incident Count'
+    let y_group = group.append('g')
+        .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
+    y_group.append('text')
+        .text('Incident Count :')
+        .attr('class','axisTitle')
+        .attr('transform', 'rotate(270)')
+
+        // .attr('id', subPlot_index)
+        .attr('x', 0)
+        .attr('y', 0);
+
+    // Y axes label
+    // let y_group = titlesG.append('g')
+    //     .attr('transform', translate(config.sub.x(subPlot_index), config.sub.y(subPlot_index)));
+    // let y_label = y_group.append('text')
+    //     .text('% of kids in income quintile')
+    //     .attr('class', 'y_label')
+    //     .attr('id', subPlot_index)
+    //     .attr('text-anchor', 'middle')
+    //     .attr('transform', 'rotate(270)')
+    //     .attr('y', 15)
+    //     .attr('x', -middle_y);
 }
 
 // Hover tooltip interactivity
