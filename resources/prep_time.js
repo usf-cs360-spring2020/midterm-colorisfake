@@ -211,9 +211,11 @@ function drawVis(call_type, data) {
     let axisG = this_svg.select('g#axes');
     let axis = axes.incidents[call_type_name];
 
+    // Aggregate the data newly
     let datathingthisisdumb = {};
     datathingthisisdumb[call_type] = data;
-    console.log(aggregateData(datathingthisisdumb));
+    let aggregated = aggregateData(datathingthisisdumb).data;
+    console.log('aggregated', aggregated);
 
     // Draw a subplot for each weekday
     let i = 0;
@@ -231,10 +233,6 @@ function drawVis(call_type, data) {
             .attr('height', c.sub.height)
             // .attr('y', differential)
             .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
-
-        // Draw y axis
-        drawYAxis(axisG, weekday_data, axis, i, differential);
-
         differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
         i += 1;
 
@@ -245,41 +243,11 @@ function drawVis(call_type, data) {
             .attr('fill', 'red')
             .attr('fill-opacity', 0.3);
 
-        // Loop though each hour, create a data element for each
-        let aggregate = [];
-        for (let hour in weekday_data) {
-            let hour_data = weekday_data[hour];
-
-            // Calculate incident count and average preparation time
-            let incident_count = 0;
-            let total_time = 0.0;
-            hour_data.forEach(function(row) {
-                let incidents = parseInt(row['Number of Records']);
-                incident_count += incidents;
-                total_time += parseFloat(row['Avg. Processing Minutes']) * incidents;
-            });
-            let avg_prep_time = total_time / incident_count;
-
-            // Calculate info for the bar
-            let y_scaled = scales.incidents[call_type_name](incident_count);
-            let zero_value = scales.incidents[call_type_name](0);
-            let color = scales.color[call_type_name](avg_prep_time);
-
-            // Make a data element for the bar
-            let aggregated_hour_data = {
-                'Incident Count': incident_count,
-                'Avg. Prep. Time  ': `${avg_prep_time.toFixed(2)} mins`,
-                'Hour': hour,
-                'Weekday': weekday,
-                'Incident Type' : call_type,
-                y_scaled : y_scaled,
-                zero_value : zero_value,
-                color : color
-            };
-            aggregate.push(aggregated_hour_data);
-        }
+        // Draw y axis
+        drawYAxis(axisG, weekday_data, axis, i, differential);
 
         // Append rectangles!
+        let aggregate = aggregated[call_type][weekday];
         let selection = sub.selectAll('rect.visBar')
             .data(aggregate)
             .enter()
@@ -291,7 +259,7 @@ function drawVis(call_type, data) {
             .attr('x', d => scales.hour(d['Hour']))
             .attr('y', d => d.y_scaled);
 
-        // Clean up for tooltip
+        // Clean up data elements for tooltip's use later
         for (let thing of aggregate) {
             delete thing.y_scaled;
             delete thing.zero_value;
@@ -440,31 +408,35 @@ function organize(data) {
 /**
  * Aggregate a given subset of data, and calculate max and min values for incident count and avg. prep. time
  * @param data the data to average
- * @return the aggregated data, as well as max and mins
+ * @return Object aggregated data, as well as max and mins
  */
 function aggregateData(data) {
-    let answer = {};
+    let answer = {
+        data : {},
+        minmax : {}
+    };
 
     for (let incident in data) {
-        answer[incident] = {};
+        answer.data[incident] = {};
         let incident_obj = data[incident];
+        answer.minmax[incident] =  {};
 
-        console.log('incident', incident);
+        // console.log('incident', incident);
         let call_type_name = c.vis.call_type_ids[incident];
 
-        let max_incident_count = 0;
-        let min_incident_count = 1000000000000000;
+        answer.minmax[incident].max_incident_count = 0;
+        answer.minmax[incident].min_incident_count = 1000000000000000;
 
-        let max_avg_resp = 0.0;
-        let min_avg_resp = 1000000000.0;
+        answer.minmax[incident].max_avg_resp = 0.0;
+        answer.minmax[incident].min_avg_resp = 1000000000.0;
 
         // Do work for each weekday
         for (let weekday in incident_obj) {
             let weekday_data = incident_obj[weekday];
 
             // Loop though each hour, create a data element for each
-            answer[incident][weekday] = [];
-            let aggregate_bars = answer[incident][weekday];
+            answer.data[incident][weekday] = [];
+            let aggregate_bars = answer.data[incident][weekday];
             for (let hour in weekday_data) {
                 let hour_data = weekday_data[hour];
 
@@ -479,7 +451,6 @@ function aggregateData(data) {
                 let avg_prep_time = total_time / incident_count;
 
                 // Calculate info for the bar
-                console.log('call_type_name', call_type_name);
                 let y_scaled = scales.incidents[call_type_name](incident_count);
                 let zero_value = scales.incidents[call_type_name](0);
                 let color = scales.color[call_type_name](avg_prep_time);
@@ -496,6 +467,19 @@ function aggregateData(data) {
                     color: color
                 };
                 aggregate_bars.push(aggregated_hour_data);
+
+                // Update the min/max records
+                if (incident_count < answer.minmax[incident].min_incident_count) {
+                    answer.minmax[incident].min_incident_count = incident_count;
+                } else if (incident_count > answer.minmax[incident].max_incident_count) {
+                    answer.minmax[incident].max_incident_count = incident_count;
+                }
+
+                if (avg_prep_time < answer.minmax[incident].min_avg_resp) {
+                    answer.minmax[incident].min_avg_resp = avg_prep_time;
+                } else if (avg_prep_time > answer.minmax[incident].max_avg_resp) {
+                    answer.minmax[incident].max_avg_resp = avg_prep_time;
+                }
             }
         }
     }
