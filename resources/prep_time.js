@@ -58,20 +58,66 @@ let weekday_names = {
 
 /**
  * Draw the overviews
+ * @param call_type the call type to draw
  * @param data the data to use to draw them
  */
-function makeOverview(data) {
+function makeOverview(call_type, data) {
     let overviews = d3.selectAll('svg.visualization').selectAll('g#overview');
-
-    // Make some test rectangles
-    overviews.append('rect')
-        .attr('width', c.plot.width)
-        .attr('height', c.plot.height)
-        .style('fill', 'green')
-        .style('fill-opacity', .2);
 
     console.log('data in makeOverview: ', data);
 
+    let processed_data = process_data_overview(data, call_type);
+    console.log('processed_data in makeOverview', processed_data);
+
+}
+
+/**
+ * Process the data for an overview into the data for its bars
+ * @param data all data to use
+ * @param incident the incident type
+ */
+function process_data_overview(data, incident) {
+    let year_org = {};
+
+    for (let weekday in data) {
+
+        for (let hour in data[weekday]) {
+
+            for (let thing of data[weekday][hour]) {
+                let year = thing['Year of Entry Date and Time'];
+
+                // Make sure the organized data has an object for this year
+                if (! (year in year_org))
+                    year_org[year] = [];
+                // let  = organized[type];
+
+                year_org[year].push(thing);
+            }
+        }
+    }
+
+    for (let year in year_org) {
+        let incident_count = 0;
+        let total_time = 0.0;
+        for (let thing of year_org[year]) {
+            let incidents = parseInt(thing['Number of Records']);
+            incident_count += incidents;
+            total_time += parseFloat(thing['Avg. Processing Minutes']) * incidents;
+        }
+
+        let avg_prep_time = total_time / incident_count;
+        year_org[year] = {
+            'Incident Count': incident_count,
+            'Avg. Prep. Time  ': `${avg_prep_time.toFixed(2)} mins`,
+            'Year': year,
+            'Incident Type': incident,
+            // y_scaled: y_scaled, // TODO scaled values here
+            // zero_value: zero_value, // TODO scaled values here
+            // color: color        // TODO scaled values here
+        };
+    }
+
+    return year_org;
 }
 
 /**
@@ -200,9 +246,8 @@ function drawVises(theData) {
     // Draw a vis for each type of call
     for (const call_type in organized) {
         drawVis(call_type, organized[call_type]);
+        makeOverview(call_type, organized[call_type]);
     }
-
-    // makeOverview(organized);
 
     // Enable Interactivity
     enableHover();
@@ -259,8 +304,6 @@ function drawVis(call_type, data) {
             .attr('height', c.sub.height)
             // .attr('y', differential)
             .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
-        differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
-        i += 1;
 
         // Make a test rectangle for each weekday subplot
         let test = sub.append('rect')
@@ -271,6 +314,9 @@ function drawVis(call_type, data) {
 
         // Draw y axis
         drawYAxis(axisG, weekday_data, axis, i, differential);
+
+        differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
+        i += 1;
 
         // Append rectangles!
         let aggregate = aggregated[call_type][weekday];
