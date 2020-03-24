@@ -29,6 +29,11 @@ let c = {
             'Medical Incident': 'medical',
             'Structure Fire': 'fire',
             'Traffic Collision': 'traffic'
+        },
+        call_type_names: {
+            'medical' : 'Medical Incident',
+            'fire' : 'Structure Fire',
+            'traffic' : 'Traffic Collision'
         }
     },
 
@@ -230,10 +235,10 @@ function drawVis(call_type, data) {
     megaData[call_type] = data;
     let agg = aggregateData(megaData);
     let aggregated = agg.data;
-    console.log(call_type, 'megaData', megaData[call_type]);
-    console.log(call_type, 'aggregated', aggregated);
+    // console.log(call_type, 'megaData', megaData[call_type]);
+    // console.log(call_type, 'aggregated', aggregated);
 
-        // Draw a subplot for each weekday
+    // Draw a subplot for each weekday
     let i = 0;
     let differential = 0;
 
@@ -645,10 +650,111 @@ function makeBrushing(call_type) {
  * @param allowed_years the set of data to include
  */
 function refreshVis(call_type, allowed_years) {
-    // let agg = aggregateData(data);
-    // console.log('agg', agg);
+    let decoded_call_type = c.vis.call_type_names[call_type];
+
+    // Filter data
+    // let new_data_to_agg = {};
+    let temp_megaData = {};
+    temp_megaData[decoded_call_type] = {};
+    for (let day in megaData[decoded_call_type]) {
+
+        for (let hour in megaData[decoded_call_type][day]) {
+
+            for (let row of megaData[decoded_call_type][day][hour]) {
+
+                // putIfAbsent...
+                // Make sure the organized data has an object for each kind of incident
+                if (! (day in temp_megaData[decoded_call_type])) {
+                    temp_megaData[decoded_call_type][day] = {};
+                }
+                // Make sure the call type object has an object for that weekday
+                // console.log(call_type_obj);
+                if (! (hour in temp_megaData[decoded_call_type][day])) {
+                    temp_megaData[decoded_call_type][day][hour] = [];
+                }
+
+                if (allowed_years.includes(row['Year of Entry Date and Time'])) {
+                    temp_megaData[decoded_call_type][day][hour].push(row);
+                }
+                // console.log('yay');
+            }
+        }
+    }
+
+
+    let aggregated_refresh = aggregateData(temp_megaData);
+    // console.log('aggregated in refresh', aggregated_refresh);
+    // Data is changed now!
 
     // TODO figure out how this will work
+
+    // TODO Refresh scales
+    // scales.color[call_type].domain()
+
+    // Refresh views
+    let this_svg = d3.select(`svg.visualization#${call_type}`);
+    let this_plot = this_svg.select('g#plot');
+
+    // Do work for each weekday
+    let i=0;
+    for (let weekday in megaData[decoded_call_type]) {
+        let weekday_data = megaData[decoded_call_type][weekday];
+
+        // Setup the SVG for this weekday
+        // let sub = plot.append('g')
+        //     .attr('class','sub')
+        //     .attr('id', i)
+        //     .attr('width', c.sub.width)
+        //     .attr('height', c.sub.height)
+        //     // .attr('y', differential)
+        //     .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
+        let sub = this_plot.select(`[id="${i}"]`);
+
+
+        // Draw y axis
+        // drawYAxis(axisG, weekday_data, axis, i, differential);
+
+        // differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
+        i += 1;
+
+        // Append rectangles!
+        let aggregated_new = aggregated_refresh.data[decoded_call_type][weekday];
+        let selection = sub.selectAll('rect.visBar')
+            .data(aggregated_new);
+        console.log('update set size', selection.size());
+        selection.each(function (d) {
+            console.log('update thing is d', d);
+        });
+
+        selection.enter();
+        console.log('enter set size', selection.size());
+        selection.each(function (d) {
+            console.log('enter thing is d', d);
+        });
+
+        selection.exit();
+        console.log('exit set size', selection.size());
+        selection.each(function (d) {
+            console.log('exit thing is d', d);
+        });
+
+            // .append('rect')
+            // .attr('class', 'visBar')
+            // .attr('height', d => d.zero_value - d.y_scaled)
+            // .attr('width', scales.hour.bandwidth())
+            // .attr('fill', d => d.color)
+            // .attr('x', d => scales.hour(d['Hour']))
+            // .attr('y', d => d.y_scaled);
+
+        // Clean up data elements for tooltip's use later
+        for (let thing of aggregated_new) {
+            delete thing.y_scaled;
+            delete thing.zero_value;
+            delete thing.color;
+        }
+    }
+
+
 }
 
 // Data organizers, converters
@@ -761,6 +867,7 @@ function aggregateData(data) {
         data : {},
         minmax : {}
     };
+    // let call_type_name = c.vis.call_type_ids[call_type];
 
     for (let incident in data) {
         answer.data[incident] = {};
@@ -852,45 +959,6 @@ function midpoint(range) {
 }
 
 
-// Junk
-// /**
-//  * Enable brushing interactivity for one visualization
-//  * @param incident_type the type of incident
-//  */
-// function enableBrushing(incident_type) {
-//     let svg = d3.select(`svg.visualization#${incident_type}`);
-//
-//     let plot = svg.select('g.plot');
-//     let bars = plot.selectAll('rect.visBar');
-//
-//     let brush = d3.brush()
-//         .on("start.brush2 brush.brush2 end.brush2", brushed);
-//
-//     function brushed() {
-//         if (d3.event.selection) {
-//             const [[x0, y0], [x1, y1]] = d3.event.selection;
-//
-//             // show what we interacted with
-//             // d3.select(status).text("brush: " + d3.event.selection);
-//
-//             bars.classed("dim", function (d) {
-//                 let cx = +d3.select(this).attr("cx");
-//                 let cy = +d3.select(this).attr("cy");
-//                 return !(x0 <= cx && cx < x1 &&
-//                     y0 <= cy && cy < y1);
-//             });
-//         } else {
-//             d3.select(status).text("brush: none");
-//             bars.classed("dim", false);
-//         }
-//     }
-//
-//     // place brush BEHIND points so we still get pointer events
-//     svg.insert("g", ":first-child").attr("class", "brush").call(brush);
-//
-//
-//     // Thank you Sophie Engle for this code
-// }
 /**
  * Calculate the min and max overview values
  * @param processed_data the data to calculate from
