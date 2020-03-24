@@ -1,10 +1,10 @@
 // Global Variables
 let c = {
     svg: {
-        height: 600,
+        height: 700,
         width: 900,
         pad: {
-            top: 50,
+            top: 150,
             right: 20,
             bottom: 40,
             left: 10
@@ -18,7 +18,7 @@ let c = {
             top: 2,
             right: 5,
             bottom: 2,
-            left: 120
+            left: 140
         },
         padding_between_hours : 0.05
     },
@@ -29,6 +29,15 @@ let c = {
             'Medical Incident': 'medical',
             'Structure Fire': 'fire',
             'Traffic Collision': 'traffic'
+        }
+    },
+
+    overviewPlot : {
+        margins: {
+            top: 5,
+            right : 5,
+            bottom : 5,
+            left : 500
         }
     }
 };
@@ -47,6 +56,17 @@ let weekday_names = {
     6: 'Sunday'
 };
 
+function makeOverview() {
+    let overviews = d3.selectAll('svg.visualization').selectAll('g#overview');
+
+    // Make some test rectangles
+    overviews.append('rect')
+        .attr('width', c.plot.width)
+        .attr('height', c.plot.height)
+        .style('fill', 'green')
+        .style('fill-opacity', .2);
+}
+
 /**
  * Prepare the page for the visualization to be drawn
  */
@@ -63,22 +83,16 @@ function prepVis() {
         .attr('id', 'plot');
     svgs.append('g')
         .attr('id', 'text');
+    svgs.append('g')
+        .attr('id', 'overview');
 
+    // Setup the plot area
     c.plot.width = c.svg.width - c.svg.pad.right - c.svg.pad.left;
     c.plot.height = c.svg.height - c.svg.pad.top - c.svg.pad.bottom;
     let plot = svgs.select('g#plot')
         .attr('transform', translate(c.svg.pad.left, c.svg.pad.top))
         .attr('width', c.plot.width)
         .attr('height', c.plot.height);
-
-    svgs.select('g#axes')
-        .attr('transform', translate(c.svg.pad.left, c.svg.pad.top));
-
-
-    c.sub.width = c.plot.width - c.sub.margins.left - c.sub.margins.right;
-    c.sub.height = (c.plot.height / c.vis.weekdays) - c.sub.margins.top - c.sub.margins.bottom;
-
-
     // Make some test rectangles
     plot.append('rect')
         .attr('width', c.plot.width)
@@ -86,6 +100,30 @@ function prepVis() {
         .style('fill', 'yellow')
         .style('fill-opacity', .2);
 
+
+    // Setup the axes area
+    svgs.select('g#axes')
+        .attr('transform', translate(c.svg.pad.left, c.svg.pad.top));
+
+
+    // Calculate parameters for the subplot areas
+    c.sub.width = c.plot.width - c.sub.margins.left - c.sub.margins.right;
+    c.sub.height = (c.plot.height / c.vis.weekdays) - c.sub.margins.top - c.sub.margins.bottom;
+
+
+    // Setup the overview area
+    c.overviewPlot.height = c.svg.pad.top - c.overviewPlot.margins.top - c.overviewPlot.margins.bottom;
+    c.overviewPlot.width = c.svg.width - c.overviewPlot.margins.left - c.overviewPlot.margins.right;
+    let overviews = svgs.select('g#overview')
+        .attr('transform', translate(c.overviewPlot.margins.left, c.overviewPlot.margins.top))
+        .attr('width', c.overviewPlot.width)
+        .attr('height', c.overviewPlot.height);
+    // Test rectangles
+    overviews.append('rect')
+        .attr('width', c.overviewPlot.width)
+        .attr('height', c.overviewPlot.height)
+        .attr('fill', 'green')
+        .attr('fill-opacity', 0.3);
 
     // Make the scales
     scales.hour = d3.scaleBand()
