@@ -83,3 +83,9 @@ text, .tooltip {
 table, .tooltip {
     border-spacing: 5px;
 }
+
+/* Make the little '01 '02 '03 etc smaller*/
+.xAxisOverview text {
+    font-size: 8pt;
+    color: #333333;
+}

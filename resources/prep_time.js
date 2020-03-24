@@ -36,7 +36,7 @@ let c = {
         margins: {
             top: 15,
             right : 0,
-            bottom : 15,
+            bottom : 30,
             left : 500
         }
     }
@@ -95,6 +95,10 @@ function makeOverview(call_type, data) {
         delete thing.zero_value;
         delete thing.color;
     }
+
+    let axisGOverview = overview.append('g')
+        .attr('class', 'overviewAxis');
+    drawXAxisOverview(axisGOverview);
 }
 
 /**
@@ -280,13 +284,13 @@ function prepVis() {
     scales.color['traffic'] = d3.scaleSequential(d3.interpolateGreys)
         .domain([0.8386801541069366, 1.8966183574492759]);
 
-    scales.colorOverview = {};
-    scales.colorOverview['fire'] = d3.scaleSequential(d3.interpolateOranges)
-        .domain([0.8862924282193209, 1.84355555554]);
-    scales.colorOverview['medical'] = d3.scaleSequential(d3.interpolateBlues)
-        .domain([0.8608115115257102, 1.5448774151841203]);
-    scales.colorOverview['traffic'] = d3.scaleSequential(d3.interpolateGreys)
-        .domain([0.8386801541069366, 1.8966183574492759]);
+    // scales.colorOverview = {};
+    // scales.colorOverview['fire'] = d3.scaleSequential(d3.interpolateOranges)
+    //     .domain([0.8862924282193209, 1.84355555554]);
+    // scales.colorOverview['medical'] = d3.scaleSequential(d3.interpolateBlues)
+    //     .domain([0.8608115115257102, 1.5448774151841203]);
+    // scales.colorOverview['traffic'] = d3.scaleSequential(d3.interpolateGreys)
+    //     .domain([0.8386801541069366, 1.8966183574492759]);
 
     // Make some axes
     axes.incidents = {};
@@ -299,6 +303,10 @@ function prepVis() {
 
     axes.hours = d3.axisBottom(scales.hour)
         .ticks(24);
+
+    axes.years = d3.axisBottom(scales.year)
+        // .ticks()
+        .tickFormat(d => "'" + d.substring(2,5));
 
 
     // Load the data, then call another function
@@ -465,6 +473,19 @@ function drawXAxis(group) {
         // .attr('transform', translate(   /))
 
     axisGroup.call(axes.hours);
+}
+
+/**
+ * Draw the x axis for hours on one visualization's overview
+ * @param group the d3 selection where the axis should be drawn
+ */
+function drawXAxisOverview(group) {
+    let axisGroup = group.append('g')
+        .attr('class', 'xAxisOverview')
+        .attr('transform', translate(0, c.sub.margins.top + c.overviewPlot.height));
+    // .attr('transform', translate(   /))
+
+    axisGroup.call(axes.years);
 }
 
 /**
