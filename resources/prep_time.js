@@ -99,10 +99,11 @@ function makeOverview(call_type, data) {
     let axisGOverview = overview.append('g')
         .attr('class', 'overviewAxis');
     drawXAxisOverview(axisGOverview);
-
-
     drawYAxisOverview(axisGOverview, {}, axes.incidentsOverview[coded_call_type], 0, 0);
-//            drawYAxis(axisG, weekday_data, axis, i, differential);
+
+    let overviewText = overview.append('g')
+        .attr('class', 'overviewText');
+    drawOverviewText(axisGOverview);
 }
 
 /**
@@ -486,19 +487,6 @@ function drawYAxisOverview(group, data, axis, i, differential) {
 
     axisGroup.call(axis);
 
-    // 'Incident Count'
-    // let y_group = axisGroup.append('g')
-    //     // .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
-    //     .attr('transform', translate(0,0))
-    // y_group.append('text')
-    //     .text('Incident Count :')
-    //     .attr('class','axisTitle')
-    //     .attr('transform', 'rotate(270)')
-    //
-    //     // .attr('id', subPlot_index)
-    //     .attr('x', 0)
-    //     .attr('y', 0);
-
 }
 
 /**
@@ -525,6 +513,33 @@ function drawXAxisOverview(group) {
     // .attr('transform', translate(   /))
 
     axisGroup.call(axes.years);
+}
+
+/**
+ * Draw some pesky text
+ * @param group the group to draw it in
+ */
+function drawOverviewText(group) {
+    // 'Incident Count'
+    let y_group = group.append('g')
+        // .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
+        .attr('transform', translate(-40, c.overviewPlot.height + 5))
+    y_group.append('text')
+        .text('Incident Count :')
+        .attr('class','axisTitle')
+        .attr('transform', 'rotate(270)')
+
+        // .attr('id', subPlot_index)
+        .attr('x', 0)
+        .attr('y', 0);
+
+    // 'Hour of day'
+    group.append('text')
+        .text('Year :')
+        .attr('class','axisTitle')
+        // .attr('id', subPlot_index)
+        .attr('x', -35)
+        .attr('y', c.overviewPlot.height + 20);
 }
 
 /**
