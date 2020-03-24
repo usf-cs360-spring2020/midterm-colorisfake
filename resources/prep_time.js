@@ -74,20 +74,34 @@ function makeOverview(call_type, data) {
     let processed_data = process_data_overview(data, call_type);
     console.log('processed_data in makeOverview', processed_data, call_type);
 
-    let selection = overviewPlot.selectAll('rect.bar')
+    let selection = overviewPlot.selectAll('rect.visBar#overview')
         .data(processed_data)
         .enter();
     // console.log('enter set size', call_type, selection.size());
 
     selection.append('rect')
-        .attr('class', 'bar')
+        .attr('class', 'visBar overview')
         .attr('x', d => scales.year(d['Year']))
         .attr('y', d => d.y_scaled)
         .attr('width', d => scales.year.bandwidth())
         .attr('height', d => d.zero_value - d.y_scaled)
         .attr('fill', d => d.color);
 
+    // calculateMinMax(processed_data);
 
+    // Clean up data elements for tooltip's use later
+    for (let thing of processed_data) {
+        delete thing.y_scaled;
+        delete thing.zero_value;
+        delete thing.color;
+    }
+}
+
+/**
+ * Calculate the min and max overview values
+ * @param processed_data the data to calculate from
+ */
+function calculateMinMax(processed_data) {
     let minInc = 1000000000;
     let maxInc = 0;
     let minTime = 10000000000.0;
@@ -107,7 +121,7 @@ function makeOverview(call_type, data) {
         }
     }
 
-    console.log('max and min for', call_type, minTime, maxTime, minInc, maxInc);
+    console.log('max and min are', minTime, maxTime, minInc, maxInc);
 }
 
 /**

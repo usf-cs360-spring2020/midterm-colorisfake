@@ -69,10 +69,10 @@ footer.smaller-footers-are-better {
     width: auto;
     height: auto;
     padding: 8px;
-    background: #ddd;
+    background: rgba(230, 230, 230, 0.8);;
     pointer-events: none;
     border: 1px solid #eee;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 text, .tooltip {
