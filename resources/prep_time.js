@@ -67,7 +67,7 @@ function makeOverview(call_type, data) {
     let overview = d3.select(`svg.visualization#${coded_call_type}`).selectAll('g#overview');
     // console.log('overview selection size', overview.size());
     let overviewPlot = overview.append('g');
-    console.log('overviewPlot selection size', overviewPlot.size(), call_type);
+    // console.log('overviewPlot selection size', overviewPlot.size(), call_type);
 
     // console.log('data in makeOverview: ', data, call_type);
 
@@ -77,7 +77,7 @@ function makeOverview(call_type, data) {
     let selection = overviewPlot.selectAll('rect.bar')
         .data(processed_data)
         .enter();
-    console.log('enter set size', call_type, selection.size());
+    // console.log('enter set size', call_type, selection.size());
 
     selection.append('rect')
         .attr('class', 'bar')
@@ -87,7 +87,27 @@ function makeOverview(call_type, data) {
         .attr('height', d => d.zero_value - d.y_scaled)
         .attr('fill', d => d.color);
 
-    console.log('finished');
+
+    let minInc = 1000000000;
+    let maxInc = 0;
+    let minTime = 10000000000.0;
+    let maxTime = 0.0;
+    for (let thingy of processed_data) {
+        // Update the min/max records
+        if (thingy['Incident Count'] < minInc) {
+            minInc = thingy['Incident Count'];
+        } else if (thingy['Incident Count'] > maxInc) {
+            maxInc = thingy['Incident Count'];
+        }
+
+        if (thingy['Avg. Prep. Time'] < minTime) {
+            minTime = thingy['Avg. Prep. Time'];
+        } else if (thingy['Avg. Prep. Time'] > maxTime) {
+            maxTime = thingy['Avg. Prep. Time'];
+        }
+    }
+
+    console.log('max and min for', call_type, minTime, maxTime, minInc, maxInc);
 }
 
 /**
@@ -135,9 +155,9 @@ function process_data_overview(data, incident) {
             'Avg. Prep. Time': `${avg_prep_time.toFixed(2)} mins`,
             'Year': year,
             'Incident Type': incident,
-            y_scaled: y_scaled, // TODO scaled values here
-            zero_value: zero_value, // TODO scaled values here
-            color: color        // TODO scaled values here
+            y_scaled: y_scaled,     // TODO fix
+            zero_value: zero_value, // TODO fix
+            color: color
         });
     }
 
@@ -229,14 +249,14 @@ function prepVis() {
 
     scales.incidentsOverview = {};
     scales.incidentsOverview['fire'] = d3.scaleLinear()
-        .range([c.sub.height,0])
-        .domain([-20,1426]);
+        .range([c.overviewPlot.height,0])
+        .domain([0-100,11267 + 200]);
     scales.incidentsOverview['medical'] = d3.scaleLinear()
-        .range([c.sub.height,0])
-        .domain([-200,13237]);
+        .range([c.overviewPlot.height,0])
+        .domain([0-100,116657]);
     scales.incidentsOverview['traffic'] = d3.scaleLinear()
-        .range([c.sub.height,0])
-        .domain([-15,900]);
+        .range([c.overviewPlot.height,0])
+        .domain([0-100,4907+200]);
 
     scales.color = {};
     scales.color['fire'] = d3.scaleSequential(d3.interpolateOranges)
