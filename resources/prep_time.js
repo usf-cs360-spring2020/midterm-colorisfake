@@ -86,6 +86,7 @@ function prepVis() {
         .attr('transform', translate(c.svg.pad.left, c.svg.pad.top))
         .attr('width', c.plot.width)
         .attr('height', c.plot.height);
+
     // Make some test rectangles
     // plot.append('rect')
     //     .attr('width', c.plot.width)
@@ -110,6 +111,7 @@ function prepVis() {
         .attr('transform', translate(c.overviewPlot.margins.left, c.overviewPlot.margins.top))
         .attr('width', c.overviewPlot.width)
         .attr('height', c.overviewPlot.height);
+
     // Test rectangles
     // overviews.append('rect')
     //     .attr('width', c.overviewPlot.width)
@@ -178,7 +180,6 @@ function prepVis() {
         .ticks(24);
 
     axes.years = d3.axisBottom(scales.year)
-        // .ticks()
         .tickFormat(d => "'" + d.substring(2,5));
 
 
@@ -234,8 +235,6 @@ function drawVis(call_type, data) {
     megaData[call_type] = data;
     let agg = aggregateData(megaData);
     let aggregated = agg.data;
-    // console.log(call_type, 'megaData', megaData[call_type]);
-    // console.log(call_type, 'aggregated', aggregated);
 
     // Draw a subplot for each weekday
     let i = 0;
@@ -294,7 +293,24 @@ function drawVis(call_type, data) {
     // Draw some pesky text
     drawText(this_svg.select('g#text'), call_type);
 
-    // enableBrushing(call_type);
+    // Make a legend
+    let legend = d3.legendColor()
+        .cells(5)
+        .labelFormat(d3.format(".2f"))
+        .ascending(true)
+        .titleWidth(200)
+        .shapePadding(10)
+        .shapeWidth(25)
+        .title('Average Preparation Times :')
+        .orient('horizontal')
+        .scale(scales.color[call_type_name]);
+
+    let legendTarget = this_svg.append("g")
+        .attr("class", "legendQuant")
+        .attr("transform", translate(c.svg.pad.left + 20 + 5, c.svg.pad.top - 60 - 30));
+
+    legendTarget.call(legend)
+
 }
 
 // Extras for the main visualization
@@ -322,8 +338,8 @@ function drawYAxis(group, data, axis, i, differential) {
         .attr('class','sub_label_weekday')
         .attr('id', i)
         .style('font-size', '.8rem')
-        .attr('x', 10)// .attr('x', c.sub.margins.left - 100)
-        .attr('y', differential + 40); //.attr('y', c.sub.margins.top + differential + mid);
+        .attr('x', 10)
+        .attr('y', differential + 40);
 
     // console.log('hello', group.size());
 }
@@ -335,7 +351,6 @@ function drawXAxis(group) {
     let axisGroup = group.append('g')
         .attr('class', 'xAxis')
         .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + c.plot.height));
-        // .attr('transform', translate(   /))
 
     axisGroup.call(axes.hours);
 }
@@ -348,27 +363,22 @@ function drawText(group, call_type) {
     let title = `Incident Volume and Average`;
     let title2 = `Prep. Time for ${call_type}s`;
 
-    // let titlesG = group.append('g#title');
-
     // Vis title
     group.append('text')
         .text(title)
         .attr('class','visTitle')
-        // .attr('id', subPlot_index)
         .attr('x', 30)
-        .attr('y', 80);
+        .attr('y', 50);
     group.append('text')
         .text(title2)
         .attr('class','visTitle')
-        // .attr('id', subPlot_index)
         .attr('x', 30)
-        .attr('y', 80+35);
+        .attr('y', 50+35);
 
     // 'Hour of day'
     group.append('text')
         .text('Hour of Day :')
         .attr('class','axisTitle')
-        // .attr('id', subPlot_index)
         .attr('x', c.svg.pad.left + 77)
         .attr('y', c.svg.pad.top + c.plot.height + 22);
 
@@ -376,7 +386,6 @@ function drawText(group, call_type) {
     group.append('text')
         .text('Weekday')
         .attr('class','axisTitleBigger')
-        // .attr('id', subPlot_index)
         .attr('x', c.svg.pad.left + 5 )
         .attr('y', c.svg.pad.top - 5);
 
@@ -387,15 +396,12 @@ function drawText(group, call_type) {
         .text('Incident Count :')
         .attr('class','axisTitle')
         .attr('transform', 'rotate(270)')
-
-        // .attr('id', subPlot_index)
         .attr('x', 0)
         .attr('y', 0);
 }
 // Hover tooltip interactivity
 function enableHover() {
     let bars = d3.selectAll('rect.visBar');
-    // console.log('found', bars.size(), 'bars');
 
     bars.on("mouseover.hover", function(d) {
         let me = d3.select(this);
@@ -426,7 +432,6 @@ function enableHover() {
 
     bars.on("mouseout.hover2", function(d) {
         d3.selectAll("div#details").remove();
-        // d3.select(status).text("hover: none");
     });
 
     // Thank you Sophie Engle for this code
@@ -442,20 +447,14 @@ function makeOverview(call_type, data) {
     let coded_call_type = c.vis.call_type_ids[call_type];
 
     let overview = d3.select(`svg.visualization#${coded_call_type}`).selectAll('g#overview');
-    // console.log('overview selection size', overview.size());
     let overviewPlot = overview.append('g')
         .attr('class', 'plotArea');
-    // console.log('overviewPlot selection size', overviewPlot.size(), call_type);
-
-    // console.log('data in makeOverview: ', data, call_type);
 
     let processed_data = process_data_overview(data, call_type);
-    // console.log('processed_data in makeOverview', processed_data, call_type);
 
     let selection = overviewPlot.selectAll('rect.visBar#overview')
         .data(processed_data)
         .enter();
-    // console.log('enter set size', call_type, selection.size());
 
     selection.append('rect')
         .attr('class', 'visBar overview')
@@ -465,8 +464,6 @@ function makeOverview(call_type, data) {
         .attr('width', d => scales.year.bandwidth())
         .attr('height', d => d.zero_value - d.y_scaled)
         .attr('fill', d => d.color);
-
-    // calculateMinMax(processed_data);
 
     // Clean up data elements for tooltip's use later
     for (let thing of processed_data) {
@@ -480,8 +477,6 @@ function makeOverview(call_type, data) {
     drawXAxisOverview(axisGOverview);
     drawYAxisOverview(axisGOverview, {}, axes.incidentsOverview[coded_call_type], 0, 0);
 
-    let overviewText = overview.append('g')
-        .attr('class', 'overviewText');
     drawOverviewText(axisGOverview);
 
     // Define brushing behavior
@@ -497,7 +492,6 @@ function drawXAxisOverview(group) {
     let axisGroup = group.append('g')
         .attr('class', 'xAxisOverview')
         .attr('transform', translate(0, c.sub.margins.top + c.overviewPlot.height));
-    // .attr('transform', translate(   /))
 
     axisGroup.call(axes.years);
 }
@@ -513,7 +507,6 @@ function drawYAxisOverview(group, data, axis, i, differential) {
     let axisGroup = group.append('g')
         .attr('class', 'yAxis')
         .attr('id', i)
-        // .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
         .attr('transform', translate(0, c.sub.margins.top));
 
     axisGroup.call(axis);
@@ -529,21 +522,17 @@ function drawOverviewText(group) {
     group.append('text')
         .text('Changes by Year')
         .attr('class','visTitleMidi')
-        // .attr('id', subPlot_index)
         .attr('x', 40)
         .attr('y', -10);
 
 
     // 'Incident Count'
     let y_group = group.append('g')
-        // .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
         .attr('transform', translate(-40, c.overviewPlot.height + 5))
     y_group.append('text')
         .text('Incident Count :')
         .attr('class','axisTitle')
         .attr('transform', 'rotate(270)')
-
-        // .attr('id', subPlot_index)
         .attr('x', 0)
         .attr('y', 0);
 
@@ -551,7 +540,6 @@ function drawOverviewText(group) {
     group.append('text')
         .text('Year :')
         .attr('class','axisTitle')
-        // .attr('id', subPlot_index)
         .attr('x', -35)
         .attr('y', c.overviewPlot.height + 20);
 }
@@ -564,45 +552,20 @@ function drawOverviewText(group) {
 function makeBrushing(call_type) {
     let this_svg = d3.select(`svg.visualization#${call_type}`);
     let this_overview = this_svg.select('g#overview');
-    // console.log(this_overview.size());
-    // Make a SVG for the focus chart
-    // const svg = d3.create("svg")
-    //     .attr("viewBox", [0, 0, width, focusHeight])
-    //     .style("display", "block");
 
     let overviewBars = this_overview.selectAll('rect.visBar');
 
     // Define the brush
     const brush = d3.brushX()
-        // .extent([[margin.left, 0.5], [width - margin.right, focusHeight - margin.bottom + 0.5]])
         .extent([[0,0], [c.overviewPlot.width, c.overviewPlot.height]])
         .on("brush", brushed)
         .on("end", brushended);
-    // console.log('extent', [0,0], [c.overviewPlot.width, c.overviewPlot.height])
 
-    // Some sort of selection
-    // const defaultSelection = [x(d3.utcYear.offset(x.domain()[1], -1)),        x.range()[1]];
     const defaultSelection = [scales.year.range()[0], scales.year.range()[1]];
-    // console.log('defaultSelection', defaultSelection);
 
-    // Draw the x axis
-    // svg.append("g")
-    //     .call(xAxis, x, focusHeight);
-
-    // Draw the area
-    // svg.append("path")
-    //     .datum(data)
-    //     .attr("fill", "steelblue")
-    //     .attr("d", area(x, y.copy().range([focusHeight - margin.bottom, 4])));
-
-    // Make the brush?
+    // Make the brush
     const gb = this_overview.append("g")
         .attr('class', 'brushThing')
-        // .attr('x', 0)
-        // .attr('y', 0)
-        // .attr('width', c.overviewPlot.width)
-        // .attr('height', c.overviewPlot.height)
-        // .attr("viewBox", [0, 0, c.overviewPlot.width, c.overviewPlot.height])
         .call(brush)
         .call(brush.move, defaultSelection);
 
@@ -610,19 +573,16 @@ function makeBrushing(call_type) {
     function brushed() {
         if (d3.event.selection) {
             const [x0, x1] = d3.event.selection;
-            // console.log('brushed, selection is', x0, x1);
 
             overviewBars.classed('dim', function(d) {
                 let this_bar = d3.select(this);
                 let cx = (+(this_bar.attr('x')) + ((+this_bar.attr('width')) / 2));
-                // console.log('me x cx', this_bar.attr('x'), cx);
                 return !(cx < x1 && cx > x0);
             });
         }
     }
 
     function brushended() {
-        // console.log('brushended');
         if (!d3.event.selection) {
             gb.call(brush.move, defaultSelection);
         }
@@ -654,7 +614,6 @@ function refreshVis(call_type, allowed_years) {
     let decoded_call_type = c.vis.call_type_names[call_type];
 
     // Filter data
-    // let new_data_to_agg = {};
     let temp_megaData = {};
     temp_megaData[decoded_call_type] = {};
     for (let day in megaData[decoded_call_type]) {
@@ -669,7 +628,6 @@ function refreshVis(call_type, allowed_years) {
                     temp_megaData[decoded_call_type][day] = {};
                 }
                 // Make sure the call type object has an object for that weekday
-                // console.log(call_type_obj);
                 if (! (hour in temp_megaData[decoded_call_type][day])) {
                     temp_megaData[decoded_call_type][day][hour] = [];
                 }
@@ -677,33 +635,25 @@ function refreshVis(call_type, allowed_years) {
                 if (allowed_years.includes(row['Year of Entry Date and Time'])) {
                     temp_megaData[decoded_call_type][day][hour].push(row);
                 }
-                // console.log('yay');
             }
         }
     }
 
 
     let aggregated_refresh = aggregateData(temp_megaData);
-    // console.log('aggregated in refresh', aggregated_refresh);
     console.log('aggregated minmax in refresh', aggregated_refresh.minmax[decoded_call_type]);
     // Data is changed now!
 
-    // TODO Refresh scales
-    // scales.color[call_type].domain([aggregated_refresh.minmax[decoded_call_type].min_avg_resp, aggregated_refresh.minmax[decoded_call_type].max_avg_resp]);
     scales.incidents[call_type].domain([0, aggregated_refresh.minmax[decoded_call_type].max_incident_count*1.2]);
 
     // Recalculate all TODO change this, it's inefficient
     aggregated_refresh = aggregateData(temp_megaData);
-    // scales.color[call_type].domain()
 
     // Refresh views
     let this_svg = d3.select(`svg.visualization#${call_type}`);
     let this_plot = this_svg.select('g#plot');
     let axisG = this_svg.select('g#axes');
     axisG.selectAll('.yAxis').remove();
-    // axisG = this_svg.append('g')
-    //     .attr('id', 'axes')
-    //     .attr('transform', translate(c.svg.pad.left, c.svg.pad.top));
 
 
     // Do work for each weekday
@@ -727,20 +677,8 @@ function refreshVis(call_type, allowed_years) {
             .data(aggregated_new);
         selection.transition()
             .attr('height', d => d.zero_value - d.y_scaled)
-            // .attr('width', scales.hour.bandwidth())
             .attr('fill', d => d.color)
             .attr('y', d => d.y_scaled);
-
-        // let selection = sub.selectAll('rect.visBar')
-        //     .data(aggregate)
-        //     .enter()
-        //     .append('rect')
-        //     .attr('class', 'visBar')
-        //     .attr('height', d => d.zero_value - d.y_scaled)
-        //     .attr('width', scales.hour.bandwidth())
-        //     .attr('fill', d => d.color)
-        //     .attr('x', d => scales.hour(d['Hour']))
-        //     .attr('y', d => d.y_scaled);
 
         // Clean up data elements for tooltip's use later
         for (let thing of aggregated_new) {
@@ -749,8 +687,6 @@ function refreshVis(call_type, allowed_years) {
             delete thing.color;
         }
     }
-
-
 }
 
 // Data organizers, converters
@@ -816,7 +752,6 @@ function process_data_overview(data, incident) {
                 // Make sure the organized data has an object for this year
                 if (! (year in year_org))
                     year_org[year] = [];
-                // let  = organized[type];
 
                 year_org[year].push(thing);
             }
@@ -848,7 +783,6 @@ function process_data_overview(data, incident) {
     }
 
     // Finish scales
-    // console.log(Object.keys(year_org) );
     scales.year.domain(Object.keys(year_org));
 
     return year_data;
@@ -863,14 +797,12 @@ function aggregateData(data) {
         data : {},
         minmax : {}
     };
-    // let call_type_name = c.vis.call_type_ids[call_type];
 
     for (let incident in data) {
         answer.data[incident] = {};
         let incident_obj = data[incident];
         answer.minmax[incident] =  {};
 
-        // console.log('incident', incident);
         let call_type_name = c.vis.call_type_ids[incident];
 
         answer.minmax[incident].max_incident_count = 0;
