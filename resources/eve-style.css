@@ -90,6 +90,14 @@ table, .tooltip {
     color: #333333;
 }
 
+/* Make incident count axes numbers smaller*/
+.yAxis text {
+    font-size: 8pt;
+    color: #333333;
+}
+
+
+
 /* Make the big titles for each visualization big */
 .visTitle {
     font-size: 20pt;

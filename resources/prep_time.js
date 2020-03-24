@@ -15,9 +15,9 @@ let c = {
 
     sub: {
         margins: {
-            top: 2,
+            top: 4,
             right: 5,
-            bottom: 2,
+            bottom: 4,
             left: 140
         },
         padding_between_hours : 0.05
@@ -97,7 +97,6 @@ function prepVis() {
     // Setup the axes area
     svgs.select('g#axes')
         .attr('transform', translate(c.svg.pad.left, c.svg.pad.top));
-
 
     // Calculate parameters for the subplot areas
     c.sub.width = c.plot.width - c.sub.margins.left - c.sub.margins.right;
@@ -313,7 +312,7 @@ function drawYAxis(group, data, axis, i, differential) {
         .attr('id', i)
         .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
 
-    axisGroup.call(axis);
+    axisGroup.transition().call(axis);
 
     let mid = midpoint(scales.incidents['medical']);
 
@@ -691,34 +690,35 @@ function refreshVis(call_type, allowed_years) {
 
     // TODO Refresh scales
     // scales.color[call_type].domain([aggregated_refresh.minmax[decoded_call_type].min_avg_resp, aggregated_refresh.minmax[decoded_call_type].max_avg_resp]);
-    // scales.incidents[call_type].domain([aggregated_refresh.minmax[decoded_call_type].min_incident_count, aggregated_refresh.minmax[decoded_call_type].max_incident_count]);
+    scales.incidents[call_type].domain([0, aggregated_refresh.minmax[decoded_call_type].max_incident_count*1.2]);
 
+    // Recalculate all TODO change this, it's inefficient
+    aggregated_refresh = aggregateData(temp_megaData);
     // scales.color[call_type].domain()
 
     // Refresh views
     let this_svg = d3.select(`svg.visualization#${call_type}`);
     let this_plot = this_svg.select('g#plot');
+    let axisG = this_svg.select('g#axes');
+    axisG.selectAll('.yAxis').remove();
+    // axisG = this_svg.append('g')
+    //     .attr('id', 'axes')
+    //     .attr('transform', translate(c.svg.pad.left, c.svg.pad.top));
+
 
     // Do work for each weekday
     let i=0;
+    let differential = 0;
     for (let weekday in megaData[decoded_call_type]) {
         let weekday_data = megaData[decoded_call_type][weekday];
 
-        // Setup the SVG for this weekday
-        // let sub = plot.append('g')
-        //     .attr('class','sub')
-        //     .attr('id', i)
-        //     .attr('width', c.sub.width)
-        //     .attr('height', c.sub.height)
-        //     // .attr('y', differential)
-        //     .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
         let sub = this_plot.select(`[id="${i}"]`);
 
 
         // Draw y axis
-        // drawYAxis(axisG, weekday_data, axis, i, differential);
+        drawYAxis(axisG, weekday_data, axes.incidents[call_type], i, differential);
 
-        // differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
+        differential += c.sub.height + c.sub.margins.top + c.sub.margins.bottom;
         i += 1;
 
         // Append rectangles!
@@ -730,6 +730,17 @@ function refreshVis(call_type, allowed_years) {
             // .attr('width', scales.hour.bandwidth())
             .attr('fill', d => d.color)
             .attr('y', d => d.y_scaled);
+
+        // let selection = sub.selectAll('rect.visBar')
+        //     .data(aggregate)
+        //     .enter()
+        //     .append('rect')
+        //     .attr('class', 'visBar')
+        //     .attr('height', d => d.zero_value - d.y_scaled)
+        //     .attr('width', scales.hour.bandwidth())
+        //     .attr('fill', d => d.color)
+        //     .attr('x', d => scales.hour(d['Hour']))
+        //     .attr('y', d => d.y_scaled);
 
         // Clean up data elements for tooltip's use later
         for (let thing of aggregated_new) {
@@ -890,7 +901,7 @@ function aggregateData(data) {
 
                 // Calculate info for the bar
                 let y_scaled = scales.incidents[call_type_name](incident_count);
-                let zero_value = scales.incidents[call_type_name](0);
+                let zero_value = scales.incidents[call_type_name](scales.incidents[call_type_name].domain()[0]);
                 let color = scales.color[call_type_name](avg_prep_time);
 
                 // Make a data element for the bar
