@@ -99,6 +99,10 @@ function makeOverview(call_type, data) {
     let axisGOverview = overview.append('g')
         .attr('class', 'overviewAxis');
     drawXAxisOverview(axisGOverview);
+
+
+    drawYAxisOverview(axisGOverview, {}, axes.incidentsOverview[coded_call_type], 0, 0);
+//            drawYAxis(axisG, weekday_data, axis, i, differential);
 }
 
 /**
@@ -284,22 +288,22 @@ function prepVis() {
     scales.color['traffic'] = d3.scaleSequential(d3.interpolateGreys)
         .domain([0.8386801541069366, 1.8966183574492759]);
 
-    // scales.colorOverview = {};
-    // scales.colorOverview['fire'] = d3.scaleSequential(d3.interpolateOranges)
-    //     .domain([0.8862924282193209, 1.84355555554]);
-    // scales.colorOverview['medical'] = d3.scaleSequential(d3.interpolateBlues)
-    //     .domain([0.8608115115257102, 1.5448774151841203]);
-    // scales.colorOverview['traffic'] = d3.scaleSequential(d3.interpolateGreys)
-    //     .domain([0.8386801541069366, 1.8966183574492759]);
-
     // Make some axes
     axes.incidents = {};
     axes.incidents['fire'] = d3.axisLeft(scales.incidents['fire'])
-        .ticks(4);
+        .ticks(4, 's');
     axes.incidents['medical'] = d3.axisLeft(scales.incidents['medical'])
-        .ticks(4);
+        .ticks(4, 's');
     axes.incidents['traffic'] = d3.axisLeft(scales.incidents['traffic'])
-        .ticks(4);
+        .ticks(4, 's');
+
+    axes.incidentsOverview = {};
+    axes.incidentsOverview['fire'] = d3.axisLeft(scales.incidentsOverview['fire'])
+        .ticks(4, 's');
+    axes.incidentsOverview['medical'] = d3.axisLeft(scales.incidentsOverview['medical'])
+        .ticks(4, 's');
+    axes.incidentsOverview['traffic'] = d3.axisLeft(scales.incidentsOverview['traffic'])
+        .ticks(4, 's');
 
     axes.hours = d3.axisBottom(scales.hour)
         .ticks(24);
@@ -466,6 +470,38 @@ function drawYAxis(group, data, axis, i, differential) {
 }
 
 /**
+ * Draw one Y axis for the overview on one visualization
+ * @param group the d3 selection where the axis should be drawn
+ * @param data the data to use
+ * @param axis the axis to use
+ * @param i the weekday index
+ * @param differential how much to shift the y havue by
+ */
+function drawYAxisOverview(group, data, axis, i, differential) {
+    let axisGroup = group.append('g')
+        .attr('class', 'yAxis')
+        .attr('id', i)
+        // .attr('transform', translate(c.sub.margins.left, c.sub.margins.top + differential));
+        .attr('transform', translate(0, c.sub.margins.top));
+
+    axisGroup.call(axis);
+
+    // 'Incident Count'
+    // let y_group = axisGroup.append('g')
+    //     // .attr('transform', translate(c.svg.pad.left + 100, c.plot.height + c.svg.pad.top ));
+    //     .attr('transform', translate(0,0))
+    // y_group.append('text')
+    //     .text('Incident Count :')
+    //     .attr('class','axisTitle')
+    //     .attr('transform', 'rotate(270)')
+    //
+    //     // .attr('id', subPlot_index)
+    //     .attr('x', 0)
+    //     .attr('y', 0);
+
+}
+
+/**
  * Draw the x axis for hours on one visualization
  * @param group the d3 selection where the axis should be drawn
  */
@@ -543,18 +579,6 @@ function drawText(group, call_type) {
         // .attr('id', subPlot_index)
         .attr('x', 0)
         .attr('y', 0);
-
-    // Y axes label
-    // let y_group = titlesG.append('g')
-    //     .attr('transform', translate(config.sub.x(subPlot_index), config.sub.y(subPlot_index)));
-    // let y_label = y_group.append('text')
-    //     .text('% of kids in income quintile')
-    //     .attr('class', 'y_label')
-    //     .attr('id', subPlot_index)
-    //     .attr('text-anchor', 'middle')
-    //     .attr('transform', 'rotate(270)')
-    //     .attr('y', 15)
-    //     .attr('x', -middle_y);
 }
 
 // Hover tooltip interactivity
