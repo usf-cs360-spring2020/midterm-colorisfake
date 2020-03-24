@@ -56,7 +56,11 @@ let weekday_names = {
     6: 'Sunday'
 };
 
-function makeOverview() {
+/**
+ * Draw the overviews
+ * @param data the data to use to draw them
+ */
+function makeOverview(data) {
     let overviews = d3.selectAll('svg.visualization').selectAll('g#overview');
 
     // Make some test rectangles
@@ -65,6 +69,9 @@ function makeOverview() {
         .attr('height', c.plot.height)
         .style('fill', 'green')
         .style('fill-opacity', .2);
+
+    console.log('data in makeOverview: ', data);
+
 }
 
 /**
@@ -130,6 +137,11 @@ function prepVis() {
         .rangeRound([0,c.sub.width])
         .paddingInner(c.sub.padding_between_hours);
 
+    scales.year = d3.scaleBand()
+        .domain(['2001', '2019'])
+        .rangeRound([0, c.overviewPlot.width])
+        .paddingInner(c.sub.padding_between_hours);
+
     scales.incidents = {};
     scales.incidents['fire'] = d3.scaleLinear()
         .range([c.sub.height,0])
@@ -190,8 +202,21 @@ function drawVises(theData) {
         drawVis(call_type, organized[call_type]);
     }
 
+    // makeOverview(organized);
+
     // Enable Interactivity
     enableHover();
+}
+
+/**
+ * Redraw the visualization with new data
+ * @param data the set of data to include
+ */
+function refresh(data) {
+    let agg = aggregateData(data);
+    console.log('agg', agg);
+
+    // TODO figure out how this will work
 }
 
 /**
@@ -214,10 +239,11 @@ function drawVis(call_type, data) {
     // Aggregate the data newly
     let datathingthisisdumb = {};
     datathingthisisdumb[call_type] = data;
-    let aggregated = aggregateData(datathingthisisdumb).data;
-    console.log('aggregated', aggregated);
+    let agg = aggregateData(datathingthisisdumb);
+    console.log('agg', agg);
+    let aggregated = agg.data;
 
-    // Draw a subplot for each weekday
+        // Draw a subplot for each weekday
     let i = 0;
     let differential = 0;
 
