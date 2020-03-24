@@ -409,7 +409,6 @@ function organize(data) {
     for (let row of data) {
         let type = row['Call Type'];
         let weekday = row['Weekday of Entry Date and Time'];
-        let year = row['Year of Entry Date and Time'];
         let hour = row['Hour of Entry Date and Time'];
 
         // Make sure the organized data has an object for each kind of incident
@@ -417,15 +416,11 @@ function organize(data) {
             organized[type] = {};
         let call_type_obj = organized[type];
 
-        // Make sure the call type object has an object for that year
-        if (! (year in call_type_obj))
-            call_type_obj[year] = {};
-        let year_object = call_type_obj[year];
-
-        // Make sure the year object has an object for that weekday
-        if (! (weekday in year_object))
-            year_object[weekday] = {};
-        let weekday_object = year_object[weekday];
+        // Make sure the call type object has an object for that weekday
+        // console.log(call_type_obj);
+        if (! (weekday in call_type_obj))
+            call_type_obj[weekday] = {};
+        let weekday_object = call_type_obj[weekday];
 
         // Make sure the weekday object has an object for that hour
         if (! (hour in weekday_object))
