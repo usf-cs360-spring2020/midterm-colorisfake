@@ -117,11 +117,13 @@ function makeOverview(call_type, data) {
 function makeBrushing(call_type) {
     let this_svg = d3.select(`svg.visualization#${call_type}`);
     let this_overview = this_svg.select('g#overview');
-    console.log(this_overview.size());
+    // console.log(this_overview.size());
     // Make a SVG for the focus chart
     // const svg = d3.create("svg")
     //     .attr("viewBox", [0, 0, width, focusHeight])
     //     .style("display", "block");
+
+    let overviewBars = this_overview.selectAll('rect.visBar');
 
     // Define the brush
     const brush = d3.brushX()
@@ -129,12 +131,12 @@ function makeBrushing(call_type) {
         .extent([[0,0], [c.overviewPlot.width, c.overviewPlot.height]])
         .on("brush", brushed)
         .on("end", brushended);
-    console.log('extent', [0,0], [c.overviewPlot.width, c.overviewPlot.height])
+    // console.log('extent', [0,0], [c.overviewPlot.width, c.overviewPlot.height])
 
     // Some sort of selection
     // const defaultSelection = [x(d3.utcYear.offset(x.domain()[1], -1)),        x.range()[1]];
     const defaultSelection = [scales.year.range()[0], scales.year.range()[1]];
-    console.log('defaultSelection', defaultSelection);
+    // console.log('defaultSelection', defaultSelection);
 
     // Draw the x axis
     // svg.append("g")
@@ -149,20 +151,26 @@ function makeBrushing(call_type) {
     // Make the brush?
     const gb = this_overview.append("g")
         .attr('class', 'brushThing')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', c.overviewPlot.width)
-        .attr('height', c.overviewPlot.height)
-        .attr("viewBox", [0, 0, c.overviewPlot.width, c.overviewPlot.height])
+        // .attr('x', 0)
+        // .attr('y', 0)
+        // .attr('width', c.overviewPlot.width)
+        // .attr('height', c.overviewPlot.height)
+        // .attr("viewBox", [0, 0, c.overviewPlot.width, c.overviewPlot.height])
         .call(brush)
         .call(brush.move, defaultSelection);
 
     // Some functions
     function brushed() {
         if (d3.event.selection) {
-            // svg.property("value", d3.event.selection.map(x.invert, x).map(d3.utcDay.round));
-            // svg.dispatch("input");
-            console.log('brushed');
+            const [x0, x1] = d3.event.selection;
+            console.log('brushed, selection is', x0, x1);
+
+            overviewBars.classed('dim', function(d) {
+                let this_bar = d3.select(this);
+                let cx = (+(this_bar.attr('x')) + ((+this_bar.attr('width')) / 2));
+                console.log('me x cx', this_bar.attr('x'), cx);
+                return !(cx < x1 && cx > x0);
+            });
         }
     }
 
