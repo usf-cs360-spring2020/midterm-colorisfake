@@ -1,294 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Response Time</title>
-
-    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
-    <!-- https://bulma.io/ -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-
-    <!-- Load Font Awesome 5 (free) icons -->
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-
-    <!-- include d3.js v5 -->
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-
-    <!-- include d3.js modules -->
-    <script src="https://d3js.org/d3-array.v2.min.js"></script>
-    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
-    <script src="https://d3js.org/d3-time.v1.min.js"></script>
-    <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
-
-<!--    My CSS! -->
-    <link rel="stylesheet" href="resources/eve-style.css">
-  </head>
-
-  <body>
-
-  <!-- Page header -->
-  <!-- https://bulma.io/documentation/layout/hero/ -->
-  <section class="hero is-primary is-bold">
-    <div class="hero-body">
-      <div class="container">
-        <h1 class="title">ColorIsFake Midterm</h1>
-        <h2 class="subtitle">Chaitrika, Priscilla, and Eve's Data Visualization Site</h2>
-      </div>
-    </div>
-  </section>
-  <!-- End page header -->
-
-  <!-- Page navigation -->
-  <!-- https://bulma.io/documentation/components/navbar/ -->
-  <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
-    <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="index.html">
-          <span class="icon"><i class="fas fa-home"></i></span>
-          <span>Home</span>
-        </a>
-
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-
-      <div id="main-menu" class="navbar-menu has-text-weight-medium">
-        <!-- Left navbar items -->
-        <div class="navbar-start">
-          <a class="navbar-item" href="dataset.html" title="Dataset">
-            <span class="icon"><i class="fas fa-table"></i></span>
-            <span>Dataset</span>
-          </a>
-
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              Visualizations
-            </a>
-
-            <div class="navbar-dropdown">
-              <a class="navbar-item" href="responsetime.html">
-                <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Priscilla - Response Time</span>
-              </a>
-              <a class="navbar-item" href="preparationtime.html">
-                <span class="icon"><i class="fas fa-chart-area"></i></span>
-                <span>Evelyn - Preparation Time</span>
-              </a>
-              <a class="navbar-item" href="hospitalaccesstime.html">
-                <span class="icon"><i class="fas fa-chart-bar"></i></span>
-                <span>Chaitrika - Hospital Access Time</span>
-              </a>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>ColorIsFake Midterm</title>
+      <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+      <!-- https://bulma.io/ -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+      <!-- Load Font Awesome 5 (free) icons -->
+      <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+      <!-- include d3.js v5 -->
+      <script src="https://d3js.org/d3.v5.min.js"></script>
+      <!-- include d3.js modules -->
+      <script src="https://d3js.org/d3-array.v2.min.js"></script>
+      <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+      <script src="https://d3js.org/d3-time.v1.min.js"></script>
+      <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+      <!--    My CSS! -->
+      <link rel="stylesheet" href="resources/eve-style.css">
+   </head>
+   <body>
+      <!-- Page header -->
+      <!-- https://bulma.io/documentation/layout/hero/ -->
+      <section class="hero is-primary is-bold">
+         <div class="hero-body">
+            <div class="container">
+               <h1 class="title">ColorIsFake Midterm</h1>
+               <h2 class="subtitle">Chaitrika, Priscilla, and Eve's Data Visualization Site</h2>
             </div>
-          </div>
-
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              Prototypes
-            </a>
-
-            <div class="navbar-dropdown">
-              <a class="navbar-item is-active" href="responsetime-prototype.html">
-                <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Priscilla - Response Time</span>
-              </a>
-              <a class="navbar-item" href="preparationtime-prototype.html">
-                <span class="icon"><i class="fas fa-chart-area"></i></span>
-                <span>Evelyn - Preparation Time</span>
-              </a>
-              <a class="navbar-item" href="hospitalaccesstime-prototype.html">
-                <span class="icon"><i class="fas fa-chart-bar"></i></span>
-                <span>Chaitrika - Hospital Access Time</span>
-              </a>
+         </div>
+      </section>
+      <!-- End page header -->
+      <!-- Page navigation -->
+      <!-- https://bulma.io/documentation/components/navbar/ -->
+      <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+         <div class="container">
+            <div class="navbar-brand">
+               <a class="navbar-item" href="index.html">
+               <span class="icon"><i class="fas fa-home"></i></span>
+               <span>Home</span>
+               </a>
+               <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
+               <span aria-hidden="true"></span>
+               <span aria-hidden="true"></span>
+               <span aria-hidden="true"></span>
+               </a>
             </div>
-          </div>
-        </div>
-
-        <!-- Right navbar items -->
-        <div class="navbar-end">
-          <a class="navbar-item" href="about.html" title="About">
-            <span class="icon"><i class="fas fa-info-circle"></i></span>
-            <span>About the Team</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </nav>
-  <!-- End page navigation -->
-
-  <section class="section">
-    <div class="container">
-      <!-- Begin page content -->
-      <div class="content">
-      
-        <h1 class="title">
-          Analyzing Difference in Transportation Time in Neighborhoods
-        </h1>
-        
-        <p>
-          This graph measures the average difference of time between Dispatch Time, when 911 dispatches a unit to the location of the incident, and On-Scene Time, when the unit reaches that location for each Neighborhood.
-        </p>
-        
-        <p>To conserve space and optimize the graph, the y-axis consists of the average time it has taken for a unit to arrive on the scene after dispatch during that month from 2012-2019. </p>
-        
-        <div class='tableauPlaceholder' id='viz1583271333189' style='position: relative'>
-          <noscript><a href='#'>
-            <img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm_15832712998160&#47;Sheet15&#47;1_rss.png' style='border: none' />
-            </a>
-          </noscript>
-          <object class='tableauViz'  style='display:none;'>
-            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> 
-            <param name='embed_code_version' value='3' /> 
-            <param name='site_root' value='' /><param name='name' value='midterm_15832712998160&#47;Sheet15' />
-            <param name='tabs' value='no' /><param name='toolbar' value='yes' />
-            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm_15832712998160&#47;Sheet15&#47;1.png' /> 
-            <param name='animate_transition' value='yes' />
-            <param name='display_static_image' value='yes' />
-            <param name='display_spinner' value='yes' />
-            <param name='display_overlay' value='yes' />
-            <param name='display_count' value='yes' />
-            <param name='filter' value='publish=yes' />
-          </object>
-        </div>                
-        <script type='text/javascript'>
-          var divElement = document.getElementById('viz1583271333189');
-          var vizElement = divElement.getElementsByTagName('object')[0];
-          vizElement.style.width='100%';
-          vizElement.style.height=(divElement.offsetWidth*0.75)+'px';
-          var scriptElement = document.createElement('script');
-          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
-          vizElement.parentNode.insertBefore(scriptElement, vizElement);
-        </script>
-        
-        <h1 class="title">
-          Abnormalities in the Data
-        </h1>
-        <p>
-          During certain times in the year one can notice rises or declines in the averages. Specifically in 2012 and 2019 there have been abnormalities in the data. For example, on Decmember 2019 there was the odd difference of -85.3 minutes, so in this graph compare the dispatch and on scene time recorded during that month and year and on December 2012 there was a significant rise in difference with fire related calls, here is the graph comparing dispatch and on scene time during that month and year.
-        </p>
-       
-        
-        <div class='tableauPlaceholder' id='viz1583272202956' style='position: relative'>
-          <noscript>
-            <a href='#'>
-              <img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm2_15832720928480&#47;Sheet16&#47;1_rss.png' style='border: none' />
-            </a>
-          </noscript>
-          <object class='tableauViz'  style='display:none;'>
-            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
-            <param name='embed_code_version' value='3' />
-            <param name='site_root' value='' />
-            <param name='name' value='midterm2_15832720928480&#47;Sheet16' />
-            <param name='tabs' value='no' />
-            <param name='toolbar' value='yes' />
-            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm2_15832720928480&#47;Sheet16&#47;1.png' />
-            <param name='animate_transition' value='yes' />
-            <param name='display_static_image' value='yes' />
-            <param name='display_spinner' value='yes' />
-            <param name='display_overlay' value='yes' />
-            <param name='display_count' value='yes' />
-            <param name='filter' value='publish=yes' />
-          </object>
-        </div>
-        <script type='text/javascript'>
-          var divElement = document.getElementById('viz1583272202956');
-          var vizElement = divElement.getElementsByTagName('object')[0];
-          vizElement.style.width='100%';
-          vizElement.style.height=(divElement.offsetWidth*0.75)+'px';
-          var scriptElement = document.createElement('script');
-          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
-          vizElement.parentNode.insertBefore(scriptElement, vizElement);
-        </script>
-        
-        <div class='tableauPlaceholder' id='viz1583273243064' style='position: relative'>
-          <noscript>
-            <a href='#'>
-              <img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm3_15832727292440&#47;Sheet162&#47;1_rss.png' style='border: none' />
-            </a>
-          </noscript>
-          <object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
-            <param name='embed_code_version' value='3' />
-            <param name='site_root' value='' />
-            <param name='name' value='midterm3_15832727292440&#47;Sheet162' />
-            <param name='tabs' value='no' />
-            <param name='toolbar' value='yes' />
-            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm3_15832727292440&#47;Sheet162&#47;1.png' />
-            <param name='animate_transition' value='yes' />
-            <param name='display_static_image' value='yes' />
-            <param name='display_spinner' value='yes' />
-            <param name='display_overlay' value='yes' />
-            <param name='display_count' value='yes' />
-            <param name='filter' value='publish=yes' />
-          </object>
-        </div>
-        <script type='text/javascript'>
-          var divElement = document.getElementById('viz1583273243064');
-          var vizElement = divElement.getElementsByTagName('object')[0];
-          vizElement.style.width='100%';
-          vizElement.style.height=(divElement.offsetWidth*0.75)+'px'; 
-          var scriptElement = document.createElement('script'); 
-          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
-          vizElement.parentNode.insertBefore(scriptElement, vizElement);
-        </script>
-       
-        
-        <h1>Future Interactivity</h1>
-        <ul>
-          <li>Brushing and Annotations for dense data.</li>
-          <li>Timelapse for multiple years.</li>
-        </ul>
-        <h1>Data Wrangling</h1>
-        <ul>
-          <li>Removed None from Neighborhoood - Analysis Boundaries</li>
-          <li>Removed 2000-2011 and 2020 from Call Date</li>
-        </ul>
-      </div>
-    </div>
-    <!-- End page content -->
-  </section>
-
-
-  <!-- Page footer -->
-<!--  <div class="false-footer"></div>-->
-  <!-- https://bulma.io/documentation/layout/footer/ -->
-  <footer class="footer smaller-footers-are-better">
-    <div class="content has-text-centered is-size-7">
-      <p>
-        <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
-          <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
-        </a>
-
-        <a href="https://bulma.io" class="button is-small">
-          <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
-        </a>
-      </p>
-    </div>
-  </footer>
-  <!-- End page footer -->
-
-  <!-- Mobile menu responsiveness -->
-  <!-- https://bulma.io/documentation/components/navbar/ -->
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-    if ($navbarBurgers.length > 0) {
-      $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-          const target = el.dataset.target;
-          const $target = document.getElementById(target);
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
-        });
-      });
-    }
-  });
-  </script>
-  <!-- End mobile menu responsiveness -->
-  </body>
-
+            <div id="main-menu" class="navbar-menu has-text-weight-medium">
+               <!-- Left navbar items -->
+               <div class="navbar-start">
+                  <a class="navbar-item" href="dataset.html" title="Dataset">
+                  <span class="icon"><i class="fas fa-table"></i></span>
+                  <span>Dataset</span>
+                  </a>
+                  <div class="navbar-item has-dropdown is-hoverable">
+                     <a class="navbar-link">
+                     Visualizations
+                     </a>
+                     <div class="navbar-dropdown">
+                        <a class="navbar-item is-active" href="responsetime.html">
+                        <span class="icon"><i class="fas fa-chart-line"></i></span>
+                        <span>Priscilla - Response Time</span>
+                        </a>
+                        <a class="navbar-item" href="preparationtime.html">
+                        <span class="icon"><i class="fas fa-chart-area"></i></span>
+                        <span>Evelyn - Preparation Time</span>
+                        </a>
+                        <a class="navbar-item" href="hospitalaccesstime.html">
+                        <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                        <span>Chaitrika - Hospital Access Time</span>
+                        </a>
+                     </div>
+                  </div>
+                  <div class="navbar-item has-dropdown is-hoverable">
+                     <a class="navbar-link">
+                     Prototypes
+                     </a>
+                     <div class="navbar-dropdown">
+                        <a class="navbar-item" href="responsetime-prototype.html">
+                        <span class="icon"><i class="fas fa-chart-line"></i></span>
+                        <span>Priscilla - Response Time</span>
+                        </a>
+                        <a class="navbar-item" href="preparationtime-prototype.html">
+                        <span class="icon"><i class="fas fa-chart-area"></i></span>
+                        <span>Evelyn - Preparation Time</span>
+                        </a>
+                        <a class="navbar-item" href="hospitalaccesstime-prototype.html">
+                        <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                        <span>Chaitrika - Hospital Access Time</span>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+               <!-- Right navbar items -->
+               <div class="navbar-end">
+                  <a class="navbar-item" href="about.html" title="About">
+                  <span class="icon"><i class="fas fa-info-circle"></i></span>
+                  <span>About the Team</span>
+                  </a>
+               </div>
+            </div>
+         </div>
+      </nav>
+      <!-- End page navigation -->
+      <section class="section">
+         <div class="container">
+            <!-- Begin page content -->
+            <div class="content">
+               <h1 class="title">
+                  Analyzing Difference in Transportation Time in Neighborhoods
+               </h1>
+               <p>
+                  This graph measures the average difference of time between Dispatch Time, when 911 dispatches a unit to the location of the incident, and On-Scene Time, when the unit reaches that location for each Neighborhood.
+               </p>
+               <p>To conserve space and optimize the graph, the y-axis consists of the average time it has taken for a unit to arrive on the scene after dispatch during that month from 2012-2019. </p>
+               <div class='tableauPlaceholder' id='viz1583271333189' style='width: 100%; height:862px; position: relative'>
+                  <noscript><a href='#'>
+                     <img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm_15832712998160&#47;Sheet15&#47;1_rss.png' style='border: none' />
+                     </a>
+                  </noscript>
+                  <object class='tableauViz'  style='display:none;'>
+                     <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                     <param name='embed_code_version' value='3' />
+                     <param name='site_root' value='' />
+                     <param name='name' value='midterm_15832712998160&#47;Sheet15' />
+                     <param name='tabs' value='no' />
+                     <param name='toolbar' value='yes' />
+                     <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm_15832712998160&#47;Sheet15&#47;1.png' />
+                     <param name='animate_transition' value='yes' />
+                     <param name='display_static_image' value='yes' />
+                     <param name='display_spinner' value='yes' />
+                     <param name='display_overlay' value='yes' />
+                     <param name='display_count' value='yes' />
+                     <param name='filter' value='publish=yes' />
+                  </object>
+               </div>
+               <script type='text/javascript'>
+                  var divElement = document.getElementById('viz1583271333189');
+                  var vizElement = divElement.getElementsByTagName('object')[0];
+                  vizElement.style.width='100%';
+                  vizElement.style.height=(divElement.offsetWidth*0.75)+'px';
+                  var scriptElement = document.createElement('script');
+                  scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                  vizElement.parentNode.insertBefore(scriptElement, vizElement);
+               </script>
+               <h1 class="title">
+                  Abnormalities in the Data
+               </h1>
+               <p>
+                  During certain times in the year one can notice rises or declines in the averages. Specifically in 2012 and 2019 there have been abnormalities in the data. For example, on Decmember 2019 there was the odd difference of -85.3 minutes, so in this graph compare the dispatch and on scene time recorded during that month and year and on December 2012 there was a significant rise in difference with fire related calls, here is the graph comparing dispatch and on scene time during that month and year.
+               </p>
+               <div class='tableauPlaceholder' id='viz1583272202956' style='width: 100%; height: 862px; position: relative'>
+                  <noscript>
+                     <a href='#'>
+                     <img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm2_15832720928480&#47;Sheet16&#47;1_rss.png' style='border: none' />
+                     </a>
+                  </noscript>
+                  <object class='tableauViz'  style='display:none;'>
+                     <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                     <param name='embed_code_version' value='3' />
+                     <param name='site_root' value='' />
+                     <param name='name' value='midterm2_15832720928480&#47;Sheet16' />
+                     <param name='tabs' value='no' />
+                     <param name='toolbar' value='yes' />
+                     <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm2_15832720928480&#47;Sheet16&#47;1.png' />
+                     <param name='animate_transition' value='yes' />
+                     <param name='display_static_image' value='yes' />
+                     <param name='display_spinner' value='yes' />
+                     <param name='display_overlay' value='yes' />
+                     <param name='display_count' value='yes' />
+                     <param name='filter' value='publish=yes' />
+                  </object>
+               </div>
+               <script type='text/javascript'>
+                  var divElement = document.getElementById('viz1583272202956');
+                  var vizElement = divElement.getElementsByTagName('object')[0];
+                  vizElement.style.width='100%';
+                  vizElement.style.height=(divElement.offsetWidth*0.75)+'px';
+                  var scriptElement = document.createElement('script');
+                  scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                  vizElement.parentNode.insertBefore(scriptElement, vizElement);
+               </script>
+               <div class='tableauPlaceholder' id='viz1583273243064' style='width: 100%; height: 862px; position: relative'>
+                  <noscript>
+                     <a href='#'>
+                     <img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm3_15832727292440&#47;Sheet162&#47;1_rss.png' style='border: none' />
+                     </a>
+                  </noscript>
+                  <object class='tableauViz'  style='display:none;'>
+                     <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                     <param name='embed_code_version' value='3' />
+                     <param name='site_root' value='' />
+                     <param name='name' value='midterm3_15832727292440&#47;Sheet162' />
+                     <param name='tabs' value='no' />
+                     <param name='toolbar' value='yes' />
+                     <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;mi&#47;midterm3_15832727292440&#47;Sheet162&#47;1.png' />
+                     <param name='animate_transition' value='yes' />
+                     <param name='display_static_image' value='yes' />
+                     <param name='display_spinner' value='yes' />
+                     <param name='display_overlay' value='yes' />
+                     <param name='display_count' value='yes' />
+                     <param name='filter' value='publish=yes' />
+                  </object>
+               </div>
+               <script type='text/javascript'>
+                  var divElement = document.getElementById('viz1583273243064');
+                  var vizElement = divElement.getElementsByTagName('object')[0];
+                  vizElement.style.width='100%';
+                  vizElement.style.height=(divElement.offsetWidth*0.75)+'px'; 
+                  var scriptElement = document.createElement('script'); 
+                  scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                  vizElement.parentNode.insertBefore(scriptElement, vizElement);
+               </script>
+               <h1>Future Interactivity</h1>
+               <ul>
+                  <li>Brushing and Annotations for dense data.</li>
+                  <li>Timelapse for multiple years.</li>
+               </ul>
+               <h1>Data Wrangling</h1>
+               <ul>
+                  <li>Removed None from Neighborhoood - Analysis Boundaries</li>
+                  <li>Removed 2000-2011 and 2020 from Call Date</li>
+               </ul>
+            </div>
+            <h1 class="title">Peer Feedback</h1>
+               
+            <h2>Based on the peer feedback I have received I have somewhat changed the layout and data in from of graphs. First I and many of my peers noted that the outfliers in my data are skewing my data and it is confusing and after further investigation, most of those outliers were typos and errors in the data. Another change to my graph is the size. Since I used a lot of data in one screen I overwhelmed many of my classmates with a large amount of rows at once. I think I would be best to limit my graph to the dimensions of the svg. Besides those changes I decided to try to implement a time lapse of sort for my graph since I think it will help me organize and condense the data. Also because many peers found the idea of implementing a time lapse would add dimension to my graph and would be intriguing to analyze. </h2>
+         </div>
+         <!-- End page content -->
+      </section>
+      <!-- Page footer -->
+      <!--  <div class="false-footer"></div>-->
+      <!-- https://bulma.io/documentation/layout/footer/ -->
+      <footer class="footer smaller-footers-are-better">
+         <div class="content has-text-centered is-size-7">
+            <p>
+               <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+               <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
+               </a>
+               <a href="https://bulma.io" class="button is-small">
+               <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
+               </a>
+            </p>
+         </div>
+      </footer>
+      <!-- End page footer -->
+      <!-- Mobile menu responsiveness -->
+      <!-- https://bulma.io/documentation/components/navbar/ -->
+      <script>
+         document.addEventListener('DOMContentLoaded', () => {
+           const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+         
+           if ($navbarBurgers.length > 0) {
+             $navbarBurgers.forEach( el => {
+               el.addEventListener('click', () => {
+                 const target = el.dataset.target;
+                 const $target = document.getElementById(target);
+                 el.classList.toggle('is-active');
+                 $target.classList.toggle('is-active');
+               });
+             });
+           }
+         });
+      </script>
+      <!-- End mobile menu responsiveness -->
+   </body>
 </html>
