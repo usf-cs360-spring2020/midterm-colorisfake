@@ -643,6 +643,8 @@ function makeBrushing(call_type) {
 
         refreshVis(call_type, allowed_years);
     }
+
+    // Thank you https://observablehq.com/@d3/focus-context for inspiration
 }
 /**
  * Redraw a visualization with new data
@@ -684,9 +686,13 @@ function refreshVis(call_type, allowed_years) {
 
     let aggregated_refresh = aggregateData(temp_megaData);
     // console.log('aggregated in refresh', aggregated_refresh);
+    console.log('aggregated minmax in refresh', aggregated_refresh.minmax[decoded_call_type]);
     // Data is changed now!
 
     // TODO Refresh scales
+    // scales.color[call_type].domain([aggregated_refresh.minmax[decoded_call_type].min_avg_resp, aggregated_refresh.minmax[decoded_call_type].max_avg_resp]);
+    // scales.incidents[call_type].domain([aggregated_refresh.minmax[decoded_call_type].min_incident_count, aggregated_refresh.minmax[decoded_call_type].max_incident_count]);
+
     // scales.color[call_type].domain()
 
     // Refresh views
