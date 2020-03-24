@@ -433,6 +433,34 @@ function organize(data) {
     return organized;
 }
 
+/**
+ * Calculate the max and min values for incident count and avg. prep. time, over a given subset of data
+ * @param data the data to average
+ */
+function calculateMaxMins(data) {
+    let answer = {};
+
+    for (let incident of data.keys()) {
+        answer[incident] = {};
+        let incident_obj = data[incident];
+
+        for (let weekday of incident_obj.keys()) {
+            answer[incident][weekday] = {};
+            let weekday_obj = incident_obj[weekday];
+
+            for (let hour of weekday_obj.keys()) {
+                answer[incident][weekday][hour] = {};
+                let rows = weekday_obj[hour];
+
+                for (let row of rows) {
+
+                }
+            }
+
+        }
+    }
+}
+
 prepVis();
 
 /**
