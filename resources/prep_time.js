@@ -66,13 +66,14 @@ function makeOverview(call_type, data) {
 
     let overview = d3.select(`svg.visualization#${coded_call_type}`).selectAll('g#overview');
     // console.log('overview selection size', overview.size());
-    let overviewPlot = overview.append('g');
+    let overviewPlot = overview.append('g')
+        .attr('class', 'plotArea');
     // console.log('overviewPlot selection size', overviewPlot.size(), call_type);
 
     // console.log('data in makeOverview: ', data, call_type);
 
     let processed_data = process_data_overview(data, call_type);
-    console.log('processed_data in makeOverview', processed_data, call_type);
+    // console.log('processed_data in makeOverview', processed_data, call_type);
 
     let selection = overviewPlot.selectAll('rect.visBar#overview')
         .data(processed_data)
@@ -104,6 +105,73 @@ function makeOverview(call_type, data) {
     let overviewText = overview.append('g')
         .attr('class', 'overviewText');
     drawOverviewText(axisGOverview);
+
+    // Define brushing behavior
+    makeBrushing(coded_call_type);
+}
+
+/**
+ * Enable brushing  interactivity
+ * @param call_type the call type to use
+ */
+function makeBrushing(call_type) {
+    let this_svg = d3.select(`svg.visualization#${call_type}`);
+    let this_overview = this_svg.select('g#overview');
+    console.log(this_overview.size());
+    // Make a SVG for the focus chart
+    // const svg = d3.create("svg")
+    //     .attr("viewBox", [0, 0, width, focusHeight])
+    //     .style("display", "block");
+
+    // Define the brush
+    const brush = d3.brushX()
+        // .extent([[margin.left, 0.5], [width - margin.right, focusHeight - margin.bottom + 0.5]])
+        .extent([[0,0], [c.overviewPlot.width, c.overviewPlot.height]])
+        .on("brush", brushed)
+        .on("end", brushended);
+    console.log('extent', [0,0], [c.overviewPlot.width, c.overviewPlot.height])
+
+    // Some sort of selection
+    // const defaultSelection = [x(d3.utcYear.offset(x.domain()[1], -1)),        x.range()[1]];
+    const defaultSelection = [scales.year.range()[0], scales.year.range()[1]];
+    console.log('defaultSelection', defaultSelection);
+
+    // Draw the x axis
+    // svg.append("g")
+    //     .call(xAxis, x, focusHeight);
+
+    // Draw the area
+    // svg.append("path")
+    //     .datum(data)
+    //     .attr("fill", "steelblue")
+    //     .attr("d", area(x, y.copy().range([focusHeight - margin.bottom, 4])));
+
+    // Make the brush?
+    const gb = this_overview.append("g")
+        .attr('class', 'brushThing')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', c.overviewPlot.width)
+        .attr('height', c.overviewPlot.height)
+        .attr("viewBox", [0, 0, c.overviewPlot.width, c.overviewPlot.height])
+        .call(brush)
+        .call(brush.move, defaultSelection);
+
+    // Some functions
+    function brushed() {
+        if (d3.event.selection) {
+            // svg.property("value", d3.event.selection.map(x.invert, x).map(d3.utcDay.round));
+            // svg.dispatch("input");
+            console.log('brushed');
+        }
+    }
+
+    function brushended() {
+        // if (!d3.event.selection) {
+        //     gb.call(brush.move, defaultSelection);
+        // }
+        console.log('brushended');
+    }
 }
 
 /**
@@ -353,7 +421,7 @@ function drawVises(theData) {
  */
 function refresh(data) {
     let agg = aggregateData(data);
-    console.log('agg', agg);
+    // console.log('agg', agg);
 
     // TODO figure out how this will work
 }
@@ -379,7 +447,7 @@ function drawVis(call_type, data) {
     let datathingthisisdumb = {};
     datathingthisisdumb[call_type] = data;
     let agg = aggregateData(datathingthisisdumb);
-    console.log('agg', agg);
+    // console.log('agg', agg);
     let aggregated = agg.data;
 
         // Draw a subplot for each weekday
@@ -438,6 +506,8 @@ function drawVis(call_type, data) {
 
     // Draw some pesky text
     drawText(this_svg.select('g#text'), call_type);
+
+    // enableBrushing(call_type);
 }
 
 /**
@@ -646,43 +716,44 @@ function enableHover() {
     // Thank you Sophie Engle for this code
 }
 
-/**
- * Enable brushing interactivity
- */
-function enableBrushing() {
-    const svg = d3.selectAll('svg');
-
-    // used to test out interactivity in this cell
-    // const status = html`<code>brush: none</code>`;
-
-    let brush = d3.brush()
-        .on("start.brush2 brush.brush2 end.brush2", brushed);
-
-    function brushed() {
-        if (d3.event.selection) {
-            const [[x0, y0], [x1, y1]] = d3.event.selection;
-
-            // show what we interacted with
-            d3.select(status).text("brush: " + d3.event.selection);
-
-            circles.classed("dim", function(d) {
-                let cx = +d3.select(this).attr("cx");
-                let cy = +d3.select(this).attr("cy");
-                return !(x0 <= cx && cx < x1 &&
-                    y0 <= cy && cy < y1);
-            });
-        }
-        else {
-            d3.select(status).text("brush: none");
-            circles.classed("dim", false);
-        }
-    }
-
-    // place brush BEHIND points so we still get pointer events
-    svg.insert("g", ":first-child").attr("class", "brush").call(brush);
-
-    // Thank you Sophie Engle for this code
-}
+// /**
+//  * Enable brushing interactivity for one visualization
+//  * @param incident_type the type of incident
+//  */
+// function enableBrushing(incident_type) {
+//     let svg = d3.select(`svg.visualization#${incident_type}`);
+//
+//     let plot = svg.select('g.plot');
+//     let bars = plot.selectAll('rect.visBar');
+//
+//     let brush = d3.brush()
+//         .on("start.brush2 brush.brush2 end.brush2", brushed);
+//
+//     function brushed() {
+//         if (d3.event.selection) {
+//             const [[x0, y0], [x1, y1]] = d3.event.selection;
+//
+//             // show what we interacted with
+//             // d3.select(status).text("brush: " + d3.event.selection);
+//
+//             bars.classed("dim", function (d) {
+//                 let cx = +d3.select(this).attr("cx");
+//                 let cy = +d3.select(this).attr("cy");
+//                 return !(x0 <= cx && cx < x1 &&
+//                     y0 <= cy && cy < y1);
+//             });
+//         } else {
+//             d3.select(status).text("brush: none");
+//             bars.classed("dim", false);
+//         }
+//     }
+//
+//     // place brush BEHIND points so we still get pointer events
+//     svg.insert("g", ":first-child").attr("class", "brush").call(brush);
+//
+//
+//     // Thank you Sophie Engle for this code
+// }
 
 
 /**
